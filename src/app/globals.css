@@ -463,6 +463,14 @@ h1, h2, h3 {
   display: block;
 }
 
+/* ── Landing nav mobile ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .landing-nav-wordmark { display: none !important; }
+  .landing-nav-links    { display: none !important; }
+  .landing-nav-actions  { gap: 0.5rem !important; }
+  .landing-nav-login    { display: none !important; }
+}
+
 /* ── Mobile responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   /* Show bottom nav, hide top nav */

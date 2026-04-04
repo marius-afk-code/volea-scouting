@@ -498,18 +498,18 @@ export default function Home() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <VoleaLogoMark size={40} />
-            <span style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-0.01em' }}>
+            <VoleaLogoMark size={36} />
+            <span className="landing-nav-wordmark" style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-0.01em' }}>
               Volea <span style={{ color: '#7c3aed' }}>Scouting</span>
             </span>
           </div>
 
           {/* Nav links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <a href="#features" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Funciones</a>
-            <a href="#pricing" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Precios</a>
-            <a href="#faq" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>FAQ</a>
-            <Link href="/login" style={{
+          <div className="landing-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            <a href="#features" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Funciones</a>
+            <a href="#pricing" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Precios</a>
+            <a href="#faq" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>FAQ</a>
+            <Link href="/login" className="landing-nav-login" style={{
               color: '#e2e8f0', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)',
             }}>Iniciar sesión</Link>
             <button onClick={() => setShowModal(true)} style={{
