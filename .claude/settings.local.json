@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)",
+      "mcp__aidesigner__generate_design",
+      "Bash(npx -y @aidesigner/agent-skills capture --html-file .aidesigner/mcp-latest.html --prompt \"Professional football scouting dashboard — players list page for MM Scouting. Dark nav + hero, pure white data pane with player roster rows.\" --transport mcp --remote-run-id \"6094343d-9b73-480e-b3c2-2f5095c278c0\")",
+      "Bash(npx -y @aidesigner/agent-skills adopt --id \"2026-04-03T13-15-28-767Z-professional-football-scouting-dashb\")",
+      "Bash(npx -y @aidesigner/agent-skills capture --html-file .aidesigner/mcp-latest.html --prompt \"Professional football scouting SaaS marketing landing page. Dark navy hero, white features grid, pale gray steps, white pricing, pale gray FAQ, navy footer. DM Serif Display headings, purple #7C3AED accent.\" --transport mcp --remote-run-id \"2ee8b2f9-0b8b-4320-8813-69defbe4f0ac\")",
+      "Bash(npx -y @aidesigner/agent-skills adopt --id \"2026-04-03T20-22-00-618Z-professional-football-scouting-saas-\")",
+      "mcp__aidesigner__get_credit_status",
+      "Read(//c/Users/Usuario/Downloads/**)",
+      "Read(//c/Users/Usuario/**)",
+      "Read(//c/Users/Usuario/Documents/**)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*volea*)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Copia*)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Copia*Volea*)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*.png)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*1*.png)",
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*\\\\\\(1\\\\\\)*.png)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "aidesigner"
+  ]
+}
