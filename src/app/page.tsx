@@ -788,7 +788,7 @@ export default function Home() {
                 <h3 style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{p.name}</h3>
                 <p style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: 'var(--font-body)' }}>{p.desc}</p>
                 <div style={{ marginBottom: '1.75rem' }}>
-                  <span style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>{p.price}</span>
+                  <span style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-body)', letterSpacing: '-0.02em' }}>{p.price}</span>
                   {p.period && <span style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '0.875rem', fontFamily: 'var(--font-body)' }}>{p.period}</span>}
                 </div>
 
