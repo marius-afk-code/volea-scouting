@@ -159,7 +159,9 @@ function FaqItem({ q, a }: { q: string; a: string }) {
           padding: '0 1.5rem 1.25rem',
           borderTop: '1px solid #F3F4F6',
           color: '#6B7280',
-          fontSize: '0.9rem',
+          fontSize: '1rem',
+          fontWeight: 500,
+          letterSpacing: '-0.01em',
           lineHeight: 1.75,
           fontFamily: 'var(--font-body)',
         }}>
@@ -586,6 +588,8 @@ export default function Home() {
           <p style={{
             color: '#94a3b8',
             fontSize: '1.1rem',
+            fontWeight: 500,
+            letterSpacing: '-0.01em',
             lineHeight: 1.75,
             maxWidth: '560px',
             margin: '0 auto 3rem',
@@ -662,7 +666,7 @@ export default function Home() {
             <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
               Todo lo que un scout profesional necesita
             </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+            <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
               Diseñado para el flujo de trabajo real de un scout: desde el primer vistazo hasta el informe final.
             </p>
           </div>
@@ -694,8 +698,8 @@ export default function Home() {
                   fontSize: '1.25rem',
                   marginBottom: '1.25rem',
                 }}>{f.icon}</div>
-                <h3 style={{ color: '#111827', fontSize: '1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{f.title}</h3>
-                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{f.desc}</p>
+                <h3 style={{ color: '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{f.title}</h3>
+                <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -710,7 +714,7 @@ export default function Home() {
             <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
               En marcha en menos de 5 minutos
             </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+            <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
               Sin integraciones complejas. Sin formación técnica. Solo abre, configura y empieza a scouting.
             </p>
           </div>
@@ -740,8 +744,8 @@ export default function Home() {
                   marginBottom: '1.5rem',
                   boxShadow: i === 1 ? '0 0 24px rgba(124,58,237,0.25)' : '0 2px 8px rgba(0,0,0,0.06)',
                 }}>{s.num}</div>
-                <h3 style={{ color: '#111827', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.625rem', fontFamily: 'var(--font-heading)' }}>{s.title}</h3>
-                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.75, margin: 0, fontFamily: 'var(--font-body)' }}>{s.desc}</p>
+                <h3 style={{ color: '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.625rem', fontFamily: 'var(--font-heading)' }}>{s.title}</h3>
+                <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.75, margin: 0, fontFamily: 'var(--font-body)' }}>{s.desc}</p>
               </div>
             ))}
           </div>
@@ -756,7 +760,7 @@ export default function Home() {
             <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
               Elige tu plan
             </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '420px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+            <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '420px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
               Sin permanencia. Sin sorpresas. Cancela cuando quieras.
             </p>
           </div>
@@ -782,7 +786,7 @@ export default function Home() {
                   }}>Más popular</div>
                 )}
                 <h3 style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{p.name}</h3>
-                <p style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '0.82rem', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: 'var(--font-body)' }}>{p.desc}</p>
+                <p style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: 'var(--font-body)' }}>{p.desc}</p>
                 <div style={{ marginBottom: '1.75rem' }}>
                   <span style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>{p.price}</span>
                   {p.period && <span style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '0.875rem', fontFamily: 'var(--font-body)' }}>{p.period}</span>}
@@ -790,13 +794,13 @@ export default function Home() {
 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
                   {p.features.map(f => (
-                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.875rem', color: p.highlight ? '#e2e8f0' : '#374151', fontFamily: 'var(--font-body)' }}>
+                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', color: p.highlight ? '#e2e8f0' : '#374151', fontFamily: 'var(--font-body)' }}>
                       <span style={{ color: '#22C55E', flexShrink: 0, marginTop: '1px' }}>✓</span>
                       {f}
                     </li>
                   ))}
                   {p.missing.map(f => (
-                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.875rem', color: p.highlight ? '#4B5563' : '#D1D5DB', fontFamily: 'var(--font-body)' }}>
+                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', color: p.highlight ? '#4B5563' : '#D1D5DB', fontFamily: 'var(--font-body)' }}>
                       <span style={{ flexShrink: 0, marginTop: '1px' }}>–</span>
                       {f}
                     </li>
