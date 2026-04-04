@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Instrument_Serif, Syne, DM_Sans } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { DemoProvider } from '@/contexts/DemoContext';
 
 const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
@@ -30,9 +31,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body className={`${instrumentSerif.variable} ${syne.variable} ${dmSans.variable}`}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <DemoProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </DemoProvider>
       </body>
     </html>
   );

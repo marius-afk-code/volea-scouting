@@ -1,10 +1,12 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayers } from '@/lib/players';
+import { DEMO_PLAYERS, DEMO_ALERTS } from '@/lib/demo-data';
 import {
   getAlerts, addAlert, completeAlert as completeAlertFn,
   postponeAlert as postponeAlertFn, snoozeAlert, deleteAlert as deleteAlertFn,
@@ -213,6 +215,7 @@ function SectionCard({ title, badge, children, className }: { title: string; bad
 
 export default function AlertsPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const [players, setPlayers] = useState<Player[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -225,16 +228,22 @@ export default function AlertsPage() {
   const today = todayISO();
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
+    if (isDemo) {
+      setPlayers(DEMO_PLAYERS);
+      setAlerts(DEMO_ALERTS);
+      setLoadingData(false);
+      return;
+    }
     if (!user) return;
     Promise.all([getPlayers(user.uid), getAlerts(user.uid)])
       .then(([ps, as]) => { setPlayers(ps); setAlerts(as); })
       .catch(err => console.error('alerts load error:', err))
       .finally(() => setLoadingData(false));
-  }, [user]);
+  }, [user, isDemo]);
 
   const visibleAlerts = alerts.filter(a => !a.snoozedUntil || a.snoozedUntil <= today);
   const pending    = visibleAlerts.filter(a => !a.done);
@@ -242,6 +251,7 @@ export default function AlertsPage() {
   const urgentCount = pending.filter(a => a.priority === 'urgent').length;
 
   const handleCreate = async () => {
+    if (isDemo) { setSaveError('No se pueden crear alertas en modo demo.'); return; }
     if (!user || !form.message.trim()) return;
     setSaving(true); setSaveError('');
     try {

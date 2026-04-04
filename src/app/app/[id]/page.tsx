@@ -1,10 +1,12 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayer, updatePlayer, deletePlayer } from '@/lib/players';
+import { DEMO_PLAYERS } from '@/lib/demo-data';
 import { Player, PlayerPosition, PlayerFoot, PlayerStatus } from '@/types/player';
 
 const POSITIONS: PlayerPosition[] = [
@@ -50,6 +52,7 @@ const labelStyle: React.CSSProperties = {
 
 export default function PlayerDetailPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const params = useParams();
   const playerId = params.id as string;
@@ -64,25 +67,32 @@ export default function PlayerDetailPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
-    if (playerId) {
-      getPlayer(playerId)
-        .then(p => {
-          setPlayer(p);
-          if (p) {
-            setEditForm(p);
-            setTagsInput(p.tags.join(', '));
-          }
-        })
-        .finally(() => setLoadingPlayer(false));
+    if (!playerId) return;
+    if (isDemo) {
+      const p = DEMO_PLAYERS.find(pl => pl.id === playerId) ?? null;
+      setPlayer(p);
+      if (p) { setEditForm(p); setTagsInput(p.tags.join(', ')); }
+      setLoadingPlayer(false);
+      return;
     }
-  }, [playerId]);
+    getPlayer(playerId)
+      .then(p => {
+        setPlayer(p);
+        if (p) {
+          setEditForm(p);
+          setTagsInput(p.tags.join(', '));
+        }
+      })
+      .finally(() => setLoadingPlayer(false));
+  }, [playerId, isDemo]);
 
   const handleSave = async () => {
     if (!player) return;
+    if (isDemo) { setEditing(false); return; }
     setSaving(true);
     try {
       const updatedData = {
@@ -99,6 +109,7 @@ export default function PlayerDetailPage() {
 
   const handleDelete = async () => {
     if (!player) return;
+    if (isDemo) { setConfirmDelete(false); return; }
     setDeleting(true);
     try {
       await deletePlayer(player.id);

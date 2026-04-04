@@ -1,11 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayers } from '@/lib/players';
 import { getVisits } from '@/lib/visits';
+import { DEMO_PLAYERS, DEMO_VISITS } from '@/lib/demo-data';
 import { Player } from '@/types/player';
 import { Visit } from '@/types/visit';
 import AppNav from '@/components/AppNav';
@@ -91,16 +93,24 @@ function Card({ title, children, span2, className }: { title: string; children: 
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const [players, setPlayers] = useState<Player[]>([]);
   const [allVisits, setAllVisits] = useState<Visit[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
+    if (isDemo) {
+      setPlayers(DEMO_PLAYERS);
+      const allVisits = Object.values(DEMO_VISITS).flat();
+      setAllVisits(allVisits);
+      setLoadingData(false);
+      return;
+    }
     if (!user) return;
     (async () => {
       try {
@@ -114,7 +124,7 @@ export default function DashboardPage() {
         setLoadingData(false);
       }
     })();
-  }, [user]);
+  }, [user, isDemo]);
 
   if (loading || loadingData) {
     return (

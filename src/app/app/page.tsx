@@ -1,11 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayers, addPlayer } from '@/lib/players';
 import { Player, PlayerPosition, PlayerFoot, PlayerStatus } from '@/types/player';
+import { DEMO_PLAYERS } from '@/lib/demo-data';
 import AppNav from '@/components/AppNav';
 
 const POSITIONS: PlayerPosition[] = [
@@ -99,6 +101,7 @@ function Avatar({ name, status }: { name: string; status: PlayerStatus }) {
 
 export default function AppPage() {
   const { user, loading, signOut } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const [players, setPlayers] = useState<Player[]>([]);
   const [loadingPlayers, setLoadingPlayers] = useState(true);
@@ -113,11 +116,14 @@ export default function AppPage() {
   void signOut;
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
-    if (user) {
+    if (isDemo) {
+      setPlayers(DEMO_PLAYERS);
+      setLoadingPlayers(false);
+    } else if (user) {
       getPlayers(user.uid)
         .then(setPlayers)
         .catch(err => {
@@ -126,7 +132,7 @@ export default function AppPage() {
         })
         .finally(() => setLoadingPlayers(false));
     }
-  }, [user]);
+  }, [user, isDemo]);
 
   const filtered = players.filter(p => {
     const matchStatus = filterStatus === 'todos' || p.status === filterStatus;
@@ -138,6 +144,7 @@ export default function AppPage() {
   });
 
   const handleSubmit = async () => {
+    if (isDemo) { setShowForm(false); return; }
     if (!user || !form.name.trim() || !form.club.trim()) return;
     setSaving(true);
     setSaveError('');

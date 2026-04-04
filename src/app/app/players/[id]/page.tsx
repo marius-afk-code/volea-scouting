@@ -1,12 +1,14 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import AppNav from '@/components/AppNav';
 import { getPlayer } from '@/lib/players';
 import { getVisits, addVisit, deleteVisit, saveSharedReport } from '@/lib/visits';
+import { DEMO_PLAYERS, DEMO_VISITS } from '@/lib/demo-data';
 import { Player } from '@/types/player';
 import { Visit } from '@/types/visit';
 import {
@@ -437,6 +439,7 @@ const STATUS_CONFIG = {
 
 export default function PlayerDetailPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const params = useParams();
   const playerId = params.id as string;
@@ -502,20 +505,29 @@ export default function PlayerDetailPage() {
 
   // Auth guard
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   // Load player + visits in parallel
   useEffect(() => {
     if (!playerId) return;
+    if (isDemo) {
+      const demoPlayer = DEMO_PLAYERS.find(p => p.id === playerId) ?? null;
+      const demoVisits = DEMO_VISITS[playerId] ?? [];
+      setPlayer(demoPlayer);
+      setVisits(demoVisits);
+      setLoadingData(false);
+      return;
+    }
     Promise.all([getPlayer(playerId), getVisits(playerId)])
       .then(([p, v]) => { setPlayer(p); setVisits(v); })
       .catch(err => console.error('Error cargando datos:', err))
       .finally(() => setLoadingData(false));
-  }, [playerId]);
+  }, [playerId, isDemo]);
 
   // ── Visit handlers ──
   async function handleAddVisit() {
+    if (isDemo) { setVisitError('Las visitas no se pueden guardar en modo demo.'); return; }
     if (!player || !vFecha || !vPartido.trim()) {
       setVisitError('Indica la fecha y el partido.');
       return;
@@ -543,6 +555,7 @@ export default function PlayerDetailPage() {
 
   async function handleDeleteVisit() {
     if (!player || !confirmVisit) return;
+    if (isDemo) { setConfirmVisit(null); return; }
     try {
       await deleteVisit(player.id, confirmVisit.id);
       setVisits(prev => prev.filter(v => v.id !== confirmVisit.id));
@@ -570,7 +583,8 @@ export default function PlayerDetailPage() {
 
   // ── Share: save snapshot to Firestore, show URL ──
   async function handleShare() {
-    if (!player || !user) return;
+    if (!player || (!user && !isDemo)) return;
+    if (isDemo) { setShareUrl('https://volea.app/report/demo-example'); setSharing(false); return; }
     setSharing(true);
     try {
       const analysis = generateAnalysis(player, visits);

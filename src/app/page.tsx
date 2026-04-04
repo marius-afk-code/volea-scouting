@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -142,9 +143,9 @@ function FaqItem({ q, a }: { q: string; a: string }) {
           gap: '1rem',
         }}
       >
-        <span style={{ color: '#111827', fontSize: '0.95rem', fontWeight: 600 }}>{q}</span>
+        <span style={{ color: '#111827', fontSize: '0.95rem', fontWeight: 600, fontFamily: 'var(--font-body)' }}>{q}</span>
         <span style={{
-          color: '#7C3AED',
+          color: '#7c3aed',
           fontSize: '1.25rem',
           lineHeight: 1,
           flexShrink: 0,
@@ -160,6 +161,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
           color: '#6B7280',
           fontSize: '0.9rem',
           lineHeight: 1.75,
+          fontFamily: 'var(--font-body)',
         }}>
           {a}
         </div>
@@ -168,11 +170,281 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+// ─── Request Access Modal ──────────────────────────────────────────────────
+
+function RequestAccessModal({ onClose }: { onClose: () => void }) {
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ nombre: '', email: '', telefono: '', mensaje: '' });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitted(true);
+  }
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(6,12,24,0.85)',
+        backdropFilter: 'blur(6px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '1.5rem',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: '#0d1526',
+          border: '1px solid rgba(124,58,237,0.25)',
+          borderRadius: '16px',
+          padding: '2.5rem',
+          width: '100%',
+          maxWidth: '480px',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(124,58,237,0.08)',
+          position: 'relative',
+        }}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: '1.25rem', right: '1.25rem',
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: '#94a3b8', fontSize: '1.25rem', lineHeight: 1,
+            padding: '0.25rem',
+          }}
+        >×</button>
+
+        {submitted ? (
+          <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+            <div style={{
+              width: '56px', height: '56px', borderRadius: '50%',
+              background: 'rgba(124,58,237,0.15)',
+              border: '2px solid rgba(124,58,237,0.4)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem', margin: '0 auto 1.5rem',
+            }}>✓</div>
+            <h3 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.5rem',
+              color: '#e2e8f0',
+              marginBottom: '0.75rem',
+            }}>¡Solicitud enviada!</h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+              Gracias, te contactaremos pronto.
+            </p>
+            <button
+              onClick={onClose}
+              style={{
+                marginTop: '2rem',
+                background: '#7c3aed',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '0.75rem 2rem',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+                boxShadow: '0 0 20px rgba(124,58,237,0.3)',
+              }}
+            >Cerrar</button>
+          </div>
+        ) : (
+          <>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.75rem',
+              color: '#e2e8f0',
+              marginBottom: '0.5rem',
+            }}>Solicitar acceso</h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '2rem', fontFamily: 'var(--font-body)' }}>
+              Cuéntanos sobre tu trabajo y nos ponemos en contacto contigo.
+            </p>
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <label style={{
+                  display: 'block', marginBottom: '0.375rem',
+                  color: '#94a3b8', fontSize: '0.72rem', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                  fontFamily: 'var(--font-body)',
+                }}>Nombre *</label>
+                <input
+                  required
+                  type="text"
+                  value={form.nombre}
+                  onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
+                  placeholder="Tu nombre completo"
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '8px',
+                    padding: '0.7rem 0.875rem',
+                    color: '#e2e8f0',
+                    fontSize: '0.875rem',
+                    fontFamily: 'var(--font-body)',
+                    outline: 'none',
+                  }}
+                  onFocus={e => {
+                    e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)';
+                  }}
+                  onBlur={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block', marginBottom: '0.375rem',
+                  color: '#94a3b8', fontSize: '0.72rem', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                  fontFamily: 'var(--font-body)',
+                }}>Email *</label>
+                <input
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  placeholder="tu@email.com"
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '8px',
+                    padding: '0.7rem 0.875rem',
+                    color: '#e2e8f0',
+                    fontSize: '0.875rem',
+                    fontFamily: 'var(--font-body)',
+                    outline: 'none',
+                  }}
+                  onFocus={e => {
+                    e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)';
+                  }}
+                  onBlur={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block', marginBottom: '0.375rem',
+                  color: '#94a3b8', fontSize: '0.72rem', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                  fontFamily: 'var(--font-body)',
+                }}>Teléfono <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span></label>
+                <input
+                  type="tel"
+                  value={form.telefono}
+                  onChange={e => setForm(f => ({ ...f, telefono: e.target.value }))}
+                  placeholder="+34 600 000 000"
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '8px',
+                    padding: '0.7rem 0.875rem',
+                    color: '#e2e8f0',
+                    fontSize: '0.875rem',
+                    fontFamily: 'var(--font-body)',
+                    outline: 'none',
+                  }}
+                  onFocus={e => {
+                    e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)';
+                  }}
+                  onBlur={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block', marginBottom: '0.375rem',
+                  color: '#94a3b8', fontSize: '0.72rem', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                  fontFamily: 'var(--font-body)',
+                }}>¿Cómo usarías Volea Scouting? *</label>
+                <textarea
+                  required
+                  value={form.mensaje}
+                  onChange={e => setForm(f => ({ ...f, mensaje: e.target.value }))}
+                  placeholder="Cuéntanos tu rol, el tipo de scouting que haces, qué necesitas..."
+                  rows={4}
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '8px',
+                    padding: '0.7rem 0.875rem',
+                    color: '#e2e8f0',
+                    fontSize: '0.875rem',
+                    fontFamily: 'var(--font-body)',
+                    outline: 'none',
+                    resize: 'vertical',
+                    minHeight: '100px',
+                  }}
+                  onFocus={e => {
+                    e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)';
+                  }}
+                  onBlur={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{
+                  background: '#7c3aed',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '0.875rem',
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-body)',
+                  boxShadow: '0 0 24px rgba(124,58,237,0.3)',
+                  marginTop: '0.25rem',
+                }}
+              >Enviar solicitud →</button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Volea logo mark ───────────────────────────────────────────────────────
+
+function VoleaLogoMark({ size = 40 }: { size?: number }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/logo-volea-icon.png" alt="Volea" height={size} width={size} style={{ objectFit: 'contain', display: 'block' }} />
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const { activateDemo } = useDemo();
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (!loading && user) router.push('/app');
@@ -181,6 +453,8 @@ export default function Home() {
   return (
     <div style={{ fontFamily: 'var(--font-body)', overflowX: 'hidden' }}>
 
+      {showModal && <RequestAccessModal onClose={() => setShowModal(false)} />}
+
       {/* ══════════════════════════ NAV ══════════════════════════════ */}
       <nav style={{
         position: 'fixed',
@@ -188,7 +462,7 @@ export default function Home() {
         left: 0,
         right: 0,
         zIndex: 50,
-        background: 'rgba(11,15,26,0.88)',
+        background: 'rgba(6,12,24,0.88)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
         height: '64px',
@@ -199,41 +473,39 @@ export default function Home() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <path d="M14 2L26 14L14 26L2 14Z" fill="rgba(124,58,237,0.15)" stroke="rgba(124,58,237,0.5)" strokeWidth="1.5"/>
-              <path d="M14 7L21 14L14 21L7 14Z" fill="rgba(124,58,237,0.2)" stroke="#7C3AED" strokeWidth="1.5"/>
-              <text x="14" y="18" textAnchor="middle" fill="#A78BFA" fontSize="8" fontWeight="800" fontFamily="system-ui" letterSpacing="0.5">MM</text>
-            </svg>
-            <span style={{ color: '#FFFFFF', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-0.01em' }}>
-              MM <span style={{ color: '#7C3AED' }}>Scouting</span>
+            <VoleaLogoMark size={40} />
+            <span style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-0.01em' }}>
+              Volea <span style={{ color: '#7c3aed' }}>Scouting</span>
             </span>
           </div>
 
           {/* Nav links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <a href="#features" style={{ color: '#9CA3AF', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>Funciones</a>
-            <a href="#pricing" style={{ color: '#9CA3AF', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>Precios</a>
-            <a href="#faq" style={{ color: '#9CA3AF', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>FAQ</a>
+            <a href="#features" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Funciones</a>
+            <a href="#pricing" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Precios</a>
+            <a href="#faq" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>FAQ</a>
             <Link href="/login" style={{
-              color: '#D1D5DB', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500,
+              color: '#e2e8f0', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)',
             }}>Iniciar sesión</Link>
-            <Link href="/login" style={{
-              background: '#7C3AED',
+            <button onClick={() => setShowModal(true)} style={{
+              background: '#7c3aed',
               color: '#FFFFFF',
               padding: '0.45rem 1.125rem',
               borderRadius: '8px',
               fontSize: '0.82rem',
               fontWeight: 700,
-              textDecoration: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-body)',
               boxShadow: '0 0 18px rgba(124,58,237,0.3)',
-            }}>Solicitar acceso</Link>
+            }}>Solicitar acceso</button>
           </div>
         </div>
       </nav>
 
       {/* ══════════════════════════ HERO ══════════════════════════════ */}
       <section style={{
-        background: '#0B0F1A',
+        background: '#060c18',
         backgroundImage: `
           linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
           linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px)
@@ -268,66 +540,70 @@ export default function Home() {
             padding: '0.3rem 0.875rem',
             marginBottom: '2.5rem',
           }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#7C3AED', display: 'inline-block' }} />
-            <span style={{ color: '#A78BFA', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em' }}>Plataforma profesional de scouting · v2</span>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#7c3aed', display: 'inline-block' }} />
+            <span style={{ color: '#a78bfa', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em', fontFamily: 'var(--font-body)' }}>Plataforma profesional de scouting · v2</span>
           </div>
 
           {/* Headline */}
           <h1 style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(2.75rem, 7vw, 5rem)',
-            color: '#FFFFFF',
+            color: '#e2e8f0',
             lineHeight: 1.08,
             letterSpacing: '-0.02em',
             marginBottom: '1.5rem',
           }}>
             Scouting profesional.<br />
-            <span style={{ color: 'rgba(255,255,255,0.45)' }}>Gestión de élite.</span>
+            <span style={{ color: 'rgba(226,232,240,0.4)' }}>Gestión de élite.</span>
           </h1>
 
           {/* Subtext */}
           <p style={{
-            color: '#6B7280',
+            color: '#94a3b8',
             fontSize: '1.1rem',
             lineHeight: 1.75,
             maxWidth: '560px',
             margin: '0 auto 3rem',
+            fontFamily: 'var(--font-body)',
           }}>
             La plataforma boutique que usan scouts y directores deportivos para gestionar jugadores, registrar partidos y generar informes profesionales.
           </p>
 
           {/* CTAs */}
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/login" style={{
-              background: '#7C3AED',
+            <button onClick={() => setShowModal(true)} style={{
+              background: '#7c3aed',
               color: '#FFFFFF',
               padding: '0.875rem 2rem',
               borderRadius: '10px',
               fontSize: '0.95rem',
               fontWeight: 700,
-              textDecoration: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-body)',
               boxShadow: '0 0 32px rgba(124,58,237,0.25)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
             }}>
               Solicitar acceso →
-            </Link>
-            <a href="#features" style={{
+            </button>
+            <button onClick={() => { activateDemo(); router.push('/app'); }} style={{
               background: 'transparent',
-              color: '#FFFFFF',
+              color: '#e2e8f0',
               padding: '0.875rem 2rem',
               borderRadius: '10px',
               fontSize: '0.95rem',
               fontWeight: 600,
-              textDecoration: 'none',
               border: '1px solid rgba(255,255,255,0.2)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
+              fontFamily: 'var(--font-body)',
+              cursor: 'pointer',
             }}>
               ▶ Ver demo
-            </a>
+            </button>
           </div>
         </div>
 
@@ -346,8 +622,8 @@ export default function Home() {
             { n: '150+', l: 'Informes generados' },
           ].map(s => (
             <div key={s.n} style={{ textAlign: 'center' }}>
-              <p style={{ color: '#FFFFFF', fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)', margin: '0 0 0.25rem', letterSpacing: '-0.02em' }}>{s.n}</p>
-              <p style={{ color: '#4B5563', fontSize: '0.75rem', fontWeight: 500, margin: 0, letterSpacing: '0.03em' }}>{s.l}</p>
+              <p style={{ color: '#e2e8f0', fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)', margin: '0 0 0.25rem', letterSpacing: '-0.02em' }}>{s.n}</p>
+              <p style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 500, margin: 0, letterSpacing: '0.03em', fontFamily: 'var(--font-body)' }}>{s.l}</p>
             </div>
           ))}
         </div>
@@ -357,11 +633,11 @@ export default function Home() {
       <section id="features" style={{ background: '#FFFFFF', padding: '6rem 2rem' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <p style={{ color: '#7C3AED', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Plataforma</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.15 }}>
+            <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Plataforma</p>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.15 }}>
               Todo lo que un scout profesional necesita
             </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7 }}>
+            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
               Diseñado para el flujo de trabajo real de un scout: desde el primer vistazo hasta el informe final.
             </p>
           </div>
@@ -393,8 +669,8 @@ export default function Home() {
                   fontSize: '1.25rem',
                   marginBottom: '1.25rem',
                 }}>{f.icon}</div>
-                <h3 style={{ color: '#111827', fontSize: '1rem', fontWeight: 700, marginBottom: '0.5rem' }}>{f.title}</h3>
-                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
+                <h3 style={{ color: '#111827', fontSize: '1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{f.title}</h3>
+                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -405,11 +681,11 @@ export default function Home() {
       <section style={{ background: '#F8FAFC', padding: '6rem 2rem' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4.5rem' }}>
-            <p style={{ color: '#7C3AED', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Proceso</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.15 }}>
+            <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Proceso</p>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.15 }}>
               En marcha en menos de 5 minutos
             </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7 }}>
+            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
               Sin integraciones complejas. Sin formación técnica. Solo abre, configura y empieza a scouting.
             </p>
           </div>
@@ -430,8 +706,8 @@ export default function Home() {
               <div key={s.num} style={{ position: 'relative', zIndex: 1 }}>
                 <div style={{
                   width: '56px', height: '56px', borderRadius: '50%',
-                  background: i === 1 ? '#7C3AED' : '#FFFFFF',
-                  border: `2px solid ${i === 1 ? '#7C3AED' : '#E5E7EB'}`,
+                  background: i === 1 ? '#7c3aed' : '#FFFFFF',
+                  border: `2px solid ${i === 1 ? '#7c3aed' : '#E5E7EB'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontFamily: 'var(--font-display)',
                   fontSize: '1.25rem',
@@ -439,8 +715,8 @@ export default function Home() {
                   marginBottom: '1.5rem',
                   boxShadow: i === 1 ? '0 0 24px rgba(124,58,237,0.25)' : '0 2px 8px rgba(0,0,0,0.06)',
                 }}>{s.num}</div>
-                <h3 style={{ color: '#111827', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.625rem' }}>{s.title}</h3>
-                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.75, margin: 0 }}>{s.desc}</p>
+                <h3 style={{ color: '#111827', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.625rem', fontFamily: 'var(--font-heading)' }}>{s.title}</h3>
+                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.75, margin: 0, fontFamily: 'var(--font-body)' }}>{s.desc}</p>
               </div>
             ))}
           </div>
@@ -451,11 +727,11 @@ export default function Home() {
       <section id="pricing" style={{ background: '#FFFFFF', padding: '6rem 2rem' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <p style={{ color: '#7C3AED', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Precios</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.15 }}>
+            <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Precios</p>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.15 }}>
               Elige tu plan
             </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '420px', margin: '0 auto', lineHeight: 1.7 }}>
+            <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '420px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
               Sin permanencia. Sin sorpresas. Cancela cuando quieras.
             </p>
           </div>
@@ -463,8 +739,8 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', alignItems: 'center' }}>
             {PLANS.map(p => (
               <div key={p.name} style={{
-                background: p.highlight ? '#0B0F1A' : '#FFFFFF',
-                border: `2px solid ${p.highlight ? '#7C3AED' : '#E5E7EB'}`,
+                background: p.highlight ? '#060c18' : '#FFFFFF',
+                border: `2px solid ${p.highlight ? '#7c3aed' : '#E5E7EB'}`,
                 borderRadius: '16px',
                 padding: '2.25rem',
                 position: 'relative',
@@ -474,46 +750,65 @@ export default function Home() {
                 {p.highlight && (
                   <div style={{
                     position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)',
-                    background: '#7C3AED', color: '#FFFFFF',
+                    background: '#7c3aed', color: '#FFFFFF',
                     fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em',
                     padding: '0.25rem 0.875rem', borderRadius: '999px', textTransform: 'uppercase',
+                    fontFamily: 'var(--font-body)',
                   }}>Más popular</div>
                 )}
-                <h3 style={{ color: p.highlight ? '#FFFFFF' : '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>{p.name}</h3>
-                <p style={{ color: p.highlight ? '#6B7280' : '#9CA3AF', fontSize: '0.82rem', marginBottom: '1.5rem', lineHeight: 1.6 }}>{p.desc}</p>
+                <h3 style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{p.name}</h3>
+                <p style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '0.82rem', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: 'var(--font-body)' }}>{p.desc}</p>
                 <div style={{ marginBottom: '1.75rem' }}>
-                  <span style={{ color: p.highlight ? '#FFFFFF' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>{p.price}</span>
-                  {p.period && <span style={{ color: p.highlight ? '#6B7280' : '#9CA3AF', fontSize: '0.875rem' }}>{p.period}</span>}
+                  <span style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>{p.price}</span>
+                  {p.period && <span style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '0.875rem', fontFamily: 'var(--font-body)' }}>{p.period}</span>}
                 </div>
 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
                   {p.features.map(f => (
-                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.875rem', color: p.highlight ? '#D1D5DB' : '#374151' }}>
+                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.875rem', color: p.highlight ? '#e2e8f0' : '#374151', fontFamily: 'var(--font-body)' }}>
                       <span style={{ color: '#22C55E', flexShrink: 0, marginTop: '1px' }}>✓</span>
                       {f}
                     </li>
                   ))}
                   {p.missing.map(f => (
-                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.875rem', color: p.highlight ? '#4B5563' : '#D1D5DB' }}>
+                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.875rem', color: p.highlight ? '#4B5563' : '#D1D5DB', fontFamily: 'var(--font-body)' }}>
                       <span style={{ flexShrink: 0, marginTop: '1px' }}>–</span>
                       {f}
                     </li>
                   ))}
                 </ul>
 
-                <Link href="/login" style={{
-                  display: 'block',
-                  textAlign: 'center',
-                  padding: '0.75rem 1.25rem',
-                  borderRadius: '10px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                  background: p.highlight ? '#7C3AED' : 'transparent',
-                  color: p.highlight ? '#FFFFFF' : '#374151',
-                  border: p.highlight ? 'none' : '1px solid #E5E7EB',
-                  boxShadow: p.highlight ? '0 0 18px rgba(124,58,237,0.25)' : 'none',
-                }}>{p.cta}</Link>
+                {p.cta === 'Solicitar acceso' ? (
+                  <button onClick={() => setShowModal(true)} style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'center',
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '10px',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-body)',
+                    background: '#7c3aed',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    boxShadow: '0 0 18px rgba(124,58,237,0.25)',
+                  }}>{p.cta}</button>
+                ) : (
+                  <Link href="/login" style={{
+                    display: 'block',
+                    textAlign: 'center',
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '10px',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    fontFamily: 'var(--font-body)',
+                    background: 'transparent',
+                    color: '#374151',
+                    border: '1px solid #E5E7EB',
+                  }}>{p.cta}</Link>
+                )}
               </div>
             ))}
           </div>
@@ -524,8 +819,8 @@ export default function Home() {
       <section id="faq" style={{ background: '#F8FAFC', padding: '6rem 2rem' }}>
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <p style={{ color: '#7C3AED', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>FAQ</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', color: '#111827', margin: 0, lineHeight: 1.2 }}>
+            <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>FAQ</p>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', color: '#111827', margin: 0, lineHeight: 1.2 }}>
               Preguntas frecuentes
             </h2>
           </div>
@@ -538,45 +833,43 @@ export default function Home() {
 
       {/* ══════════════════════════ CTA BAND ══════════════════════════ */}
       <section style={{
-        background: 'linear-gradient(135deg, #7C3AED, #5B21B6)',
+        background: 'linear-gradient(135deg, #7c3aed, #5B21B6)',
         padding: '5rem 2rem',
         textAlign: 'center',
       }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', color: '#FFFFFF', margin: '0 0 1rem', lineHeight: 1.15 }}>
           Empieza a scouting hoy
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', marginBottom: '2.5rem', maxWidth: '420px', margin: '0 auto 2.5rem', lineHeight: 1.7 }}>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', marginBottom: '2.5rem', maxWidth: '420px', margin: '0 auto 2.5rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
           Plan gratuito disponible. Sin tarjeta de crédito.
         </p>
-        <Link href="/login" style={{
+        <button onClick={() => setShowModal(true)} style={{
           display: 'inline-block',
           background: '#FFFFFF',
-          color: '#7C3AED',
+          color: '#7c3aed',
           padding: '0.9rem 2.25rem',
           borderRadius: '10px',
           fontSize: '0.95rem',
           fontWeight: 800,
-          textDecoration: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontFamily: 'var(--font-body)',
           boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
-        }}>Solicitar acceso gratuito →</Link>
+        }}>Solicitar acceso gratuito →</button>
       </section>
 
       {/* ══════════════════════════ FOOTER ══════════════════════════ */}
-      <footer style={{ background: '#0B0F1A', borderTop: '1px solid rgba(255,255,255,0.05)', padding: '4rem 2rem 2.5rem' }}>
+      <footer style={{ background: '#060c18', borderTop: '1px solid rgba(255,255,255,0.05)', padding: '4rem 2rem 2.5rem' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
 
             {/* Brand */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
-                <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                  <path d="M14 2L26 14L14 26L2 14Z" fill="rgba(124,58,237,0.15)" stroke="rgba(124,58,237,0.5)" strokeWidth="1.5"/>
-                  <path d="M14 7L21 14L14 21L7 14Z" fill="rgba(124,58,237,0.2)" stroke="#7C3AED" strokeWidth="1.5"/>
-                  <text x="14" y="18" textAnchor="middle" fill="#A78BFA" fontSize="8" fontWeight="800" fontFamily="system-ui" letterSpacing="0.5">MM</text>
-                </svg>
-                <span style={{ color: '#FFFFFF', fontSize: '1rem', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>MM <span style={{ color: '#7C3AED' }}>Scouting</span></span>
+                <VoleaLogoMark size={24} />
+                <span style={{ color: '#e2e8f0', fontSize: '1rem', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>Volea <span style={{ color: '#7c3aed' }}>Scouting</span></span>
               </div>
-              <p style={{ color: '#4B5563', fontSize: '0.85rem', lineHeight: 1.75, maxWidth: '280px' }}>
+              <p style={{ color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.75, maxWidth: '280px', fontFamily: 'var(--font-body)' }}>
                 La plataforma boutique de scouting de fútbol profesional para scouts y directores deportivos.
               </p>
             </div>
@@ -588,10 +881,10 @@ export default function Home() {
               { title: 'Legal', links: ['Privacidad', 'Términos', 'Cookies'] },
             ].map(col => (
               <div key={col.title}>
-                <h4 style={{ color: '#FFFFFF', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem' }}>{col.title}</h4>
+                <h4 style={{ color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem', fontFamily: 'var(--font-body)' }}>{col.title}</h4>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {col.links.map(l => (
-                    <li key={l}><a href="#" style={{ color: '#6B7280', fontSize: '0.85rem', textDecoration: 'none' }}>{l}</a></li>
+                    <li key={l}><a href="#" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>{l}</a></li>
                   ))}
                 </ul>
               </div>
@@ -600,10 +893,10 @@ export default function Home() {
 
           {/* Bottom bar */}
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <p style={{ color: '#374151', fontSize: '0.78rem', margin: 0 }}>© 2026 Volea Scouting. Todos los derechos reservados.</p>
+            <p style={{ color: '#94a3b8', fontSize: '0.78rem', margin: 0, fontFamily: 'var(--font-body)' }}>© 2026 Volea Scouting. Todos los derechos reservados.</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E', display: 'inline-block' }} />
-              <span style={{ color: '#22C55E', fontSize: '0.72rem', fontWeight: 600 }}>Todos los sistemas operativos</span>
+              <span style={{ color: '#22C55E', fontSize: '0.72rem', fontWeight: 600, fontFamily: 'var(--font-body)' }}>Todos los sistemas operativos</span>
             </div>
           </div>
         </div>

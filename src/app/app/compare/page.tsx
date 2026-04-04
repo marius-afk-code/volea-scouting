@@ -1,11 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayers } from '@/lib/players';
 import { getVisits } from '@/lib/visits';
+import { DEMO_PLAYERS, DEMO_VISITS } from '@/lib/demo-data';
 import { Player } from '@/types/player';
 import { Visit } from '@/types/visit';
 import AppNav from '@/components/AppNav';
@@ -71,6 +73,7 @@ function smartRecommendation(selected: Player[], visitMap: Record<string, Visit[
 
 export default function ComparePage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
 
   const [players, setPlayers]       = useState<Player[]>([]);
@@ -87,10 +90,16 @@ export default function ComparePage() {
   const [aiError, setAiError]       = useState('');
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
+    if (isDemo) {
+      setPlayers(DEMO_PLAYERS);
+      setVisitMap(DEMO_VISITS);
+      setLoadingData(false);
+      return;
+    }
     if (!user) return;
     (async () => {
       try {
@@ -103,7 +112,7 @@ export default function ComparePage() {
       } catch (err) { console.error(err); }
       finally { setLoadingData(false); }
     })();
-  }, [user]);
+  }, [user, isDemo]);
 
   // Active selected players (non-null, no duplicates)
   const active = selected.slice(0, slots).filter((p): p is Player => p !== null);

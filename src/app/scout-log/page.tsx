@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import AppNav from '@/components/AppNav';
@@ -13,6 +14,7 @@ import {
   persistSavedCompetitions,
 } from '@/lib/matches';
 import { Match, MatchCategory } from '@/types/match';
+import { DEMO_MATCHES, DEMO_PLAYERS } from '@/lib/demo-data';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -211,6 +213,7 @@ function StatsPanel({ matches }: { matches: Match[] }) {
 
 export default function ScoutLogPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
 
   const [matches, setMatches] = useState<Match[]>([]);
@@ -238,23 +241,29 @@ export default function ScoutLogPage() {
 
   // ── Auth redirect ──
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   // ── Load matches ──
   useEffect(() => {
+    if (isDemo) {
+      setMatches(DEMO_MATCHES);
+      setLoadingMatches(false);
+      return;
+    }
     if (!user) return;
     getMatches(user.uid)
       .then(setMatches)
       .catch(err => console.error('Error cargando partidos:', err))
       .finally(() => setLoadingMatches(false));
-  }, [user]);
+  }, [user, isDemo]);
 
   // ── Load saved competitions ──
   useEffect(() => {
+    if (isDemo) return;
     if (!user) return;
     getSavedCompetitions(user.uid).then(setSavedComps);
-  }, [user]);
+  }, [user, isDemo]);
 
   // ── Close comp dropdown on outside click ──
   useEffect(() => {
@@ -318,6 +327,7 @@ export default function ScoutLogPage() {
   }
 
   async function handleSave() {
+    if (isDemo) { closeModal(); return; }
     if (!user || !form.date || !form.homeTeam.trim() || !form.awayTeam.trim()) return;
     setSaving(true);
     setSaveError('');
@@ -342,6 +352,7 @@ export default function ScoutLogPage() {
   // Bug fix #2: confirmMatch holds the full match so the dialog shows the correct name
   async function handleDelete() {
     if (!confirmMatch) return;
+    if (isDemo) { setConfirmMatch(null); return; }
     setDeleting(true);
     try {
       await deleteMatch(confirmMatch.id);

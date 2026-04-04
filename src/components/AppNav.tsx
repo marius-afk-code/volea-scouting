@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import BottomNav from './BottomNav';
 
@@ -50,10 +51,66 @@ function Divider() {
 
 export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
   const { user, signOut } = useAuth();
+  const { isDemo, exitDemo } = useDemo();
   const router = useRouter();
 
   return (
     <>
+    {/* ── Demo banner ──────────────────────────────────────────── */}
+    {isDemo && (
+      <div style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 51,
+        background: 'linear-gradient(90deg, rgba(124,58,237,0.95), rgba(91,33,182,0.95))',
+        borderBottom: '1px solid rgba(124,58,237,0.4)',
+        backdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '1rem',
+        padding: '0.5rem 1.5rem',
+        flexWrap: 'wrap',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: '#a78bfa',
+            display: 'inline-block',
+            boxShadow: '0 0 6px rgba(167,139,250,0.6)',
+          }} />
+          <span style={{
+            color: '#e9d5ff',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            fontFamily: 'var(--font-body)',
+            letterSpacing: '0.01em',
+          }}>
+            Estás en modo demo con datos de ejemplo
+          </span>
+        </div>
+        <button
+          onClick={() => { exitDemo(); router.push('/'); }}
+          style={{
+            background: 'rgba(255,255,255,0.12)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            color: '#e9d5ff',
+            borderRadius: '6px',
+            padding: '0.2rem 0.75rem',
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontFamily: 'var(--font-body)',
+            letterSpacing: '0.03em',
+            transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => { (e.currentTarget).style.background = 'rgba(255,255,255,0.2)'; }}
+          onMouseLeave={e => { (e.currentTarget).style.background = 'rgba(255,255,255,0.12)'; }}
+        >
+          Salir del demo →
+        </button>
+      </div>
+    )}
     <header className="app-top-nav" style={{
       position: 'sticky',
       top: 0,

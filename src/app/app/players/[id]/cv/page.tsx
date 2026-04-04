@@ -1,11 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayer, updatePlayer } from '@/lib/players';
 import { getVisits } from '@/lib/visits';
+import { DEMO_PLAYERS, DEMO_VISITS } from '@/lib/demo-data';
 import { Player } from '@/types/player';
 import { Visit } from '@/types/visit';
 
@@ -242,6 +244,7 @@ const labelS: React.CSSProperties = {
 
 export default function CvPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const params = useParams();
   const playerId = params.id as string;
@@ -260,11 +263,19 @@ export default function CvPage() {
   const [generating, setGenerating]    = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
     if (!playerId) return;
+    if (isDemo) {
+      const p = DEMO_PLAYERS.find(pl => pl.id === playerId) ?? null;
+      const v = DEMO_VISITS[playerId] ?? [];
+      if (p) { setPlayer(p); setClubs(p.cvClubs ?? []); }
+      setVisits(v);
+      setLoadingData(false);
+      return;
+    }
     Promise.all([getPlayer(playerId), getVisits(playerId)])
       .then(([p, v]) => {
         if (p) {
@@ -275,7 +286,7 @@ export default function CvPage() {
       })
       .catch(err => console.error(err))
       .finally(() => setLoadingData(false));
-  }, [playerId]);
+  }, [playerId, isDemo]);
 
   function addClub() {
     if (!newClub.club.trim()) return;
@@ -311,10 +322,12 @@ export default function CvPage() {
       finally { setPolishing(false); }
     }
 
-    // Persist club history to Firestore
-    try {
-      await updatePlayer(player.id, { cvClubs: clubs });
-    } catch { /* non-critical */ }
+    // Persist club history to Firestore (skip in demo)
+    if (!isDemo) {
+      try {
+        await updatePlayer(player.id, { cvClubs: clubs });
+      } catch { /* non-critical */ }
+    }
 
     // Open CV in new window
     const html = buildCvHtml(player, clubs, polishedDesc, visits);

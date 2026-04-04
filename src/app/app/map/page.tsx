@@ -1,9 +1,11 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getPlayers } from '@/lib/players';
+import { DEMO_PLAYERS } from '@/lib/demo-data';
 import { Player } from '@/types/player';
 import AppNav from '@/components/AppNav';
 
@@ -76,6 +78,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default function MapPage() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
   const router = useRouter();
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletRef = useRef<{ map: L.Map | null; markers: L.CircleMarker[] }>({ map: null, markers: [] });
@@ -85,16 +88,21 @@ export default function MapPage() {
   const [stats, setStats] = useState({ mapped: 0, locations: 0, unmapped: 0 });
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !user && !isDemo) router.push('/login');
+  }, [user, loading, router, isDemo]);
 
   useEffect(() => {
+    if (isDemo) {
+      setPlayers(DEMO_PLAYERS);
+      setLoadingData(false);
+      return;
+    }
     if (!user) return;
     getPlayers(user.uid)
       .then(setPlayers)
       .catch(err => console.error('map load error:', err))
       .finally(() => setLoadingData(false));
-  }, [user]);
+  }, [user, isDemo]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mapRef.current) return;
