@@ -722,23 +722,40 @@ export default function Home() {
 
       {/* ══════════════════════════ ACCESO ═══════════════════════════ */}
       <section id="pricing" style={{ background: '#060c18', padding: '6rem 2rem' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#e2e8f0', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
-            Acceso a Volea Scouting
-          </h2>
-          <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '460px', margin: '0 auto 4rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
-            Plataforma de uso profesional. El acceso es por invitación.
-          </p>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+          {/* ── Cabecera ── */}
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              background: 'rgba(124,58,237,0.12)',
+              border: '1px solid rgba(124,58,237,0.25)',
+              borderRadius: '999px',
+              padding: '0.3rem 1rem',
+              marginBottom: '1.75rem',
+            }}>
+              <span style={{ color: '#a78bfa', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>
+                Beta cerrada · Plazas limitadas
+              </span>
+            </div>
+            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#e2e8f0', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
+              Acceso a Volea Scouting
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '460px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+              Plataforma de uso profesional. El acceso es por invitación.
+            </p>
+          </div>
+
+          {/* ── Cards de funcionalidades ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
             {[
               { icon: '📂', title: 'Gestión de jugadores', desc: 'Base de datos completa con fotos, métricas y evolución.' },
               { icon: '📊', title: 'Informes y análisis', desc: 'Radar, comparador y exportación PDF profesional.' },
               { icon: '🤖', title: 'Inteligencia artificial', desc: 'Informes automáticos generados por IA por jugador.' },
             ].map(card => (
               <div key={card.title} style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                background: 'rgba(124,58,237,0.04)',
+                border: '1px solid rgba(124,58,237,0.15)',
                 borderRadius: '16px',
                 padding: '2rem',
                 textAlign: 'left',
@@ -750,24 +767,65 @@ export default function Home() {
             ))}
           </div>
 
-          <button onClick={() => setShowModal(true)} style={{
-            background: '#7c3aed',
-            color: '#FFFFFF',
-            padding: '0.875rem 2.5rem',
-            borderRadius: '10px',
-            fontSize: '0.95rem',
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-body)',
-            boxShadow: '0 0 32px rgba(124,58,237,0.25)',
-            marginBottom: '1rem',
-          }}>
-            Solicitar acceso →
-          </button>
-          <p style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>
-            Cada solicitud es revisada manualmente. Respondemos en 24–48h.
-          </p>
+          {/* ── Proceso en 3 pasos ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginBottom: '4rem', position: 'relative' }}>
+            {/* línea conectora */}
+            <div style={{
+              position: 'absolute', top: '1.25rem',
+              left: 'calc(16.66% + 1rem)', right: 'calc(16.66% + 1rem)',
+              height: '1px',
+              background: 'linear-gradient(90deg, rgba(124,58,237,0.2), rgba(124,58,237,0.5), rgba(124,58,237,0.2))',
+            }} />
+            {[
+              { num: '01', title: 'Solicitas acceso', desc: 'Rellenas el formulario con tu perfil profesional.' },
+              { num: '02', title: 'Revisamos tu solicitud', desc: 'Evaluamos cada perfil individualmente en 24–48h.' },
+              { num: '03', title: 'Accedes a la plataforma', desc: 'Recibes tus credenciales y soporte directo desde el primer día.' },
+            ].map((step, i) => (
+              <div key={step.num} style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  width: '2.5rem', height: '2.5rem', borderRadius: '50%',
+                  background: i === 1 ? '#7c3aed' : 'rgba(124,58,237,0.1)',
+                  border: `1px solid ${i === 1 ? '#7c3aed' : 'rgba(124,58,237,0.3)'}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: '1.25rem',
+                  boxShadow: i === 1 ? '0 0 20px rgba(124,58,237,0.35)' : 'none',
+                }}>
+                  <span style={{ color: i === 1 ? '#fff' : '#a78bfa', fontSize: '0.72rem', fontWeight: 800, fontFamily: 'var(--font-body)', letterSpacing: '0.05em' }}>{step.num}</span>
+                </div>
+                <h3 style={{ color: '#e2e8f0', fontSize: '1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{step.title}</h3>
+                <p style={{ color: '#94a3b8', fontSize: '0.95rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── CTA final ── */}
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ color: '#94a3b8', fontSize: '0.95rem', fontStyle: 'italic', fontFamily: 'var(--font-body)', maxWidth: '560px', margin: '0 auto 2rem', lineHeight: 1.7 }}>
+              "Los beta testers tienen acceso completo a todas las funcionalidades y participan activamente en el desarrollo del producto."
+            </p>
+            <button onClick={() => setShowModal(true)} style={{
+              background: '#7c3aed',
+              color: '#FFFFFF',
+              padding: '0.875rem 2.5rem',
+              borderRadius: '10px',
+              fontSize: '0.95rem',
+              fontWeight: 900,
+              fontFamily: 'var(--font-condensed)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 0 32px rgba(124,58,237,0.25)',
+              display: 'block',
+              margin: '0 auto 1rem',
+            }}>
+              Solicitar acceso
+            </button>
+            <p style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>
+              Cada solicitud es revisada manualmente. Respondemos en 24–48h.
+            </p>
+          </div>
+
         </div>
       </section>
 
