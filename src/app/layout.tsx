@@ -31,6 +31,9 @@ const barlowCondensed = Barlow_Condensed({
 export const metadata: Metadata = {
   title: 'Volea Scouting',
   description: 'Plataforma profesional de scouting de fútbol. Tecnología propia para scouts, agencias y clubes.',
+  icons: {
+    icon: '/logo-volea-icon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
