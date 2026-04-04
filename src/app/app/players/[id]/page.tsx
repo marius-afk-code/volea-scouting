@@ -608,7 +608,7 @@ export default function PlayerDetailPage() {
         })),
         analysis,
         sharedAt: new Date().toISOString(),
-        sharedBy: user.email ?? '',
+        sharedBy: user?.email ?? '',
       });
       setShareUrl(`${window.location.origin}/shared/${reportId}`);
     } catch (err: unknown) {
