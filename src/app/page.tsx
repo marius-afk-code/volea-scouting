@@ -79,7 +79,7 @@ const FAQS = [
   },
   {
     q: '¿Los informes PDF se pueden personalizar con el logo de mi club?',
-    a: 'En el plan Agencia sí. Los informes incluyen el logo y los colores de tu organización. En los planes Básico y Pro se genera con la marca Volea Scouting.',
+    a: 'Es una funcionalidad que estamos desarrollando. Durante la beta, los informes se generan con la marca Volea Scouting. Si tienes necesidades específicas de personalización, indícalo en tu solicitud de acceso.',
   },
 ];
 
