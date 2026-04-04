@@ -61,40 +61,6 @@ const STEPS = [
   },
 ];
 
-// ─── Pricing plans ────────────────────────────────────────────────────────
-
-const PLANS = [
-  {
-    name: 'Básico',
-    price: 'Gratis',
-    period: '',
-    desc: 'Para scouts individuales que empiezan a organizar su trabajo.',
-    features: ['Hasta 25 jugadores', 'Scout Log ilimitado', 'Informes PDF básicos', 'Mapa de jugadores'],
-    missing: ['Comparador avanzado', 'Alertas y recordatorios'],
-    cta: 'Empezar gratis',
-    highlight: false,
-  },
-  {
-    name: 'Pro',
-    price: '29€',
-    period: '/mes',
-    desc: 'Para scouts profesionales con seguimiento activo de plantillas completas.',
-    features: ['Jugadores ilimitados', 'Scout Log ilimitado', 'Informes PDF avanzados', 'Radar y comparador', 'Alertas y recordatorios', 'Compartir informes'],
-    missing: [],
-    cta: 'Solicitar acceso',
-    highlight: true,
-  },
-  {
-    name: 'Agencia',
-    price: '99€',
-    period: '/mes',
-    desc: 'Para agencias y departamentos de scouting con equipos de trabajo.',
-    features: ['Todo lo de Pro', 'Múltiples usuarios', 'Acceso API', 'Soporte prioritario', 'Onboarding personalizado'],
-    missing: [],
-    cta: 'Contactar',
-    highlight: false,
-  },
-];
 
 // ─── FAQ data ─────────────────────────────────────────────────────────────
 
@@ -754,95 +720,54 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════ PRICING ══════════════════════════ */}
-      <section id="pricing" style={{ background: '#FFFFFF', padding: '6rem 2rem' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Precios</p>
-            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
-              Elige tu plan
-            </h2>
-            <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '420px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
-              Sin permanencia. Sin sorpresas. Cancela cuando quieras.
-            </p>
-          </div>
+      {/* ══════════════════════════ ACCESO ═══════════════════════════ */}
+      <section id="pricing" style={{ background: '#060c18', padding: '6rem 2rem' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#e2e8f0', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
+            Acceso a Volea Scouting
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', maxWidth: '460px', margin: '0 auto 4rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+            Plataforma de uso profesional. El acceso es por invitación.
+          </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', alignItems: 'center' }}>
-            {PLANS.map(p => (
-              <div key={p.name} style={{
-                background: p.highlight ? '#060c18' : '#FFFFFF',
-                border: `2px solid ${p.highlight ? '#7c3aed' : '#E5E7EB'}`,
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            {[
+              { icon: '📂', title: 'Gestión de jugadores', desc: 'Base de datos completa con fotos, métricas y evolución.' },
+              { icon: '📊', title: 'Informes y análisis', desc: 'Radar, comparador y exportación PDF profesional.' },
+              { icon: '🤖', title: 'Inteligencia artificial', desc: 'Informes automáticos generados por IA por jugador.' },
+            ].map(card => (
+              <div key={card.title} style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.07)',
                 borderRadius: '16px',
-                padding: '2.25rem',
-                position: 'relative',
-                transform: p.highlight ? 'translateY(-8px)' : 'none',
-                boxShadow: p.highlight ? '0 24px 60px rgba(124,58,237,0.15)' : '0 2px 12px rgba(0,0,0,0.04)',
+                padding: '2rem',
+                textAlign: 'left',
               }}>
-                {p.highlight && (
-                  <div style={{
-                    position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)',
-                    background: '#7c3aed', color: '#FFFFFF',
-                    fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em',
-                    padding: '0.25rem 0.875rem', borderRadius: '999px', textTransform: 'uppercase',
-                    fontFamily: 'var(--font-body)',
-                  }}>Más popular</div>
-                )}
-                <h3 style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{p.name}</h3>
-                <p style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: 'var(--font-body)' }}>{p.desc}</p>
-                <div style={{ marginBottom: '1.75rem' }}>
-                  <span style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-body)', letterSpacing: '-0.02em' }}>{p.price}</span>
-                  {p.period && <span style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '0.875rem', fontFamily: 'var(--font-body)' }}>{p.period}</span>}
-                </div>
-
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                  {p.features.map(f => (
-                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', color: p.highlight ? '#e2e8f0' : '#374151', fontFamily: 'var(--font-body)' }}>
-                      <span style={{ color: '#22C55E', flexShrink: 0, marginTop: '1px' }}>✓</span>
-                      {f}
-                    </li>
-                  ))}
-                  {p.missing.map(f => (
-                    <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', color: p.highlight ? '#4B5563' : '#D1D5DB', fontFamily: 'var(--font-body)' }}>
-                      <span style={{ flexShrink: 0, marginTop: '1px' }}>–</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                {p.cta === 'Solicitar acceso' ? (
-                  <button onClick={() => setShowModal(true)} style={{
-                    display: 'block',
-                    width: '100%',
-                    textAlign: 'center',
-                    padding: '0.75rem 1.25rem',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-body)',
-                    background: '#7c3aed',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    boxShadow: '0 0 18px rgba(124,58,237,0.25)',
-                  }}>{p.cta}</button>
-                ) : (
-                  <Link href="/login" style={{
-                    display: 'block',
-                    textAlign: 'center',
-                    padding: '0.75rem 1.25rem',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    fontFamily: 'var(--font-body)',
-                    background: 'transparent',
-                    color: '#374151',
-                    border: '1px solid #E5E7EB',
-                  }}>{p.cta}</Link>
-                )}
+                <div style={{ fontSize: '1.75rem', marginBottom: '1rem' }}>{card.icon}</div>
+                <h3 style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{card.title}</h3>
+                <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{card.desc}</p>
               </div>
             ))}
           </div>
+
+          <button onClick={() => setShowModal(true)} style={{
+            background: '#7c3aed',
+            color: '#FFFFFF',
+            padding: '0.875rem 2.5rem',
+            borderRadius: '10px',
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-body)',
+            boxShadow: '0 0 32px rgba(124,58,237,0.25)',
+            marginBottom: '1rem',
+          }}>
+            Solicitar acceso →
+          </button>
+          <p style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>
+            Cada solicitud es revisada manualmente. Respondemos en 24–48h.
+          </p>
         </div>
       </section>
 
