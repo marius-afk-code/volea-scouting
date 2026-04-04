@@ -18,7 +18,10 @@
       "Bash(ls \"C:/Users/Usuario/Downloads/\"*Copia*Volea*)",
       "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*.png)",
       "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*1*.png)",
-      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*\\\\\\(1\\\\\\)*.png)"
+      "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*\\\\\\(1\\\\\\)*.png)",
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(ls:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
