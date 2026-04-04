@@ -569,12 +569,12 @@ export default function Home() {
 
           {/* Headline */}
           <h1 style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: 'clamp(3rem, 8vw, 6rem)',
+            fontFamily: 'var(--font-condensed)',
+            fontSize: 'clamp(2.25rem, 6vw, 4rem)',
             fontWeight: 900,
             color: '#e2e8f0',
             lineHeight: 1,
-            letterSpacing: '-0.01em',
+            letterSpacing: '0.01em',
             textTransform: 'uppercase',
             marginBottom: '1.5rem',
           }}>
@@ -659,7 +659,7 @@ export default function Home() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Plataforma</p>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
               Todo lo que un scout profesional necesita
             </h2>
             <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
@@ -707,7 +707,7 @@ export default function Home() {
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4.5rem' }}>
             <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Proceso</p>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
               En marcha en menos de 5 minutos
             </h2>
             <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
@@ -753,7 +753,7 @@ export default function Home() {
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>Precios</p>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
               Elige tu plan
             </h2>
             <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '420px', margin: '0 auto', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
@@ -845,7 +845,7 @@ export default function Home() {
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <p style={{ color: '#7c3aed', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-body)' }}>FAQ</p>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: 0, lineHeight: 1.05, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: '#111827', margin: 0, lineHeight: 1.05, letterSpacing: '0.01em' }}>
               Preguntas frecuentes
             </h2>
           </div>
@@ -862,7 +862,7 @@ export default function Home() {
         padding: '5rem 2rem',
         textAlign: 'center',
       }}>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', color: '#FFFFFF', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '-0.01em' }}>
+        <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 900, textTransform: 'uppercase', fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', color: '#FFFFFF', margin: '0 0 1rem', lineHeight: 1.05, letterSpacing: '0.01em' }}>
           Empieza a scouting hoy
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', marginBottom: '2.5rem', maxWidth: '420px', margin: '0 auto 2.5rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
