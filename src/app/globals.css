@@ -469,6 +469,18 @@ h1, h2, h3 {
   .landing-nav-links    { display: none !important; }
   .landing-nav-actions  { gap: 0.5rem !important; }
   .landing-nav-login    { display: none !important; }
+
+  /* Hero: menos padding-top en móvil */
+  .landing-hero { padding-top: calc(64px + 2rem) !important; padding-bottom: 6rem !important; }
+
+  /* Stats strip: reduce gap y permite wrap en móvil */
+  .landing-stats {
+    gap: 1.25rem !important;
+    flex-wrap: wrap !important;
+    padding: 1.25rem 1rem !important;
+    overflow: visible !important;
+  }
+  .landing-stats > div { flex: 1 1 auto; min-width: 80px; }
 }
 
 /* ── Mobile responsive ──────────────────────────────────────────── */

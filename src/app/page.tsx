@@ -498,7 +498,7 @@ export default function Home() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <VoleaLogoMark size={36} />
+            <VoleaLogoMark size={48} />
             <span className="landing-nav-wordmark" style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-0.01em' }}>
               Volea <span style={{ color: '#7c3aed' }}>Scouting</span>
             </span>
@@ -529,7 +529,7 @@ export default function Home() {
       </nav>
 
       {/* ══════════════════════════ HERO ══════════════════════════════ */}
-      <section style={{
+      <section className="landing-hero" style={{
         background: '#060c18',
         backgroundImage: `
           linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
@@ -637,7 +637,7 @@ export default function Home() {
         </div>
 
         {/* Stats strip */}
-        <div style={{
+        <div className="landing-stats" style={{
           position: 'absolute', bottom: 0, left: 0, right: 0,
           borderTop: '1px solid rgba(255,255,255,0.05)',
           display: 'flex',
