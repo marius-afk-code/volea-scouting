@@ -470,8 +470,8 @@ h1, h2, h3 {
   .landing-nav-actions  { gap: 0.5rem !important; }
   .landing-nav-login    { display: none !important; }
 
-  /* Hero: menos padding-top en móvil */
-  .landing-hero { padding-top: calc(64px + 2rem) !important; padding-bottom: 6rem !important; }
+  /* Hero: sin espacio entre navbar y badge en móvil */
+  .landing-hero { padding-top: 64px !important; padding-bottom: 6rem !important; }
 
   /* Stats strip: reduce gap y permite wrap en móvil */
   .landing-stats {

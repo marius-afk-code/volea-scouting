@@ -566,7 +566,7 @@ export default function Home() {
             marginBottom: '2.5rem',
           }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#7c3aed', display: 'inline-block' }} />
-            <span style={{ color: '#a78bfa', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em', fontFamily: 'var(--font-body)' }}>Plataforma profesional de scouting · v2</span>
+            <span style={{ color: '#a78bfa', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em', fontFamily: 'var(--font-body)' }}>✦ Volea Scouting · Acceso por invitación</span>
           </div>
 
           {/* Headline */}
