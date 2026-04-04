@@ -174,11 +174,27 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 function RequestAccessModal({ onClose }: { onClose: () => void }) {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState('');
   const [form, setForm] = useState({ nombre: '', email: '', telefono: '', mensaje: '' });
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setSending(true);
+    setSendError('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error('Error del servidor');
+      setSubmitted(true);
+    } catch {
+      setSendError('No se pudo enviar. Inténtalo de nuevo.');
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -405,22 +421,29 @@ function RequestAccessModal({ onClose }: { onClose: () => void }) {
                 />
               </div>
 
+              {sendError && (
+                <p style={{ color: '#f87171', fontSize: '0.82rem', margin: 0, fontFamily: 'var(--font-body)' }}>
+                  {sendError}
+                </p>
+              )}
               <button
                 type="submit"
+                disabled={sending}
                 style={{
-                  background: '#7c3aed',
+                  background: sending ? '#5b21b6' : '#7c3aed',
                   color: '#fff',
                   border: 'none',
                   borderRadius: '10px',
                   padding: '0.875rem',
                   fontSize: '0.95rem',
                   fontWeight: 700,
-                  cursor: 'pointer',
+                  cursor: sending ? 'not-allowed' : 'pointer',
                   fontFamily: 'var(--font-body)',
-                  boxShadow: '0 0 24px rgba(124,58,237,0.3)',
+                  boxShadow: sending ? 'none' : '0 0 24px rgba(124,58,237,0.3)',
                   marginTop: '0.25rem',
+                  opacity: sending ? 0.8 : 1,
                 }}
-              >Enviar solicitud →</button>
+              >{sending ? 'Enviando…' : 'Enviar solicitud →'}</button>
             </form>
           </>
         )}
