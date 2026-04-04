@@ -698,7 +698,7 @@ export default function Home() {
                   fontSize: '1.25rem',
                   marginBottom: '1.25rem',
                 }}>{f.icon}</div>
-                <h3 style={{ color: '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{f.title}</h3>
+                <h3 style={{ color: '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{f.title}</h3>
                 <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{f.desc}</p>
               </div>
             ))}
@@ -744,7 +744,7 @@ export default function Home() {
                   marginBottom: '1.5rem',
                   boxShadow: i === 1 ? '0 0 24px rgba(124,58,237,0.25)' : '0 2px 8px rgba(0,0,0,0.06)',
                 }}>{s.num}</div>
-                <h3 style={{ color: '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.625rem', fontFamily: 'var(--font-heading)' }}>{s.title}</h3>
+                <h3 style={{ color: '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.625rem', fontFamily: 'var(--font-body)' }}>{s.title}</h3>
                 <p style={{ color: '#6B7280', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.75, margin: 0, fontFamily: 'var(--font-body)' }}>{s.desc}</p>
               </div>
             ))}
@@ -785,7 +785,7 @@ export default function Home() {
                     fontFamily: 'var(--font-body)',
                   }}>Más popular</div>
                 )}
-                <h3 style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>{p.name}</h3>
+                <h3 style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{p.name}</h3>
                 <p style={{ color: p.highlight ? '#94a3b8' : '#9CA3AF', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '1.5rem', lineHeight: 1.6, fontFamily: 'var(--font-body)' }}>{p.desc}</p>
                 <div style={{ marginBottom: '1.75rem' }}>
                   <span style={{ color: p.highlight ? '#e2e8f0' : '#111827', fontSize: '2.25rem', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>{p.price}</span>
