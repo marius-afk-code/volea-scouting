@@ -5,6 +5,7 @@ import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Users, BarChart2, Sparkles } from 'lucide-react';
 
 // ─── Feature cards data ────────────────────────────────────────────────────
 
@@ -473,7 +474,7 @@ export default function Home() {
           {/* Nav links */}
           <div className="landing-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <a href="#features" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Funciones</a>
-            <a href="#pricing" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Precios</a>
+            <a href="#acceso" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Acceso</a>
             <a href="#faq" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>FAQ</a>
             <Link href="/login" style={{
               color: '#e2e8f0', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-body)',
@@ -721,7 +722,7 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════ ACCESO ═══════════════════════════ */}
-      <section id="pricing" style={{ background: '#060c18', padding: '6rem 2rem' }}>
+      <section id="acceso" style={{ background: '#060c18', padding: '6rem 2rem' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
           {/* ── Cabecera ── */}
@@ -749,20 +750,22 @@ export default function Home() {
           {/* ── Cards de funcionalidades ── */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
             {[
-              { icon: '📂', title: 'Gestión de jugadores', desc: 'Base de datos completa con fotos, métricas y evolución.' },
-              { icon: '📊', title: 'Informes y análisis', desc: 'Radar, comparador y exportación PDF profesional.' },
-              { icon: '🤖', title: 'Inteligencia artificial', desc: 'Informes automáticos generados por IA por jugador.' },
-            ].map(card => (
-              <div key={card.title} style={{
+              { Icon: Users, title: 'Gestión de jugadores', desc: 'Base de datos completa con fotos, métricas y evolución.' },
+              { Icon: BarChart2, title: 'Informes y análisis', desc: 'Radar, comparador y exportación PDF profesional.' },
+              { Icon: Sparkles, title: 'Inteligencia artificial', desc: 'Informes automáticos generados por IA por jugador.' },
+            ].map(({ Icon, title, desc }) => (
+              <div key={title} style={{
                 background: 'rgba(124,58,237,0.04)',
                 border: '1px solid rgba(124,58,237,0.15)',
                 borderRadius: '16px',
                 padding: '2rem',
                 textAlign: 'left',
               }}>
-                <div style={{ fontSize: '1.75rem', marginBottom: '1rem' }}>{card.icon}</div>
-                <h3 style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{card.title}</h3>
-                <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{card.desc}</p>
+                <div style={{ marginBottom: '1rem' }}>
+                  <Icon size={28} color="#7c3aed" strokeWidth={1.75} />
+                </div>
+                <h3 style={{ color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{title}</h3>
+                <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.7, margin: 0, fontFamily: 'var(--font-body)' }}>{desc}</p>
               </div>
             ))}
           </div>
