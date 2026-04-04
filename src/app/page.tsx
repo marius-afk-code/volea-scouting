@@ -509,8 +509,10 @@ export default function Home() {
             <a href="#features" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Funciones</a>
             <a href="#pricing" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>Precios</a>
             <a href="#faq" className="landing-nav-links" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)' }}>FAQ</a>
-            <Link href="/login" className="landing-nav-login" style={{
-              color: '#e2e8f0', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, fontFamily: 'var(--font-body)',
+            <Link href="/login" style={{
+              color: '#e2e8f0', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-body)',
+              border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '0.4rem 0.875rem',
+              whiteSpace: 'nowrap',
             }}>Iniciar sesión</Link>
             <button onClick={() => setShowModal(true)} style={{
               background: '#7c3aed',
