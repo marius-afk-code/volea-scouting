@@ -83,38 +83,14 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2.25rem' }}>
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 48 48"
-            fill="none"
-            style={{ margin: '0 auto 1.25rem' }}
-          >
-            <path
-              d="M24 3 L45 24 L24 45 L3 24 Z"
-              fill="rgba(212,175,55,0.07)"
-              stroke="rgba(212,175,55,0.4)"
-              strokeWidth="1.2"
-            />
-            <path
-              d="M24 11 L37 24 L24 37 L11 24 Z"
-              fill="rgba(212,175,55,0.10)"
-              stroke="rgba(212,175,55,0.65)"
-              strokeWidth="1.2"
-            />
-            <text
-              x="24"
-              y="28.5"
-              textAnchor="middle"
-              fill="#D4AF37"
-              fontSize="11"
-              fontWeight="800"
-              fontFamily="Syne, sans-serif"
-              letterSpacing="0.5"
-            >
-              MM
-            </text>
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo-volea-icon.png"
+            alt="Volea Scouting"
+            height={48}
+            width={48}
+            style={{ margin: '0 auto 1.25rem', display: 'block', objectFit: 'contain' }}
+          />
 
           <div style={{
             fontFamily: "'Syne', var(--font-heading), sans-serif",
@@ -124,7 +100,7 @@ export default function LoginPage() {
             letterSpacing: '-0.01em',
             marginBottom: '0.35rem',
           }}>
-            MM <span style={{ color: '#D4AF37' }}>SCOUTING</span>
+            VOLEA <span style={{ color: '#D4AF37' }}>SCOUTING</span>
           </div>
           <p style={{
             color: '#1E2A38',
