@@ -69,6 +69,11 @@
   padding: 0;
 }
 
+/* Form elements don't inherit font-family by default — force it */
+button, input, textarea, select {
+  font-family: inherit;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
