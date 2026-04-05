@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const { signIn } = useAuth();
+  const { exitDemo } = useDemo();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn(email, password);
+      exitDemo(); // asegura que el modo demo queda desactivado al entrar con cuenta real
       router.push('/app');
     } catch (err: any) {
       setError(err.code + ': ' + err.message);
