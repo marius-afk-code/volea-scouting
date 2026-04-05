@@ -886,30 +886,40 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Links */}
-            {[
-              { title: 'Plataforma', links: ['Base de jugadores', 'Scout Log', 'Informes PDF', 'Comparador'] },
-              { title: 'Empresa', links: ['Acerca de', 'Blog', 'Contacto', 'Prensa'] },
-              { title: 'Legal', links: ['Privacidad', 'Términos', 'Cookies'] },
-            ].map(col => (
-              <div key={col.title}>
-                <h4 style={{ color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem', fontFamily: 'var(--font-body)' }}>{col.title}</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {col.links.map(l => (
-                    <li key={l}><a href="#" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>{l}</a></li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {/* Producto */}
+            <div>
+              <h4 style={{ color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem', fontFamily: 'var(--font-body)' }}>Producto</h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <li><a href="#features" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Funciones</a></li>
+                <li><a href="#acceso" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Acceso</a></li>
+                <li><a href="#faq" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>FAQ</a></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 style={{ color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem', fontFamily: 'var(--font-body)' }}>Legal</h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <li><Link href="/legal/aviso-legal" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Aviso Legal</Link></li>
+                <li><Link href="/legal/privacidad" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Política de Privacidad</Link></li>
+                <li><Link href="/legal/cookies" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Política de Cookies</Link></li>
+              </ul>
+            </div>
+
+            {/* Contacto */}
+            <div>
+              <h4 style={{ color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem', fontFamily: 'var(--font-body)' }}>Contacto</h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <li><a href="mailto:hola@voleatalentsport.com" style={{ color: '#94a3b8', fontSize: '0.85rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>hola@voleatalentsport.com</a></li>
+              </ul>
+            </div>
           </div>
 
           {/* Bottom bar */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <p style={{ color: '#94a3b8', fontSize: '0.78rem', margin: 0, fontFamily: 'var(--font-body)' }}>© 2026 Volea Scouting. Todos los derechos reservados.</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E', display: 'inline-block' }} />
-              <span style={{ color: '#22C55E', fontSize: '0.72rem', fontWeight: 600, fontFamily: 'var(--font-body)' }}>Todos los sistemas operativos</span>
-            </div>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2rem' }}>
+            <p style={{ color: '#94a3b8', fontSize: '0.78rem', margin: 0, fontFamily: 'var(--font-body)' }}>
+              © 2025 Mario Martínez García · Volea Scouting · Todos los derechos reservados
+            </p>
           </div>
         </div>
       </footer>
