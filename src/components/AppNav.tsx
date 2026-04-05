@@ -23,7 +23,6 @@ const NAV_LINKS = (urgentCount = 0) => [
   { href: '/app',           key: 'players',   label: 'Jugadores' },
   { href: '/app/dashboard', key: 'dashboard', label: 'Dashboard' },
   { href: '/app/compare',   key: 'compare',   label: 'Comparar' },
-  { href: '/app/map',       key: 'map',       label: 'Mapa' },
   {
     href: '/app/alerts',
     key: 'alerts',

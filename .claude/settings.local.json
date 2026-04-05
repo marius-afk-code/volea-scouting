@@ -21,7 +21,10 @@
       "Bash(ls \"C:/Users/Usuario/Downloads/\"*Volea*\\\\\\(1\\\\\\)*.png)",
       "Bash(npm run:*)",
       "Bash(npm install:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(grep -v \"node_modules\\\\|\\\\.next\\\\|YYYY-MM\\\\|//.*MM\\\\|className\\\\|fontFamily\\\\|css\\\\|--font\")",
+      "Bash(grep -v \"//.*leaflet\")",
+      "Bash(npm uninstall:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

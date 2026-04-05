@@ -31,11 +31,6 @@ const FEATURES = [
     desc: 'Visualización SVG con radar cuadridimensional: técnica, táctica, físico y actitud. Perfil visual inmediato.',
   },
   {
-    icon: '🗺️',
-    title: 'Mapa de España',
-    desc: 'Geolocaliza tu base de jugadores sobre mapa interactivo. Filtra por estado y detecta zonas de captación prioritarias.',
-  },
-  {
     icon: '⚖️',
     title: 'Comparador',
     desc: 'Contrasta dos jugadores en paralelo sobre radar, barras y tabla. Soporte de recomendación con IA integrada.',
