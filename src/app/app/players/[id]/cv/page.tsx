@@ -6,10 +6,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayer, updatePlayer } from '@/lib/players';
-import { getVisits } from '@/lib/visits';
-import { DEMO_PLAYERS, DEMO_VISITS } from '@/lib/demo-data';
+import { DEMO_PLAYERS } from '@/lib/demo-data';
 import { Player } from '@/types/player';
-import { Visit } from '@/types/visit';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -75,7 +73,7 @@ function buildCvRadarSvg(metrics: Player['metrics']): string {
 
 // ─── CV HTML builder ────────────────────────────────────────────────────────
 
-function buildCvHtml(player: Player, clubs: CvClub[], description: string, visits: Visit[]): string {
+function buildCvHtml(player: Player, clubs: CvClub[], description: string): string {
   const avg = avgMetrics(player);
   const rc  = ratingColor;
   const age = calcAge(player.birthDate);
@@ -127,20 +125,6 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, visit
       <div style="font-size:13.5px;line-height:1.8;color:#1e293b;background:#F5F3FF;border-left:4px solid #7C3AED;padding:16px 20px;border-radius:0 10px 10px 0">${esc(description)}</div>
     </div>` : '';
 
-  const recentVisits = visits.filter(v => v.valoracion > 0).slice(0, 5);
-  const visitsHtml = recentVisits.length ? `
-    <div style="margin-bottom:20px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7C3AED;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #F5F3FF">Últimas observaciones</div>
-      ${recentVisits.map(v => `
-        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div style="font-size:11px;font-weight:800;color:${rc(v.valoracion)};background:${v.valoracion>=8?'#D1FAE5':v.valoracion>=6?'#FEF3C7':'#FEE2E2'};padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0">${v.valoracion}/10</div>
-          <div>
-            <div style="font-size:12px;font-weight:700;color:#1e293b">${esc(v.partido)}</div>
-            <div style="font-size:11px;color:#64748B">${formatDate(v.fecha)}</div>
-            ${v.nota?`<div style="font-size:11px;color:#374151;margin-top:2px">${esc(v.nota)}</div>`:''}
-          </div>
-        </div>`).join('')}
-    </div>` : '';
 
   const today = new Date().toLocaleDateString('es-ES', { day:'2-digit', month:'long', year:'numeric' });
 
@@ -169,9 +153,10 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, visit
   <div style="background:linear-gradient(135deg,#0B0F1A 0%,#1a103a 100%);border-radius:20px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden">
     <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(124,58,237,.1)"></div>
     <div style="display:flex;align-items:center;gap:20px;position:relative;z-index:1;flex-wrap:wrap">
-      <div style="width:82px;height:82px;border-radius:18px;background:rgba(124,58,237,.2);border:3px solid rgba(124,58,237,.4);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#c4b5fd;flex-shrink:0">
-        ${esc(player.name.charAt(0).toUpperCase())}
-      </div>
+      ${player.photo
+        ? `<img src="${esc(player.photo)}" alt="${esc(player.name)}" style="width:82px;height:82px;border-radius:18px;object-fit:cover;object-position:top;border:3px solid rgba(124,58,237,.4);flex-shrink:0">`
+        : `<div style="width:82px;height:82px;border-radius:18px;background:rgba(124,58,237,.2);border:3px solid rgba(124,58,237,.4);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#c4b5fd;flex-shrink:0">${esc(player.name.charAt(0).toUpperCase())}</div>`
+      }
       <div style="flex:1;min-width:180px">
         <div style="font-size:9px;letter-spacing:.14em;color:#94a3b8;text-transform:uppercase;margin-bottom:5px;font-weight:600">Sports CV · Fútbol Base · Volea Scouting</div>
         <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:4px">${esc(player.name)}</div>
@@ -210,7 +195,6 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, visit
 
   ${clubsHtml}
   ${descHtml}
-  ${visitsHtml}
 
   <!-- Footer -->
   <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:1px solid #f1f5f9">
@@ -250,7 +234,6 @@ export default function CvPage() {
   const playerId = params.id as string;
 
   const [player, setPlayer]   = useState<Player | null>(null);
-  const [visits, setVisits]   = useState<Visit[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
   // Club history
@@ -270,19 +253,13 @@ export default function CvPage() {
     if (!playerId) return;
     if (isDemo) {
       const p = DEMO_PLAYERS.find(pl => pl.id === playerId) ?? null;
-      const v = DEMO_VISITS[playerId] ?? [];
       if (p) { setPlayer(p); setClubs(p.cvClubs ?? []); }
-      setVisits(v);
       setLoadingData(false);
       return;
     }
-    Promise.all([getPlayer(playerId), getVisits(playerId)])
-      .then(([p, v]) => {
-        if (p) {
-          setPlayer(p);
-          setClubs(p.cvClubs ?? []);
-        }
-        setVisits(v);
+    getPlayer(playerId)
+      .then(p => {
+        if (p) { setPlayer(p); setClubs(p.cvClubs ?? []); }
       })
       .catch(err => console.error(err))
       .finally(() => setLoadingData(false));
@@ -330,7 +307,7 @@ export default function CvPage() {
     }
 
     // Open CV in new window
-    const html = buildCvHtml(player, clubs, polishedDesc, visits);
+    const html = buildCvHtml(player, clubs, polishedDesc);
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
     window.open(url, '_blank');
@@ -399,8 +376,11 @@ export default function CvPage() {
           <div style={{ width: 52, height: 52, borderRadius: 12,
             background: 'rgba(124,58,237,0.2)', border: '2px solid rgba(124,58,237,0.4)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 20, fontWeight: 800, color: '#C4B5FD' }}>
-            {player.name.charAt(0).toUpperCase()}
+            fontSize: 20, fontWeight: 800, color: '#C4B5FD', overflow: 'hidden', flexShrink: 0 }}>
+            {player.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={player.photo} alt={player.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+            ) : player.name.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1 }}>
             <p style={{ color: 'white', fontWeight: 800, fontSize: '1.1rem', margin: 0 }}>{player.name}</p>

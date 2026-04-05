@@ -752,8 +752,13 @@ export default function PlayerDetailPage() {
           <div style={{ position: 'absolute', right: '-60px', top: '-60px', width: '240px', height: '240px', borderRadius: '50%', background: 'rgba(124,58,237,0.06)', pointerEvents: 'none' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', position: 'relative', zIndex: 1, flexWrap: 'wrap' }}>
             {/* Avatar */}
-            <div style={{ width: '72px', height: '72px', borderRadius: '16px', background: 'linear-gradient(135deg,#EDE9FE,#C4B5FD)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: '#5B21B6', fontSize: '26px', fontWeight: '700', fontFamily: 'var(--font-display)' }}>{player.name.charAt(0).toUpperCase()}</span>
+            <div style={{ width: '72px', height: '72px', borderRadius: '16px', background: 'linear-gradient(135deg,#EDE9FE,#C4B5FD)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+              {player.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={player.photo} alt={player.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+              ) : (
+                <span style={{ color: '#5B21B6', fontSize: '26px', fontWeight: '700', fontFamily: 'var(--font-display)' }}>{player.name.charAt(0).toUpperCase()}</span>
+              )}
             </div>
             {/* Info */}
             <div style={{ flex: 1, minWidth: '200px' }}>
