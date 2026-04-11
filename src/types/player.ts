@@ -29,6 +29,7 @@ export interface Player {
   tags: string[];
   privateNotes: string;
   photo: string;
+  photoBase64?: string;
   metrics: {
     technical: number;
     tactical: number;

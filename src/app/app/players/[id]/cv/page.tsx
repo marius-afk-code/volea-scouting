@@ -153,8 +153,8 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string): stri
   <div style="background:linear-gradient(135deg,#0B0F1A 0%,#1a103a 100%);border-radius:20px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden">
     <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(124,58,237,.1)"></div>
     <div style="display:flex;align-items:center;gap:20px;position:relative;z-index:1;flex-wrap:wrap">
-      ${player.photo
-        ? `<img src="${esc(player.photo)}" alt="${esc(player.name)}" style="width:82px;height:82px;border-radius:18px;object-fit:cover;object-position:top;border:3px solid rgba(124,58,237,.4);flex-shrink:0">`
+      ${player.photoBase64
+        ? `<img src="${player.photoBase64}" alt="${esc(player.name)}" style="width:82px;height:82px;border-radius:18px;object-fit:cover;object-position:top;border:3px solid rgba(124,58,237,.4);flex-shrink:0">`
         : `<div style="width:82px;height:82px;border-radius:18px;background:rgba(124,58,237,.2);border:3px solid rgba(124,58,237,.4);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#c4b5fd;flex-shrink:0">${esc(player.name.charAt(0).toUpperCase())}</div>`
       }
       <div style="flex:1;min-width:180px">
@@ -377,9 +377,9 @@ export default function CvPage() {
             background: 'rgba(124,58,237,0.2)', border: '2px solid rgba(124,58,237,0.4)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 20, fontWeight: 800, color: '#C4B5FD', overflow: 'hidden', flexShrink: 0 }}>
-            {player.photo ? (
+            {player.photoBase64 ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={player.photo} alt={player.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+              <img src={player.photoBase64} alt={player.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
             ) : player.name.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1 }}>

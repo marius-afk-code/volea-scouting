@@ -6,8 +6,6 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { getPlayer, updatePlayer, deletePlayer } from '@/lib/players';
-import { storage } from '@/lib/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { DEMO_PLAYERS } from '@/lib/demo-data';
 import { Player, PlayerPosition, PlayerFoot, PlayerStatus } from '@/types/player';
 
@@ -89,9 +87,8 @@ export default function EditPlayerPage() {
   const [tagsInput, setTagsInput] = useState('');
 
   // Photo
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState('');
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoBase64, setPhotoBase64] = useState('');
+  const [photoError, setPhotoError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -106,7 +103,7 @@ export default function EditPlayerPage() {
       if (p) {
         setEditForm(p);
         setTagsInput(p.tags.join(', '));
-        setPhotoPreview(p.photo || '');
+        setPhotoBase64(p.photoBase64 || '');
       }
       setLoadingPlayer(false);
       return;
@@ -117,18 +114,31 @@ export default function EditPlayerPage() {
         if (p) {
           setEditForm(p);
           setTagsInput(p.tags.join(', '));
-          setPhotoPreview(p.photo || '');
+          setPhotoBase64(p.photoBase64 || '');
         }
       })
       .finally(() => setLoadingPlayer(false));
   }, [playerId, isDemo]);
 
+  const MAX_PHOTO_BYTES = 500 * 1024; // 500 KB
+
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setPhotoFile(file);
-    const previewUrl = URL.createObjectURL(file);
-    setPhotoPreview(previewUrl);
+    // Reset input so the same file can be re-selected after an error
+    e.target.value = '';
+
+    if (file.size > MAX_PHOTO_BYTES) {
+      setPhotoError(`La imagen pesa ${(file.size / 1024).toFixed(0)} KB. El máximo es 500 KB. Reduce el tamaño antes de subirla.`);
+      return;
+    }
+    setPhotoError('');
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPhotoBase64(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = async () => {
@@ -140,20 +150,9 @@ export default function EditPlayerPage() {
     setSaving(true);
     setSaveError('');
     try {
-      let photoUrl = editForm.photo ?? '';
-
-      // Upload new photo to Firebase Storage if one was selected
-      if (photoFile && user) {
-        setUploadingPhoto(true);
-        const storageRef = ref(storage, `players/${user.uid}/${player.id}`);
-        await uploadBytes(storageRef, photoFile);
-        photoUrl = await getDownloadURL(storageRef);
-        setUploadingPhoto(false);
-      }
-
       const updatedData = {
         ...editForm,
-        photo: photoUrl,
+        photoBase64,
         tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean),
       };
       await updatePlayer(player.id, updatedData);
@@ -161,7 +160,6 @@ export default function EditPlayerPage() {
     } catch (err: unknown) {
       setSaveError(err instanceof Error ? err.message : 'Error al guardar');
       setSaving(false);
-      setUploadingPhoto(false);
     }
   };
 
@@ -190,7 +188,7 @@ export default function EditPlayerPage() {
     </main>
   );
 
-  const savingLabel = uploadingPhoto ? 'Subiendo foto…' : saving ? 'Guardando…' : 'Guardar cambios';
+  const savingLabel = saving ? 'Guardando…' : 'Guardar cambios';
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A' }}>
@@ -233,7 +231,7 @@ export default function EditPlayerPage() {
               style={{
                 width: 80, height: 80, borderRadius: 16,
                 overflow: 'hidden', cursor: 'pointer',
-                background: photoPreview ? 'transparent' : 'linear-gradient(135deg,rgba(124,58,237,0.3),rgba(109,40,217,0.5))',
+                background: photoBase64 ? 'transparent' : 'linear-gradient(135deg,rgba(124,58,237,0.3),rgba(109,40,217,0.5))',
                 border: '2px dashed rgba(124,58,237,0.4)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
@@ -241,10 +239,10 @@ export default function EditPlayerPage() {
               }}
               title="Cambiar foto"
             >
-              {photoPreview ? (
+              {photoBase64 ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={photoPreview}
+                  src={photoBase64}
                   alt={player.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
                 />
@@ -285,9 +283,15 @@ export default function EditPlayerPage() {
               onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
               placeholder="Nombre completo"
             />
-            <p style={{ color: '#475569', fontSize: '0.72rem', marginTop: '0.4rem', fontFamily: 'var(--font-body)' }}>
-              Haz clic en el avatar para cambiar la foto · JPG, PNG o WebP
-            </p>
+            {photoError ? (
+              <p style={{ color: '#FCA5A5', fontSize: '0.72rem', marginTop: '0.4rem', fontFamily: 'var(--font-body)', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, padding: '0.35rem 0.6rem' }}>
+                {photoError}
+              </p>
+            ) : (
+              <p style={{ color: '#475569', fontSize: '0.72rem', marginTop: '0.4rem', fontFamily: 'var(--font-body)' }}>
+                Haz clic en el avatar para cambiar la foto · JPG, PNG o WebP · máx. 500 KB
+              </p>
+            )}
           </div>
         </div>
 
