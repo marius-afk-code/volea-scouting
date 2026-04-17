@@ -259,6 +259,7 @@ export default function SharedReportPage() {
         position: 'sticky', top: 0, zIndex: 40,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+          <img src="/logo-volea-icon.svg" alt="Volea" style={{ height: 28, display: 'block', flexShrink: 0 }} />
           <span style={{
             color: 'white',
             fontFamily: 'var(--font-condensed, system-ui)',

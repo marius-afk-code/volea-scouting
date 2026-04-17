@@ -192,6 +192,11 @@ export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
             paddingRight: '1.75rem',
           }}
         >
+          <img
+            src="/logo-volea-icon.svg"
+            alt="Volea"
+            style={{ height: 28, display: 'block', flexShrink: 0 }}
+          />
           <span style={{
             fontFamily: 'var(--font-condensed)',
             fontSize: '1.1rem',
@@ -201,7 +206,7 @@ export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
             textTransform: 'uppercase',
             lineHeight: 1,
           }}>
-            Volea Scouting
+            VOLEA SCOUTING
           </span>
         </Link>
 

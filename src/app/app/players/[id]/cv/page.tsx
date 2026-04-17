@@ -153,7 +153,12 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string): stri
   <div style="background:#fff;border-radius:0;padding:0;margin-bottom:24px;border-bottom:1px solid #E2E8F0">
     <!-- Purple accent strip -->
     <div style="height:5px;background:linear-gradient(90deg,#7C3AED,#A78BFA);border-radius:0;margin-bottom:0"></div>
-    <div style="padding:28px 0 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <!-- Brand -->
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 0 0">
+      <img src="https://voleascouting.com/logo-volea-icon.svg" alt="Volea Scouting" style="height:22px;display:block">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#0F172A;text-transform:uppercase">VOLEA SCOUTING</span>
+    </div>
+    <div style="padding:20px 0 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
       ${player.photoBase64
         ? `<img src="${player.photoBase64}" alt="${esc(player.name)}" style="width:88px;height:88px;border-radius:14px;object-fit:cover;object-position:top;border:2px solid #E2E8F0;flex-shrink:0">`
         : `<div style="width:88px;height:88px;border-radius:14px;background:#F5F3FF;border:2px solid #DDD6FE;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#7C3AED;flex-shrink:0">${esc(player.name.charAt(0).toUpperCase())}</div>`

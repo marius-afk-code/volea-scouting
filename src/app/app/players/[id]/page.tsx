@@ -313,7 +313,10 @@ function buildReportHTML(player: Player, visits: Visit[], analysis: string): str
       ${esc(player.name.charAt(0).toUpperCase())}
     </div>
     <div style="flex:1">
-      <div style="font-size:10px;letter-spacing:.14em;color:#94a3b8;text-transform:uppercase;margin-bottom:8px;font-weight:600">Informe de Scouting · Volea Scouting</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <img src="https://voleascouting.com/logo-volea-icon.svg" alt="Volea Scouting" style="height:20px;display:block">
+        <span style="font-size:10px;letter-spacing:.14em;color:#94a3b8;text-transform:uppercase;font-weight:700">VOLEA SCOUTING · Informe de Scouting</span>
+      </div>
       <div style="font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px">${esc(player.name)}</div>
       <div style="font-size:14px;color:#94a3b8;margin-bottom:14px">${esc(player.position)} &nbsp;·&nbsp; ${esc(player.club || '—')} &nbsp;·&nbsp; ${esc(player.category || '—')}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
