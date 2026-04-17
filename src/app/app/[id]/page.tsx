@@ -92,11 +92,11 @@ const EMPTY_VIDEO_LINK: VideoLink = { label: '', url: '' };
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  backgroundColor: '#0B0F1A',
-  border: '1px solid rgba(255,255,255,0.1)',
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #D1D5DB',
   borderRadius: '8px',
   padding: '0.625rem 0.875rem',
-  color: 'white',
+  color: '#111827',
   fontSize: '0.875rem',
   outline: 'none',
   fontFamily: 'var(--font-body)',
@@ -104,7 +104,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  color: '#94A3B8',
+  color: '#6B7280',
   fontSize: '0.7rem',
   fontWeight: '700',
   textTransform: 'uppercase',
@@ -115,9 +115,9 @@ const labelStyle: React.CSSProperties = {
 };
 
 const sectionStyle: React.CSSProperties = {
-  backgroundColor: '#141928',
+  backgroundColor: '#FFFFFF',
   borderRadius: '12px',
-  border: '1px solid rgba(255,255,255,0.06)',
+  border: '1px solid #E5E7EB',
   padding: '1.5rem',
 };
 
@@ -141,7 +141,7 @@ function SubSlider({ label, val, color, onChange }: {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-        <span style={{ color: '#94A3B8', fontSize: '0.78rem', fontFamily: 'var(--font-body)' }}>{label}</span>
+        <span style={{ color: '#6B7280', fontSize: '0.78rem', fontFamily: 'var(--font-body)' }}>{label}</span>
         <span style={{ color, fontSize: '0.82rem', fontWeight: 800, fontFamily: 'var(--font-heading)', minWidth: 28, textAlign: 'right' }}>{val}</span>
       </div>
       <input
@@ -312,13 +312,13 @@ export default function EditPlayerPage() {
   // ─── Early returns ────────────────────────────────────────────────────────
 
   if (loading || loadingPlayer) return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}>Cargando…</p>
     </main>
   );
 
   if (!player) return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#FAFAFA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
       <p style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}>Jugador no encontrado.</p>
       <Link href="/app" style={{ color: '#7C3AED', fontSize: '0.875rem' }}>← Volver a la lista</Link>
     </main>
@@ -331,17 +331,17 @@ export default function EditPlayerPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#FAFAFA' }}>
 
       {/* ── Sticky header ── */}
-      <header style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0 2rem', position: 'sticky', top: 0, backgroundColor: '#0B0F1A', zIndex: 30 }}>
+      <header style={{ borderBottom: '1px solid #E5E7EB', padding: '0 2rem', position: 'sticky', top: 0, backgroundColor: '#FFFFFF', zIndex: 30 }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Link href={`/app/players/${player.id}`} style={{ color: '#64748B', fontSize: '0.82rem', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>
               ← {player.name}
             </Link>
             <span style={{ color: '#374151', fontSize: '0.82rem' }}>/</span>
-            <span style={{ color: 'white', fontSize: '0.82rem', fontFamily: 'var(--font-body)' }}>Editar</span>
+            <span style={{ color: '#111827', fontSize: '0.82rem', fontFamily: 'var(--font-body)' }}>Editar</span>
           </div>
           <button onClick={handleSave} disabled={saving} style={{
             background: saving ? 'rgba(124,58,237,0.5)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)',
@@ -382,7 +382,7 @@ export default function EditPlayerPage() {
             </div>
             <div
               onClick={() => fileInputRef.current?.click()}
-              style={{ position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, borderRadius: '50%', background: '#7C3AED', border: '2px solid #0B0F1A', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 11 }}
+              style={{ position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, borderRadius: '50%', background: '#7C3AED', border: '2px solid #FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 11 }}
               title="Cambiar foto"
             >📷</div>
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handlePhotoSelect} />

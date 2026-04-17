@@ -259,25 +259,15 @@ export default function SharedReportPage() {
         position: 'sticky', top: 0, zIndex: 40,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'linear-gradient(135deg,#7C3AED,#6D28D9)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
           <span style={{
             color: 'white',
             fontFamily: 'var(--font-condensed, system-ui)',
             fontWeight: 900,
             fontSize: '1.125rem',
-            letterSpacing: '0.06em',
+            letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}>
-            Volea Scouting
+            VOLEA SCOUTING
           </span>
           <span style={{
             padding: '0.15rem 0.5rem',

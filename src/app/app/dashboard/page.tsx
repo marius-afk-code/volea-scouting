@@ -130,16 +130,16 @@ export default function DashboardPage() {
 
   if (loading || loadingData) {
     return (
-      <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#475569' }}>Cargando datos…</p>
+      <main style={{ minHeight: '100vh', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#6B7280' }}>Cargando datos…</p>
       </main>
     );
   }
 
   if (loadError) {
     return (
-      <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
+      <main style={{ minHeight: '100vh', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#DC2626', fontFamily: 'var(--font-body)' }}>{loadError}</p>
       </main>
     );
   }

@@ -387,13 +387,13 @@ export default function ScoutLogPage() {
 
   // ── Loading ──
   if (loading) return (
-    <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#475569' }}>Cargando…</p>
+    <main style={{ minHeight: '100vh', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#6B7280' }}>Cargando…</p>
     </main>
   );
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0B0F1A' }}>
+    <main style={{ minHeight: '100vh', background: '#FAFAFA' }}>
       <AppNav activePage="scout-log" />
 
       {/* ── Hero band ── */}

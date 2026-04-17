@@ -408,18 +408,18 @@ function buildReportHTML(player: Player, visits: Visit[], analysis: string): str
 
 const inputS: React.CSSProperties = {
   width: '100%',
-  background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(255,255,255,0.1)',
+  background: '#FFFFFF',
+  border: '1px solid #D1D5DB',
   borderRadius: '8px',
   padding: '0.625rem 0.875rem',
-  color: '#E2E8F0',
+  color: '#111827',
   fontSize: '0.875rem',
   outline: 'none',
   fontFamily: 'var(--font-body)',
 };
 
 const labelS: React.CSSProperties = {
-  color: '#64748B',
+  color: '#6B7280',
   fontSize: '0.72rem',
   fontWeight: '600',
   textTransform: 'uppercase',
@@ -664,19 +664,19 @@ export default function PlayerDetailPage() {
   // ─────────────────── Render ─────────────────────────────────────────────────
 
   if (loading || loadingData) return (
-    <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <main style={{ minHeight: '100vh', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#475569' }}>Cargando…</p>
     </main>
   );
 
   if (loadError) return (
-    <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <main style={{ minHeight: '100vh', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
     </main>
   );
 
   if (!player) return (
-    <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+    <main style={{ minHeight: '100vh', background: '#FAFAFA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
       <p style={{ color: '#475569' }}>Jugador no encontrado.</p>
       <Link href="/app" style={{ color: 'var(--purple-3)' }}>← Volver a la lista</Link>
     </main>
@@ -686,34 +686,34 @@ export default function PlayerDetailPage() {
   const sc  = STATUS_CONFIG[player.status] ?? STATUS_CONFIG.espera;
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0B0F1A' }}>
+    <main style={{ minHeight: '100vh', background: '#FAFAFA' }}>
       <AppNav activePage="players" />
 
       {/* Breadcrumb + actions */}
       <div style={{
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid #E5E7EB',
         padding: '0 1.5rem',
-        background: '#0B0F1A',
+        background: '#FFFFFF',
         position: 'relative', zIndex: 20,
         paddingTop: '4rem',
       }}>
         <div style={{ maxWidth: '1150px', margin: '0 auto', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Link href="/app" style={{ color: '#6B7280', fontSize: '0.82rem', textDecoration: 'none' }}>Jugadores</Link>
-            <span style={{ color: '#374151', fontSize: '0.82rem' }}>/</span>
-            <span style={{ color: 'white', fontSize: '0.82rem', fontWeight: 500 }}>{player.name}</span>
+            <span style={{ color: '#9CA3AF', fontSize: '0.82rem' }}>/</span>
+            <span style={{ color: '#111827', fontSize: '0.82rem', fontWeight: 500 }}>{player.name}</span>
           </div>
           <div style={{ display: 'flex', gap: '0.375rem' }}>
             <Link href={`/app/${player.id}`} style={{
-              color: '#9CA3AF', fontSize: '0.78rem', textDecoration: 'none',
-              padding: '0.4rem 0.875rem', border: '1px solid rgba(255,255,255,0.1)',
+              color: '#6B7280', fontSize: '0.78rem', textDecoration: 'none',
+              padding: '0.4rem 0.875rem', border: '1px solid #E5E7EB',
               borderRadius: '7px',
             }}>
               Editar
             </Link>
             <Link href={`/app/players/${player.id}/cv`} style={{
-              color: '#9CA3AF', fontSize: '0.78rem', textDecoration: 'none',
-              padding: '0.4rem 0.875rem', border: '1px solid rgba(255,255,255,0.1)',
+              color: '#6B7280', fontSize: '0.78rem', textDecoration: 'none',
+              padding: '0.4rem 0.875rem', border: '1px solid #E5E7EB',
               borderRadius: '7px',
             }}>
               Sports CV
@@ -735,7 +735,7 @@ export default function PlayerDetailPage() {
         <div style={{ backgroundColor: 'rgba(124,58,237,0.08)', borderBottom: '1px solid rgba(124,58,237,0.2)', padding: '0.75rem 2rem' }}>
           <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <span style={{ color: '#A78BFA', fontSize: '0.8rem', fontWeight: '600' }}>🔗 Enlace para compartir (válido 30 días):</span>
-            <span style={{ color: '#CBD5E1', fontSize: '0.78rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{shareUrl}</span>
+            <span style={{ color: '#111827', fontSize: '0.78rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{shareUrl}</span>
             <button onClick={handleCopyShare}
               style={{ backgroundColor: shareCopied ? '#22C55E' : '#7C3AED', color: 'white', border: 'none', padding: '0.375rem 0.875rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', flexShrink: 0 }}>
               {shareCopied ? '✓ Copiado' : 'Copiar enlace'}
@@ -746,19 +746,18 @@ export default function PlayerDetailPage() {
         </div>
       )}
 
-      {/* ── Dark content panel ── */}
-      <div style={{ background: 'var(--navy)', minHeight: '60vh', paddingTop: '2rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', position: 'relative', zIndex: 10 }}>
+      {/* ── Content panel ── */}
+      <div style={{ background: '#FAFAFA', minHeight: '60vh', paddingTop: '2rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', position: 'relative', zIndex: 10 }}>
       <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0' }}>
 
         {/* ══ HERO ══ */}
         <div className="mm-fade-up" style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(124,58,237,0.07) 100%)',
+          background: '#FFFFFF',
           borderRadius: '16px', padding: '1.75rem 2rem', marginBottom: '1.5rem',
-          border: '1px solid rgba(124,58,237,0.2)', position: 'relative', overflow: 'hidden',
-          boxShadow: '0 4px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)',
+          border: '1px solid #E5E7EB', position: 'relative', overflow: 'hidden',
+          boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
         }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg,#7C3AED,#A78BFA,transparent)' }} />
-          <div style={{ position: 'absolute', right: '-80px', top: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg,#7C3AED,#A78BFA,transparent)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', position: 'relative', zIndex: 1, flexWrap: 'wrap' }}>
             {/* Avatar */}
             <div style={{ width: '80px', height: '80px', borderRadius: '18px', background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', boxShadow: '0 0 24px rgba(124,58,237,0.2)' }}>
@@ -772,10 +771,10 @@ export default function PlayerDetailPage() {
             {/* Info */}
             <div style={{ flex: 1, minWidth: '200px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.3rem' }}>
-                <h1 style={{ color: '#F1F5F9', fontSize: '2rem', margin: 0, fontFamily: 'var(--font-condensed)', letterSpacing: '0.02em', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1 }}>{player.name}</h1>
+                <h1 style={{ color: '#111827', fontSize: '2rem', margin: 0, fontFamily: 'var(--font-condensed)', letterSpacing: '0.02em', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1 }}>{player.name}</h1>
                 <span style={{ background: sc.bg, color: sc.color, padding: '0.2rem 0.75rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700, border: `1px solid ${sc.color}30` }}>{sc.label}</span>
               </div>
-              <p style={{ color: '#64748B', margin: '0 0 0.625rem', fontSize: '0.85rem', fontFamily: 'var(--font-body)', letterSpacing: '0.02em' }}>{player.position}</p>
+              <p style={{ color: '#6B7280', margin: '0 0 0.625rem', fontSize: '0.85rem', fontFamily: 'var(--font-body)', letterSpacing: '0.02em' }}>{player.position}</p>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
                 {[
                   player.club && player.club,
@@ -803,17 +802,17 @@ export default function PlayerDetailPage() {
         <div className="mm-fade-up-1" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
 
           {/* Metric boxes + progress bars */}
-          <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+          <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
             <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Métricas</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(['technical', 'tactical', 'physical', 'attitude'] as const).map(key => {
                 const v = player.metrics[key];
                 const c = metricColor(key);
                 return (
-                  <div key={key} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '0.75rem', textAlign: 'center', border: `1px solid ${c}22` }}>
+                  <div key={key} style={{ background: '#F9FAFB', borderRadius: '10px', padding: '0.75rem', textAlign: 'center', border: `1px solid ${c}22` }}>
                     <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.2rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key)}</p>
                     <p style={{ color: c, fontSize: '1.875rem', fontFamily: 'var(--font-condensed)', margin: 0, lineHeight: 1, fontWeight: 900 }}>{v}</p>
-                    <div style={{ marginTop: '0.5rem', height: '3px', borderRadius: '2px', backgroundColor: 'rgba(255,255,255,0.07)' }}>
+                    <div style={{ marginTop: '0.5rem', height: '3px', borderRadius: '2px', backgroundColor: '#E5E7EB' }}>
                       <div className="mm-bar-animated" style={{ height: '3px', borderRadius: '2px', backgroundColor: c, width: `${v * 10}%`, boxShadow: `0 0 8px ${c}60` }} />
                     </div>
                   </div>
@@ -830,7 +829,7 @@ export default function PlayerDetailPage() {
                     <span style={{ color: '#64748B', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key)}</span>
                     <span style={{ color: c, fontSize: '0.75rem', fontWeight: '700', fontFamily: 'var(--font-condensed)' }}>{v}/10</span>
                   </div>
-                  <div style={{ height: '5px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '999px', overflow: 'hidden' }}>
+                  <div style={{ height: '5px', backgroundColor: '#E5E7EB', borderRadius: '999px', overflow: 'hidden' }}>
                     <div className="mm-bar-animated" style={{ width: `${v * 10}%`, height: '100%', backgroundColor: c, borderRadius: '999px', boxShadow: `0 0 6px ${c}50` }} />
                   </div>
                 </div>
@@ -839,13 +838,13 @@ export default function PlayerDetailPage() {
           </div>
 
           {/* Radar chart */}
-          <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', alignSelf: 'flex-start', fontFamily: 'var(--font-body)' }}>Radar</h3>
-            <RadarChart metrics={player.metrics} dark={true} />
+            <RadarChart metrics={player.metrics} dark={false} />
           </div>
 
           {/* Personal data */}
-          <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+          <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
             <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Datos personales</h3>
             <dl style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
@@ -858,9 +857,9 @@ export default function PlayerDetailPage() {
                 ['Categoría', player.category || '—'],
                 ['División', player.division || '—'],
               ].map(([label, value]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.45rem' }}>
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.45rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>{label}</dt>
-                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: '500', margin: 0, fontFamily: 'var(--font-body)' }}>{value}</dd>
+                  <dd style={{ color: '#111827', fontSize: '0.82rem', fontWeight: '500', margin: 0, fontFamily: 'var(--font-body)' }}>{value}</dd>
                 </div>
               ))}
             </dl>
@@ -868,41 +867,40 @@ export default function PlayerDetailPage() {
         </div>
 
         {/* ══ CONTACT (private) ══ */}
-        {(player.contactName || player.contactPhone || player.agentName) && (
-          <div className="mm-fade-up-1" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid rgba(245,158,11,0.15)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="mm-fade-up-1" style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(245,158,11,0.15)', padding: '1.5rem', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
               <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: 0, fontFamily: 'var(--font-body)' }}>Contacto y entorno</h3>
               <span style={{ background: 'rgba(245,158,11,0.1)', color: '#F59E0B', fontSize: '0.6rem', fontWeight: 700, padding: '1px 8px', borderRadius: 4, letterSpacing: '0.06em', fontFamily: 'var(--font-body)' }}>PRIVADO</span>
             </div>
             <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 1.5rem' }}>
               {player.contactName && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.4rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>
                     {player.contactRelation ? player.contactRelation : 'Contacto'}
                   </dt>
-                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.contactName}</dd>
+                  <dd style={{ color: '#111827', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.contactName}</dd>
                 </div>
               )}
               {player.contactPhone && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.4rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Teléfono</dt>
-                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.contactPhone}</dd>
+                  <dd style={{ color: '#111827', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.contactPhone}</dd>
                 </div>
               )}
               {player.agentName && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.4rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Agente</dt>
-                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.agentName}</dd>
+                  <dd style={{ color: '#111827', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.agentName}</dd>
                 </div>
               )}
               {player.contractEnd && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.4rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Fin contrato</dt>
-                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{formatDate(player.contractEnd)}</dd>
+                  <dd style={{ color: '#111827', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{formatDate(player.contractEnd)}</dd>
                 </div>
               )}
               {player.transferInterest && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.4rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Interés traspaso</dt>
                   <dd style={{ color: player.transferInterest === 'si' ? '#22C55E' : player.transferInterest === 'no' ? '#EF4444' : '#F59E0B', fontSize: '0.82rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-body)', textTransform: 'capitalize' }}>
                     {player.transferInterest === 'si' ? 'Sí' : player.transferInterest === 'no' ? 'No' : 'Desconocido'}
@@ -910,23 +908,24 @@ export default function PlayerDetailPage() {
                 </div>
               )}
               {player.clauseAmount !== undefined && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.4rem' }}>
                   <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Cláusula</dt>
-                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>
+                  <dd style={{ color: '#111827', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>
                     {player.clauseAmount.toLocaleString('es-ES')} €
                   </dd>
                 </div>
               )}
             </dl>
+            {!player.contactName && !player.contactPhone && !player.agentName && !player.contractEnd && !player.transferInterest && (
+              <p style={{ color: '#9CA3AF', fontSize: '0.82rem', margin: 0, fontFamily: 'var(--font-body)' }}>Sin datos de contacto. <a href={`/app/${player.id}`} style={{ color: '#7C3AED', textDecoration: 'none' }}>Añadir →</a></p>
+            )}
           </div>
-        )}
 
         {/* ══ SEASON STATS ══ */}
-        {(player.matchesPlayed !== undefined || player.goals !== undefined || player.assists !== undefined || player.saves !== undefined) && (
-          <div className="mm-fade-up-1" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="mm-fade-up-1" style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem', marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Estadísticas de temporada</h3>
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-              {[
+            {(() => {
+              const stats = [
                 { label: 'Partidos', value: player.matchesPlayed, color: '#94A3B8' },
                 { label: 'Minutos', value: player.minutesPlayed, color: '#94A3B8' },
                 { label: 'Goles', value: player.goals, color: '#22C55E' },
@@ -937,25 +936,31 @@ export default function PlayerDetailPage() {
                   { label: 'Paradas', value: player.saves, color: '#7C3AED' },
                   { label: 'Goles encajados', value: player.goalsConceded, color: '#EF4444' },
                 ] : []),
-              ].filter(s => s.value !== undefined).map(stat => (
-                <div key={stat.label} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '0.875rem 1.125rem', border: '1px solid rgba(255,255,255,0.07)', minWidth: '80px', textAlign: 'center' }}>
-                  <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.3rem', fontFamily: 'var(--font-body)' }}>{stat.label}</p>
-                  <p style={{ color: stat.color, fontSize: '1.75rem', fontFamily: 'var(--font-condensed)', margin: 0, lineHeight: 1, fontWeight: 900 }}>{stat.value}</p>
+              ].filter(s => s.value !== undefined);
+              return stats.length > 0 ? (
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {stats.map(stat => (
+                    <div key={stat.label} style={{ background: '#F9FAFB', borderRadius: '10px', padding: '0.875rem 1.125rem', border: '1px solid #E5E7EB', minWidth: '80px', textAlign: 'center' }}>
+                      <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.3rem', fontFamily: 'var(--font-body)' }}>{stat.label}</p>
+                      <p style={{ color: stat.color, fontSize: '1.75rem', fontFamily: 'var(--font-condensed)', margin: 0, lineHeight: 1, fontWeight: 900 }}>{stat.value}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              ) : (
+                <p style={{ color: '#9CA3AF', fontSize: '0.82rem', margin: 0, fontFamily: 'var(--font-body)' }}>Sin estadísticas registradas. <a href={`/app/${player.id}`} style={{ color: '#7C3AED', textDecoration: 'none' }}>Añadir →</a></p>
+              );
+            })()}
           </div>
-        )}
 
         {/* ══ TAGS + NOTES ══ */}
         {(player.tags.length > 0 || player.privateNotes) && (
           <div style={{ display: 'grid', gridTemplateColumns: player.tags.length && player.privateNotes ? '1fr 1fr' : '1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
             {player.tags.length > 0 && (
-              <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+              <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
                 <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 0.875rem', fontFamily: 'var(--font-body)' }}>Etiquetas</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {player.tags.map(tag => (
-                    <span key={tag} style={{ backgroundColor: 'rgba(124,58,237,0.15)', color: '#A78BFA', padding: '0.2rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem', fontWeight: '600', border: '1px solid rgba(124,58,237,0.25)', fontFamily: 'var(--font-body)' }}>
+                    <span key={tag} style={{ backgroundColor: '#EDE9FE', color: '#6D28D9', padding: '0.2rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem', fontWeight: '600', border: '1px solid #DDD6FE', fontFamily: 'var(--font-body)' }}>
                       {tag}
                     </span>
                   ))}
@@ -963,18 +968,20 @@ export default function PlayerDetailPage() {
               </div>
             )}
             {player.privateNotes && (
-              <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+              <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
                 <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 0.875rem', fontFamily: 'var(--font-body)' }}>Notas privadas</h3>
-                <p style={{ color: '#94A3B8', fontSize: '0.875rem', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>{player.privateNotes}</p>
+                <p style={{ color: '#374151', fontSize: '0.875rem', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>{player.privateNotes}</p>
               </div>
             )}
           </div>
         )}
 
         {/* ══ CLUB HISTORY ══ */}
-        {(player.clubHistory ?? []).length > 0 && (
-          <div className="mm-fade-up-2" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="mm-fade-up-2" style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem', marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1.25rem', fontFamily: 'var(--font-body)' }}>Historial de clubes</h3>
+            {(player.clubHistory ?? []).length === 0 ? (
+              <p style={{ color: '#9CA3AF', fontSize: '0.82rem', margin: 0, fontFamily: 'var(--font-body)' }}>Sin historial registrado. <a href={`/app/${player.id}`} style={{ color: '#7C3AED', textDecoration: 'none' }}>Añadir →</a></p>
+            ) : (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {(player.clubHistory ?? []).map((entry, idx) => (
                 <div key={idx} style={{ display: 'flex', gap: 0 }}>
@@ -988,8 +995,8 @@ export default function PlayerDetailPage() {
                   {/* Content */}
                   <div style={{ flex: 1, paddingLeft: '0.875rem', paddingBottom: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
-                      <span style={{ color: '#CBD5E1', fontSize: '0.875rem', fontWeight: 600, fontFamily: 'var(--font-body)' }}>{entry.club}</span>
-                      <span style={{ color: '#475569', fontSize: '0.72rem', background: 'rgba(255,255,255,0.05)', padding: '1px 8px', borderRadius: 4, fontFamily: 'var(--font-body)' }}>{entry.season}</span>
+                      <span style={{ color: '#111827', fontSize: '0.875rem', fontWeight: 600, fontFamily: 'var(--font-body)' }}>{entry.club}</span>
+                      <span style={{ color: '#475569', fontSize: '0.72rem', background: '#F3F4F6', padding: '1px 8px', borderRadius: 4, fontFamily: 'var(--font-body)' }}>{entry.season}</span>
                       {entry.category && (
                         <span style={{ color: '#64748B', fontSize: '0.72rem', fontFamily: 'var(--font-body)' }}>{entry.category}</span>
                       )}
@@ -1008,13 +1015,15 @@ export default function PlayerDetailPage() {
                 </div>
               ))}
             </div>
+            )}
           </div>
-        )}
 
         {/* ══ VIDEO LINKS ══ */}
-        {(player.videoLinks ?? []).length > 0 && (
-          <div className="mm-fade-up-2" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="mm-fade-up-2" style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem', marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Vídeos</h3>
+            {(player.videoLinks ?? []).length === 0 ? (
+              <p style={{ color: '#9CA3AF', fontSize: '0.82rem', margin: 0, fontFamily: 'var(--font-body)' }}>Sin vídeos añadidos. <a href={`/app/${player.id}`} style={{ color: '#7C3AED', textDecoration: 'none' }}>Añadir →</a></p>
+            ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {(player.videoLinks ?? []).map((link, idx) => (
                 <a
@@ -1025,30 +1034,30 @@ export default function PlayerDetailPage() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.75rem',
                     padding: '0.625rem 0.875rem', borderRadius: '8px',
-                    background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.15)',
+                    background: '#F9FAFB', border: '1px solid rgba(124,58,237,0.15)',
                     textDecoration: 'none', transition: 'background 0.15s',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(124,58,237,0.12)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(124,58,237,0.06)')}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#EDE9FE')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#F9FAFB')}
                 >
                   <span style={{ fontSize: '1rem' }}>▶</span>
-                  <span style={{ color: '#A78BFA', fontSize: '0.85rem', fontWeight: 600, fontFamily: 'var(--font-body)', flex: 1 }}>{link.label || 'Ver vídeo'}</span>
-                  <span style={{ color: '#475569', fontSize: '0.7rem', fontFamily: 'var(--font-body)' }}>↗</span>
+                  <span style={{ color: '#7C3AED', fontSize: '0.85rem', fontWeight: 600, fontFamily: 'var(--font-body)', flex: 1 }}>{link.label || 'Ver vídeo'}</span>
+                  <span style={{ color: '#9CA3AF', fontSize: '0.7rem', fontFamily: 'var(--font-body)' }}>↗</span>
                 </a>
               ))}
             </div>
+            )}
           </div>
-        )}
 
         {/* ══ EVOLUTION CHART ══ */}
         {evoData && (
-          <div className="mm-fade-up-2" style={{ background: 'var(--navy-2)', borderRadius: '12px',
-            border: '1px solid var(--border)', padding: '1.5rem',
+          <div className="mm-fade-up-2" style={{ background: '#FFFFFF', borderRadius: '12px',
+            border: '1px solid #E5E7EB', padding: '1.5rem',
             marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <h2 style={{ color: '#CBD5E1', fontSize: '0.9rem', margin: 0, fontFamily: 'var(--font-body)', fontWeight: 600 }}>Evolución del jugador</h2>
+                <h2 style={{ color: '#111827', fontSize: '0.9rem', margin: 0, fontFamily: 'var(--font-body)', fontWeight: 600 }}>Evolución del jugador</h2>
                 <span style={{
                   padding: '0.2rem 0.625rem', borderRadius: 999, fontSize: '0.7rem',
                   fontWeight: 700, background: evoData.badge.bg, color: evoData.badge.color,
@@ -1106,27 +1115,27 @@ export default function PlayerDetailPage() {
                   plugins: {
                     legend: {
                       position: 'bottom',
-                      labels: { color: '#475569', font: { size: 11 }, boxWidth: 12, padding: 10 },
+                      labels: { color: '#6B7280', font: { size: 11 }, boxWidth: 12, padding: 10 },
                     },
                     tooltip: {
-                      backgroundColor: 'rgba(13,21,38,0.95)',
-                      borderColor: 'rgba(124,58,237,0.3)',
+                      backgroundColor: '#FFFFFF',
+                      borderColor: '#E5E7EB',
                       borderWidth: 1,
-                      titleColor: '#E2E8F0',
-                      bodyColor: '#94A3B8',
+                      titleColor: '#111827',
+                      bodyColor: '#6B7280',
                       padding: 10,
                     },
                   },
                   scales: {
                     y: {
                       min: 1, max: 10,
-                      ticks: { stepSize: 1, color: '#475569', font: { size: 10 } },
-                      grid: { color: 'rgba(255,255,255,0.05)' },
+                      ticks: { stepSize: 1, color: '#6B7280', font: { size: 10 } },
+                      grid: { color: 'rgba(0,0,0,0.06)' },
                       border: { color: 'transparent' },
                     },
                     x: {
-                      ticks: { color: '#475569', font: { size: 10 } },
-                      grid: { color: 'rgba(255,255,255,0.04)' },
+                      ticks: { color: '#6B7280', font: { size: 10 } },
+                      grid: { color: 'rgba(0,0,0,0.04)' },
                       border: { color: 'transparent' },
                     },
                   },
@@ -1138,11 +1147,11 @@ export default function PlayerDetailPage() {
               <div style={{ marginTop: '1rem', padding: '1rem 1.25rem', borderRadius: 10,
                 background: 'rgba(124,58,237,0.08)',
                 border: '1px solid rgba(124,58,237,0.2)' }}>
-                <p style={{ color: '#A78BFA', fontSize: '0.67rem', fontWeight: 700,
+                <p style={{ color: '#7C3AED', fontSize: '0.67rem', fontWeight: 700,
                   textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 0.5rem', fontFamily: 'var(--font-body)' }}>
                   Análisis de evolución IA
                 </p>
-                <p style={{ color: '#94A3B8', fontSize: '0.875rem', lineHeight: 1.75, margin: 0 }}>
+                <p style={{ color: '#374151', fontSize: '0.875rem', lineHeight: 1.75, margin: 0 }}>
                   {evoAiText}
                 </p>
               </div>
@@ -1151,16 +1160,16 @@ export default function PlayerDetailPage() {
         )}
 
         {/* ══ VISITS ══ */}
-        <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ color: '#CBD5E1', fontSize: '0.9rem', margin: 0, fontFamily: 'var(--font-body)', fontWeight: 600 }}>
+        <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', overflow: 'hidden' }}>
+          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ color: '#111827', fontSize: '0.9rem', margin: 0, fontFamily: 'var(--font-body)', fontWeight: 600 }}>
               Historial de visitas
-              <span style={{ color: '#475569', fontWeight: '400', fontSize: '0.82rem', marginLeft: '0.5rem' }}>({visits.length})</span>
+              <span style={{ color: '#6B7280', fontWeight: '400', fontSize: '0.82rem', marginLeft: '0.5rem' }}>({visits.length})</span>
             </h2>
           </div>
 
           {/* Add visit form */}
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', backgroundColor: 'rgba(124,58,237,0.05)' }}>
+          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #E5E7EB', backgroundColor: '#F9FAFB' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div>
                 <label style={labelS}>Fecha</label>
@@ -1222,7 +1231,7 @@ export default function PlayerDetailPage() {
                         <span style={{ color: '#475569', fontSize: '0.72rem', fontWeight: '600', fontFamily: 'var(--font-body)', letterSpacing: '0.03em' }}>
                           {v.fecha}
                         </span>
-                        <span style={{ color: '#CBD5E1', fontSize: '0.85rem', fontWeight: '600', fontFamily: 'var(--font-body)' }}>{v.partido}</span>
+                        <span style={{ color: '#111827', fontSize: '0.85rem', fontWeight: '600', fontFamily: 'var(--font-body)' }}>{v.partido}</span>
                         {v.valoracion > 0 && (
                           <span style={{ fontSize: '0.72rem', fontWeight: '800', fontFamily: 'var(--font-condensed)', color: ratingColor(v.valoracion), backgroundColor: ratingBg(v.valoracion), padding: '1px 8px', borderRadius: '5px', letterSpacing: '0.02em' }}>
                             {v.valoracion}/10
@@ -1251,10 +1260,10 @@ export default function PlayerDetailPage() {
       {/* ── Delete visit modal ── */}
       {confirmVisit && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '1rem', backdropFilter: 'blur(4px)' }}>
-          <div style={{ background: 'var(--navy-2)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', padding: '2rem', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.7)' }}>
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', padding: '2rem', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.7)' }}>
             <h2 style={{ color: '#E2E8F0', fontSize: '1rem', fontWeight: '700', marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>¿Eliminar visita?</h2>
             <p style={{ color: '#94A3B8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-              <strong style={{ color: '#CBD5E1' }}>{confirmVisit.partido}</strong>
+              <strong style={{ color: '#111827' }}>{confirmVisit.partido}</strong>
             </p>
             <p style={{ color: '#475569', fontSize: '0.8rem', marginBottom: '1.5rem', fontFamily: 'var(--font-body)' }}>{confirmVisit.fecha}</p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>

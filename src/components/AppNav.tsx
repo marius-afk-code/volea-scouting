@@ -192,48 +192,17 @@ export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
             paddingRight: '1.75rem',
           }}
         >
-          <div style={{
-            width: 32,
-            height: 32,
-            borderRadius: '8px',
-            background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            boxShadow: '0 0 16px rgba(124,58,237,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
-            overflow: 'hidden',
-            position: 'relative',
+          <span style={{
+            fontFamily: 'var(--font-condensed)',
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            color: '#E2E8F0',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            lineHeight: 1,
           }}>
-            <img
-              src="/logo-volea-icon.png"
-              alt="Volea"
-              style={{ height: '22px', width: '22px', objectFit: 'contain', position: 'relative', zIndex: 1 }}
-            />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-            <span style={{
-              fontFamily: 'var(--font-condensed)',
-              fontSize: '1rem',
-              fontWeight: 700,
-              color: '#E2E8F0',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              lineHeight: 1,
-            }}>
-              Volea
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.55rem',
-              fontWeight: 600,
-              color: '#475569',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-            }}>
-              Scouting
-            </span>
-          </div>
+            Volea Scouting
+          </span>
         </Link>
 
         <Divider />

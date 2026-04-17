@@ -10,11 +10,6 @@ import { Player, PlayerPosition, PlayerFoot, PlayerStatus } from '@/types/player
 import { DEMO_PLAYERS } from '@/lib/demo-data';
 import AppNav from '@/components/AppNav';
 
-const POSITIONS: PlayerPosition[] = [
-  'Portero', 'Lateral Derecho', 'Lateral Izquierdo', 'Central',
-  'Mediocentro Defensivo', 'Mediocentro', 'Mediocentro Ofensivo',
-  'Extremo Derecho', 'Extremo Izquierdo', 'Delantero Centro', 'Segunda Punta',
-];
 
 const STATUS_CONFIG: Record<PlayerStatus, { color: string; bg: string; border: string; label: string }> = {
   activo:      { color: '#10B981', bg: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.2)',  label: 'Activo' },
@@ -145,37 +140,34 @@ export default function AppPage() {
 
   const handleSubmit = async () => {
     if (isDemo) { setShowForm(false); return; }
-    if (!user || !form.name.trim() || !form.club.trim()) return;
+    if (!user || !form.name.trim()) return;
     setSaving(true);
     setSaveError('');
     try {
       const now = new Date().toISOString();
       const id = await addPlayer({
-        ...form,
-        tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
-        height: Number(form.height),
-        weight: Number(form.weight),
+        name: form.name.trim(),
+        birthDate: '',
+        position: 'Mediocentro' as PlayerPosition,
+        foot: 'derecho' as PlayerFoot,
+        height: 175,
+        weight: 70,
+        club: '',
+        city: '',
+        category: '',
+        division: '',
+        status: 'seguimiento' as PlayerStatus,
+        privateNotes: '',
+        tags: [],
         photo: '',
         metrics: { technical: 5, tactical: 5, physical: 5, attitude: 5 },
         userId: user.uid,
         createdAt: now,
         updatedAt: now,
       });
-      const newPlayer: Player = {
-        id,
-        ...form,
-        tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
-        height: Number(form.height),
-        weight: Number(form.weight),
-        photo: '',
-        metrics: { technical: 5, tactical: 5, physical: 5, attitude: 5 },
-        userId: user.uid,
-        createdAt: now,
-        updatedAt: now,
-      };
-      setPlayers(prev => [newPlayer, ...prev]);
-      setForm(INITIAL_FORM);
       setShowForm(false);
+      setForm(INITIAL_FORM);
+      router.push(`/app/${id}`);
     } catch (err: unknown) {
       console.error('addPlayer error:', err);
       const msg = err instanceof Error ? err.message : 'Error desconocido';
@@ -269,12 +261,12 @@ export default function AppPage() {
         </div>
       </div>
 
-      {/* ── Dark content pane ────────────────────────────────── */}
+      {/* ── White content pane ──────────────────────────────── */}
       <div style={{
-        background: 'var(--navy)',
+        background: '#FAFAFA',
         borderRadius: '2rem 2rem 0 0',
         marginTop: '-1.5rem',
-        boxShadow: '0 -12px 40px rgba(0,0,0,0.4)',
+        boxShadow: '0 -4px 16px rgba(0,0,0,0.08)',
         minHeight: '60vh',
         paddingTop: '2rem',
         paddingBottom: '4rem',
@@ -296,11 +288,11 @@ export default function AppPage() {
                 onChange={e => setSearch(e.target.value)}
                 style={{
                   width: '260px',
-                  backgroundColor: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #D1D5DB',
                   borderRadius: '999px',
                   padding: '0.55rem 1rem 0.55rem 2.5rem',
-                  color: '#E2E8F0',
+                  color: '#111827',
                   fontSize: '0.875rem',
                   outline: 'none',
                   fontFamily: 'var(--font-body)',
@@ -333,7 +325,7 @@ export default function AppPage() {
                       cursor: 'pointer',
                       border: isActive
                         ? (s === 'todos' ? '1px solid rgba(255,255,255,0.2)' : `1px solid ${STATUS_CONFIG[s as PlayerStatus].border}`)
-                        : '1px solid rgba(255,255,255,0.08)',
+                        : '1px solid #E5E7EB',
                       backgroundColor: isActive ? activeBg : 'transparent',
                       color: isActive ? activeColor : '#475569',
                       transition: 'all 0.15s',
@@ -377,7 +369,7 @@ export default function AppPage() {
                 gridTemplateColumns: '3fr 2fr 1.5fr 1.5fr 0.8fr',
                 gap: '1rem',
                 padding: '0 1.25rem 0.625rem',
-                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                borderBottom: '1px solid #E5E7EB',
                 marginBottom: '0.25rem',
               }}>
                 {['Jugador', 'Etiquetas', 'Datos', 'Estado', 'Nota'].map(h => (
@@ -438,10 +430,10 @@ export default function AppPage() {
                           position: 'relative',
                         }}
                         onMouseEnter={e => {
-                          e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                          e.currentTarget.style.background = '#F3F4F6';
                           e.currentTarget.style.borderLeftColor = sc.color;
                           e.currentTarget.style.opacity = '1';
-                          e.currentTarget.style.boxShadow = `0 2px 16px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.05)`;
+                          e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
                         }}
                         onMouseLeave={e => {
                           e.currentTarget.style.background = 'transparent';
@@ -455,7 +447,7 @@ export default function AppPage() {
                           <Avatar name={player.name} status={player.status} />
                           <div>
                             <p style={{
-                              color: isDiscarded ? '#475569' : '#CBD5E1',
+                              color: isDiscarded ? '#9CA3AF' : '#111827',
                               margin: 0, fontWeight: 700, fontSize: '0.9rem',
                               fontFamily: 'var(--font-body)',
                               textDecoration: isDiscarded ? 'line-through' : 'none',
@@ -579,92 +571,22 @@ export default function AppPage() {
               >×</button>
             </div>
 
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={S.label}>Nombre *</label>
-                  <input style={S.input} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Nombre completo" />
-                </div>
-                <div>
-                  <label style={S.label}>Fecha de nacimiento</label>
-                  <input type="date" style={S.input} value={form.birthDate} onChange={e => setForm(f => ({ ...f, birthDate: e.target.value }))} />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={S.label}>Posición</label>
-                  <select style={S.input} value={form.position} onChange={e => setForm(f => ({ ...f, position: e.target.value as PlayerPosition }))}>
-                    {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={S.label}>Pie</label>
-                  <select style={S.input} value={form.foot} onChange={e => setForm(f => ({ ...f, foot: e.target.value as PlayerFoot }))}>
-                    <option value="derecho">Derecho</option>
-                    <option value="izquierdo">Izquierdo</option>
-                    <option value="ambos">Ambos</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={S.label}>Altura (cm)</label>
-                  <input type="number" style={S.input} value={form.height} onChange={e => setForm(f => ({ ...f, height: Number(e.target.value) }))} min={140} max={220} />
-                </div>
-                <div>
-                  <label style={S.label}>Peso (kg)</label>
-                  <input type="number" style={S.input} value={form.weight} onChange={e => setForm(f => ({ ...f, weight: Number(e.target.value) }))} min={40} max={130} />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={S.label}>Club *</label>
-                  <input style={S.input} value={form.club} onChange={e => setForm(f => ({ ...f, club: e.target.value }))} placeholder="Club actual" />
-                </div>
-                <div>
-                  <label style={S.label}>Ciudad</label>
-                  <input style={S.input} value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} placeholder="Ciudad" />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={S.label}>Categoría</label>
-                  <input style={S.input} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="ej. Juvenil A" />
-                </div>
-                <div>
-                  <label style={S.label}>División</label>
-                  <input style={S.input} value={form.division} onChange={e => setForm(f => ({ ...f, division: e.target.value }))} placeholder="ej. Primera División" />
-                </div>
-              </div>
-
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
-                <label style={S.label}>Estado</label>
-                <select style={S.input} value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as PlayerStatus }))}>
-                  <option value="activo">Activo</option>
-                  <option value="seguimiento">Seguimiento</option>
-                  <option value="espera">En espera</option>
-                  <option value="descartado">Descartado</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={S.label}>Etiquetas (separadas por coma)</label>
-                <input style={S.input} value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} placeholder="rápido, técnico, liderazgo" />
-              </div>
-
-              <div>
-                <label style={S.label}>Notas privadas</label>
-                <textarea
-                  style={{ ...S.input, minHeight: '80px', resize: 'vertical' }}
-                  value={form.privateNotes}
-                  onChange={e => setForm(f => ({ ...f, privateNotes: e.target.value }))}
-                  placeholder="Observaciones del scouting…"
+                <label style={S.label}>Nombre completo *</label>
+                <input
+                  autoFocus
+                  style={S.input}
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  onKeyDown={e => e.key === 'Enter' && form.name.trim() && handleSubmit()}
+                  placeholder="ej. Alejandro García Ruiz"
                 />
               </div>
+
+              <p style={{ color: '#475569', fontSize: '0.82rem', margin: 0, fontFamily: 'var(--font-body)' }}>
+                Después de crear el jugador se abrirá su ficha completa para rellenar el resto de datos.
+              </p>
 
               {saveError && (
                 <div style={{
@@ -676,7 +598,7 @@ export default function AppPage() {
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', paddingTop: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
                 <button
                   onClick={() => { setShowForm(false); setSaveError(''); }}
                   style={{
@@ -690,7 +612,7 @@ export default function AppPage() {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={saving || !form.name.trim() || !form.club.trim()}
+                  disabled={saving || !form.name.trim()}
                   style={{
                     background: saving ? '#5B21B6' : 'var(--purple)',
                     color: 'white', border: 'none',
@@ -701,7 +623,7 @@ export default function AppPage() {
                     boxShadow: saving ? 'none' : '0 4px 12px rgba(124,58,237,0.3)',
                   }}
                 >
-                  {saving ? 'Guardando…' : 'Guardar jugador'}
+                  {saving ? 'Creando…' : 'Crear jugador →'}
                 </button>
               </div>
             </div>
