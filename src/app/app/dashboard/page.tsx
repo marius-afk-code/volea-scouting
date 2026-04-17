@@ -98,6 +98,7 @@ export default function DashboardPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [allVisits, setAllVisits] = useState<Visit[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     if (!loading && !user && !isDemo) router.push('/login');
@@ -120,6 +121,7 @@ export default function DashboardPage() {
         setAllVisits(visitArrays.flat());
       } catch (err) {
         console.error('dashboard load error:', err);
+        setLoadError('Error al cargar los datos. Recarga la página.');
       } finally {
         setLoadingData(false);
       }
@@ -130,6 +132,14 @@ export default function DashboardPage() {
     return (
       <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#475569' }}>Cargando datos…</p>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
       </main>
     );
   }

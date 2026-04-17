@@ -269,12 +269,12 @@ export default function AppPage() {
         </div>
       </div>
 
-      {/* ── White content pane ────────────────────────────────── */}
+      {/* ── Dark content pane ────────────────────────────────── */}
       <div style={{
-        background: '#FFFFFF',
+        background: 'var(--navy)',
         borderRadius: '2rem 2rem 0 0',
         marginTop: '-1.5rem',
-        boxShadow: '0 -12px 40px rgba(0,0,0,0.18)',
+        boxShadow: '0 -12px 40px rgba(0,0,0,0.4)',
         minHeight: '60vh',
         paddingTop: '2rem',
         paddingBottom: '4rem',
@@ -296,17 +296,17 @@ export default function AppPage() {
                 onChange={e => setSearch(e.target.value)}
                 style={{
                   width: '260px',
-                  backgroundColor: '#F3F4F6',
-                  border: '1px solid #E5E7EB',
+                  backgroundColor: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '999px',
                   padding: '0.55rem 1rem 0.55rem 2.5rem',
-                  color: '#111827',
+                  color: '#E2E8F0',
                   fontSize: '0.875rem',
                   outline: 'none',
                   fontFamily: 'var(--font-body)',
                 }}
               />
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5"
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5"
                 style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)' }}>
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
@@ -317,8 +317,8 @@ export default function AppPage() {
               {(['todos', 'activo', 'seguimiento', 'espera', 'descartado'] as const).map(s => {
                 const isActive = filterStatus === s;
                 const dotColor = s === 'todos' ? '#8B5CF6' : STATUS_CONFIG[s as PlayerStatus].color;
-                const activeBg = s === 'todos' ? '#111827' : STATUS_CONFIG[s as PlayerStatus].bg;
-                const activeColor = s === 'todos' ? 'white' : STATUS_CONFIG[s as PlayerStatus].color;
+                const activeBg = s === 'todos' ? 'rgba(255,255,255,0.1)' : STATUS_CONFIG[s as PlayerStatus].bg;
+                const activeColor = s === 'todos' ? '#E2E8F0' : STATUS_CONFIG[s as PlayerStatus].color;
                 const label = s === 'todos' ? 'Todos' : STATUS_CONFIG[s as PlayerStatus].label;
                 return (
                   <button
@@ -332,10 +332,10 @@ export default function AppPage() {
                       fontWeight: 600,
                       cursor: 'pointer',
                       border: isActive
-                        ? (s === 'todos' ? '1px solid #111827' : `1px solid ${STATUS_CONFIG[s as PlayerStatus].border}`)
-                        : '1px solid #E5E7EB',
-                      backgroundColor: isActive ? activeBg : 'white',
-                      color: isActive ? activeColor : '#6B7280',
+                        ? (s === 'todos' ? '1px solid rgba(255,255,255,0.2)' : `1px solid ${STATUS_CONFIG[s as PlayerStatus].border}`)
+                        : '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: isActive ? activeBg : 'transparent',
+                      color: isActive ? activeColor : '#475569',
                       transition: 'all 0.15s',
                       fontFamily: 'var(--font-body)',
                     }}
@@ -353,7 +353,7 @@ export default function AppPage() {
               })}
             </div>
 
-            <div style={{ marginLeft: 'auto', color: '#9CA3AF', fontSize: '0.8rem', fontFamily: 'var(--font-body)' }}>
+            <div style={{ marginLeft: 'auto', color: '#334155', fontSize: '0.8rem', fontFamily: 'var(--font-body)' }}>
               {filtered.length} {filtered.length === 1 ? 'jugador' : 'jugadores'}
             </div>
           </div>
@@ -377,13 +377,13 @@ export default function AppPage() {
                 gridTemplateColumns: '3fr 2fr 1.5fr 1.5fr 0.8fr',
                 gap: '1rem',
                 padding: '0 1.25rem 0.625rem',
-                borderBottom: '1px solid #F3F4F6',
+                borderBottom: '1px solid rgba(255,255,255,0.05)',
                 marginBottom: '0.25rem',
               }}>
                 {['Jugador', 'Etiquetas', 'Datos', 'Estado', 'Nota'].map(h => (
                   <span key={h} style={{
-                    color: '#9CA3AF', fontSize: '0.69rem', fontWeight: 700,
-                    textTransform: 'uppercase', letterSpacing: '0.08em',
+                    color: '#334155', fontSize: '0.67rem', fontWeight: 700,
+                    textTransform: 'uppercase', letterSpacing: '0.1em',
                     fontFamily: 'var(--font-body)',
                     textAlign: h === 'Nota' ? 'right' : 'left',
                   }}>{h}</span>
@@ -392,18 +392,18 @@ export default function AppPage() {
             )}
 
             {loadingPlayers ? (
-              <p style={{ color: '#9CA3AF', padding: '3rem', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
+              <p style={{ color: '#334155', padding: '3rem', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
                 Cargando jugadores…
               </p>
             ) : filtered.length === 0 ? (
               <div style={{ padding: '3rem', textAlign: 'center' }}>
-                <p style={{ color: '#9CA3AF', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                <p style={{ color: '#475569', fontSize: '0.9rem', marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>
                   {players.length === 0 ? 'Aún no hay jugadores en tu base.' : 'Sin resultados para este filtro.'}
                 </p>
                 {players.length === 0 && (
                   <button
                     onClick={() => setShowForm(true)}
-                    style={{ color: '#8B5CF6', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontFamily: 'var(--font-body)' }}
+                    style={{ color: '#A78BFA', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontFamily: 'var(--font-body)' }}
                   >
                     Añadir el primer jugador →
                   </button>
@@ -429,26 +429,24 @@ export default function AppPage() {
                           gridTemplateColumns: '3fr 2fr 1.5fr 1.5fr 0.8fr',
                           gap: '1rem',
                           padding: '0.75rem 1.25rem',
-                          borderRadius: '12px',
+                          borderRadius: '10px',
                           alignItems: 'center',
                           cursor: 'pointer',
                           transition: 'all 0.18s',
-                          opacity: isDiscarded ? 0.65 : 1,
-                          borderLeft: '3px solid transparent',
+                          opacity: isDiscarded ? 0.55 : 1,
+                          borderLeft: '2px solid transparent',
                           position: 'relative',
                         }}
                         onMouseEnter={e => {
-                          e.currentTarget.style.background = '#F9FAFB';
+                          e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
                           e.currentTarget.style.borderLeftColor = sc.color;
                           e.currentTarget.style.opacity = '1';
-                          e.currentTarget.style.transform = 'translateY(-1px)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
+                          e.currentTarget.style.boxShadow = `0 2px 16px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.05)`;
                         }}
                         onMouseLeave={e => {
                           e.currentTarget.style.background = 'transparent';
                           e.currentTarget.style.borderLeftColor = 'transparent';
-                          e.currentTarget.style.opacity = isDiscarded ? '0.65' : '1';
-                          e.currentTarget.style.transform = 'none';
+                          e.currentTarget.style.opacity = isDiscarded ? '0.55' : '1';
                           e.currentTarget.style.boxShadow = 'none';
                         }}
                       >
@@ -457,14 +455,14 @@ export default function AppPage() {
                           <Avatar name={player.name} status={player.status} />
                           <div>
                             <p style={{
-                              color: isDiscarded ? '#9CA3AF' : '#111827',
+                              color: isDiscarded ? '#475569' : '#CBD5E1',
                               margin: 0, fontWeight: 700, fontSize: '0.9rem',
                               fontFamily: 'var(--font-body)',
                               textDecoration: isDiscarded ? 'line-through' : 'none',
                             }}>
                               {player.name}
                             </p>
-                            <p style={{ color: '#6B7280', margin: 0, fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>
+                            <p style={{ color: '#475569', margin: 0, fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>
                               {[player.position, player.club, player.category].filter(Boolean).join(' · ')}
                             </p>
                           </div>
@@ -474,16 +472,16 @@ export default function AppPage() {
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                           {player.tags.slice(0, 3).map(tag => (
                             <span key={tag} style={{
-                              padding: '0.2rem 0.5rem',
-                              background: '#F3F4F6',
-                              color: '#374151',
+                              padding: '0.15rem 0.5rem',
+                              background: 'rgba(124,58,237,0.12)',
+                              color: '#7C6AEC',
                               borderRadius: '4px',
-                              fontSize: '0.68rem',
+                              fontSize: '0.67rem',
                               fontWeight: 700,
                               textTransform: 'uppercase',
                               letterSpacing: '0.04em',
                               fontFamily: 'var(--font-body)',
-                              border: '1px solid #E5E7EB',
+                              border: '1px solid rgba(124,58,237,0.2)',
                             }}>
                               {tag}
                             </span>
@@ -492,10 +490,10 @@ export default function AppPage() {
 
                         {/* Col 3: Physical data */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                          <span style={{ color: '#6B7280', fontSize: '0.78rem', fontFamily: 'var(--font-body)' }}>
+                          <span style={{ color: '#64748B', fontSize: '0.78rem', fontFamily: 'var(--font-body)' }}>
                             {year !== '—' ? `Año ${year}` : '—'}
                           </span>
-                          <span style={{ color: '#9CA3AF', fontSize: '0.75rem', fontFamily: 'var(--font-body)', textTransform: 'capitalize' }}>
+                          <span style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)', textTransform: 'capitalize' }}>
                             {player.foot !== 'ambos' ? `Pie ${player.foot}` : 'Ambos pies'}
                           </span>
                         </div>
@@ -507,17 +505,16 @@ export default function AppPage() {
                             background: sc.bg,
                             color: sc.color,
                             border: `1px solid ${sc.border}`,
-                            padding: '0.25rem 0.75rem',
+                            padding: '0.2rem 0.7rem',
                             borderRadius: '999px',
-                            fontSize: '0.72rem',
+                            fontSize: '0.7rem',
                             fontWeight: 700,
                             letterSpacing: '0.02em',
                             fontFamily: 'var(--font-body)',
                           }}>
-                            <span style={{
+                            <span className="mm-glow-dot" style={{
                               width: 5, height: 5, borderRadius: '50%',
                               backgroundColor: sc.color, flexShrink: 0,
-                              boxShadow: `0 0 6px ${sc.color}`,
                             }} />
                             {sc.label}
                           </span>
@@ -527,10 +524,10 @@ export default function AppPage() {
                         <div style={{ textAlign: 'right' }}>
                           <span style={{
                             color: rColor,
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '1.5rem',
-                            fontWeight: 800,
-                            letterSpacing: '-0.03em',
+                            fontFamily: 'var(--font-condensed)',
+                            fontSize: '1.625rem',
+                            fontWeight: 900,
+                            letterSpacing: '-0.01em',
                           }}>
                             {rating.toFixed(1)}
                           </span>

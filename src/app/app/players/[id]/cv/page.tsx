@@ -147,26 +147,27 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string): stri
   <button onclick="window.print()" style="background:#7C3AED;color:#fff">🖨️ Guardar como PDF</button>
   <button onclick="window.close()" style="background:#fff;color:#374151;border:1px solid #d1d5db">✕ Cerrar</button>
 </div>
-<div style="max-width:720px;margin:0 auto;padding:20px">
+<div style="max-width:720px;margin:0 auto;padding:0 20px 20px">
 
   <!-- Header -->
-  <div style="background:linear-gradient(135deg,#0B0F1A 0%,#1a103a 100%);border-radius:20px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden">
-    <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(124,58,237,.1)"></div>
-    <div style="display:flex;align-items:center;gap:20px;position:relative;z-index:1;flex-wrap:wrap">
+  <div style="background:#fff;border-radius:0;padding:0;margin-bottom:24px;border-bottom:1px solid #E2E8F0">
+    <!-- Purple accent strip -->
+    <div style="height:5px;background:linear-gradient(90deg,#7C3AED,#A78BFA);border-radius:0;margin-bottom:0"></div>
+    <div style="padding:28px 0 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
       ${player.photoBase64
-        ? `<img src="${player.photoBase64}" alt="${esc(player.name)}" style="width:82px;height:82px;border-radius:18px;object-fit:cover;object-position:top;border:3px solid rgba(124,58,237,.4);flex-shrink:0">`
-        : `<div style="width:82px;height:82px;border-radius:18px;background:rgba(124,58,237,.2);border:3px solid rgba(124,58,237,.4);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#c4b5fd;flex-shrink:0">${esc(player.name.charAt(0).toUpperCase())}</div>`
+        ? `<img src="${player.photoBase64}" alt="${esc(player.name)}" style="width:88px;height:88px;border-radius:14px;object-fit:cover;object-position:top;border:2px solid #E2E8F0;flex-shrink:0">`
+        : `<div style="width:88px;height:88px;border-radius:14px;background:#F5F3FF;border:2px solid #DDD6FE;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#7C3AED;flex-shrink:0">${esc(player.name.charAt(0).toUpperCase())}</div>`
       }
-      <div style="flex:1;min-width:180px">
-        <div style="font-size:9px;letter-spacing:.14em;color:#94a3b8;text-transform:uppercase;margin-bottom:5px;font-weight:600">Sports CV · Fútbol Base · Volea Scouting</div>
-        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:4px">${esc(player.name)}</div>
-        <div style="font-size:13px;color:#94a3b8;margin-bottom:8px">${esc(player.position)} · ${esc(player.club||'—')}</div>
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:9px;letter-spacing:.14em;color:#A78BFA;text-transform:uppercase;margin-bottom:6px;font-weight:700">Sports CV · Fútbol Base · Volea Scouting</div>
+        <div style="font-size:28px;font-weight:800;color:#0F172A;letter-spacing:-.02em;margin-bottom:4px;line-height:1.1">${esc(player.name)}</div>
+        <div style="font-size:13px;color:#64748B;margin-bottom:10px;font-weight:500">${esc(player.position)} · ${esc(player.club||'—')}</div>
         ${player.tags.length?`<div style="display:flex;gap:5px;flex-wrap:wrap">${tagsHtml}</div>`:''}
       </div>
-      <div style="text-align:center;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.35);border-radius:14px;padding:12px 16px;flex-shrink:0">
-        <div style="font-size:9px;letter-spacing:.1em;color:#c4b5fd;text-transform:uppercase;font-weight:700;margin-bottom:2px">Nota</div>
-        <div style="font-size:40px;font-weight:800;color:${rc(avg)};line-height:1">${avg}</div>
-        <div style="font-size:9px;color:#94a3b8;margin-top:2px">/10</div>
+      <div style="text-align:center;background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:14px;padding:12px 20px;flex-shrink:0">
+        <div style="font-size:9px;letter-spacing:.1em;color:#7C3AED;text-transform:uppercase;font-weight:700;margin-bottom:2px">Nota global</div>
+        <div style="font-size:42px;font-weight:800;color:${rc(avg)};line-height:1">${avg}</div>
+        <div style="font-size:10px;color:#94A3B8;margin-top:2px;font-weight:500">/10</div>
       </div>
     </div>
   </div>
@@ -235,6 +236,7 @@ export default function CvPage() {
 
   const [player, setPlayer]   = useState<Player | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [loadError, setLoadError]     = useState('');
 
   // Club history
   const [clubs, setClubs]     = useState<CvClub[]>([]);
@@ -261,7 +263,7 @@ export default function CvPage() {
       .then(p => {
         if (p) { setPlayer(p); setClubs(p.cvClubs ?? []); }
       })
-      .catch(err => console.error(err))
+      .catch(err => { console.error(err); setLoadError('Error al cargar el jugador. Recarga la página.'); })
       .finally(() => setLoadingData(false));
   }, [playerId, isDemo]);
 
@@ -321,6 +323,15 @@ export default function CvPage() {
       <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A',
         display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#94A3B8' }}>Cargando…</p>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A',
+        display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
       </main>
     );
   }

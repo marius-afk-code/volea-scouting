@@ -19,6 +19,47 @@ interface AppNavProps {
   urgentCount?: number;
 }
 
+const NAV_ICONS: Record<string, React.ReactNode> = {
+  players: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  ),
+  dashboard: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="14" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/>
+    </svg>
+  ),
+  compare: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 20V10"/>
+      <path d="M12 20V4"/>
+      <path d="M6 20v-6"/>
+    </svg>
+  ),
+  alerts: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+  ),
+  'scout-log': (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <polyline points="10 9 9 9 8 9"/>
+    </svg>
+  ),
+};
+
 const NAV_LINKS = (urgentCount = 0) => [
   { href: '/app',           key: 'players',   label: 'Jugadores' },
   { href: '/app/dashboard', key: 'dashboard', label: 'Dashboard' },
@@ -145,23 +186,54 @@ export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
+            gap: '0.625rem',
             textDecoration: 'none',
             flexShrink: 0,
             paddingRight: '1.75rem',
           }}
         >
-          <img src="/logo-volea-icon.png" alt="Volea" style={{ height: '40px', width: '40px', objectFit: 'contain' }} />
-          <span style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '0.9rem',
-            fontWeight: 700,
-            color: 'var(--gold)',
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
+          <div style={{
+            width: 32,
+            height: 32,
+            borderRadius: '8px',
+            background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            boxShadow: '0 0 16px rgba(124,58,237,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
+            overflow: 'hidden',
+            position: 'relative',
           }}>
-            Volea Scouting
-          </span>
+            <img
+              src="/logo-volea-icon.png"
+              alt="Volea"
+              style={{ height: '22px', width: '22px', objectFit: 'contain', position: 'relative', zIndex: 1 }}
+            />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+            <span style={{
+              fontFamily: 'var(--font-condensed)',
+              fontSize: '1rem',
+              fontWeight: 700,
+              color: '#E2E8F0',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+            }}>
+              Volea
+            </span>
+            <span style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.55rem',
+              fontWeight: 600,
+              color: '#475569',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+            }}>
+              Scouting
+            </span>
+          </div>
         </Link>
 
         <Divider />
@@ -191,10 +263,13 @@ export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
                   isUrgent && !isActive ? 'urgent' : '',
                 ].join(' ')}
               >
+                <span style={{ opacity: isActive ? 1 : 0.7, transition: 'opacity 0.15s' }}>
+                  {NAV_ICONS[l.key]}
+                </span>
                 {l.label}
                 {badge && (
                   <span style={{
-                    marginLeft: '0.4rem',
+                    marginLeft: '0.3rem',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -202,9 +277,9 @@ export default function AppNav({ activePage, urgentCount = 0 }: AppNavProps) {
                     height: '16px',
                     padding: '0 4px',
                     borderRadius: '4px',
-                    background: 'rgba(212,168,83,0.15)',
-                    border: '1px solid rgba(212,168,83,0.3)',
-                    color: 'var(--gold)',
+                    background: 'rgba(124,58,237,0.2)',
+                    border: '1px solid rgba(124,58,237,0.35)',
+                    color: 'var(--purple-3)',
                     fontSize: '0.6rem',
                     fontWeight: 700,
                     letterSpacing: 0,

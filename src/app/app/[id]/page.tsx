@@ -7,7 +7,12 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { getPlayer, updatePlayer, deletePlayer } from '@/lib/players';
 import { DEMO_PLAYERS } from '@/lib/demo-data';
-import { Player, PlayerPosition, PlayerFoot, PlayerStatus } from '@/types/player';
+import {
+  Player, PlayerPosition, PlayerFoot, PlayerStatus,
+  DetailedMetrics, ClubHistoryEntry, VideoLink,
+} from '@/types/player';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const POSITIONS: PlayerPosition[] = [
   'Portero', 'Lateral Derecho', 'Lateral Izquierdo', 'Central',
@@ -21,6 +26,69 @@ const METRIC_LABELS: { key: keyof Player['metrics']; label: string; color: strin
   { key: 'physical',  label: 'Físico',   color: '#10B981' },
   { key: 'attitude',  label: 'Actitud',  color: '#F59E0B' },
 ];
+
+const PRESET_TAGS = [
+  'Rápido', 'Líder', 'Goleador', 'Creativo', 'Lesionado', 'Canterano',
+  'Polivalente', 'Disciplinado', 'Técnico', 'Físico', 'Zurdo',
+  'Buen regate', 'Visión de juego', 'Presión alta', 'Buen pase',
+];
+
+const DETAILED_GROUPS: {
+  dim: keyof DetailedMetrics;
+  label: string;
+  color: string;
+  subs: { key: string; label: string }[];
+}[] = [
+  {
+    dim: 'technical', label: 'Técnica', color: '#7C3AED',
+    subs: [
+      { key: 'passing',   label: 'Pase' },
+      { key: 'control',   label: 'Control' },
+      { key: 'vision',    label: 'Visión de juego' },
+      { key: 'dribbling', label: 'Conducción' },
+      { key: 'pressing',  label: 'Pressing' },
+    ],
+  },
+  {
+    dim: 'tactical', label: 'Táctica', color: '#3B82F6',
+    subs: [
+      { key: 'balance',    label: 'Equilibrio' },
+      { key: 'transition', label: 'Transición' },
+      { key: 'recovery',   label: 'Recuperación' },
+      { key: 'creation',   label: 'Creación' },
+      { key: 'highPress',  label: 'Presión alta' },
+    ],
+  },
+  {
+    dim: 'physical', label: 'Físico', color: '#10B981',
+    subs: [
+      { key: 'speed',      label: 'Velocidad' },
+      { key: 'resistance', label: 'Resistencia' },
+      { key: 'strength',   label: 'Fuerza' },
+      { key: 'jump',       label: 'Salto' },
+    ],
+  },
+  {
+    dim: 'attitude', label: 'Actitud', color: '#F59E0B',
+    subs: [
+      { key: 'leadership',      label: 'Liderazgo' },
+      { key: 'competitiveness', label: 'Competitividad' },
+      { key: 'coachability',    label: 'Receptividad al entrenador' },
+    ],
+  },
+];
+
+const INITIAL_DETAILED: DetailedMetrics = {
+  technical: { passing: 5, control: 5, vision: 5, dribbling: 5, pressing: 5 },
+  tactical:  { balance: 5, transition: 5, recovery: 5, creation: 5, highPress: 5 },
+  physical:  { speed: 5, resistance: 5, strength: 5, jump: 5 },
+  attitude:  { leadership: 5, competitiveness: 5, coachability: 5 },
+};
+
+const EMPTY_CLUB_ENTRY: ClubHistoryEntry = { club: '', category: '', season: '' };
+const EMPTY_VIDEO_LINK: VideoLink = { label: '', url: '' };
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -53,21 +121,39 @@ const sectionStyle: React.CSSProperties = {
   padding: '1.5rem',
 };
 
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <p style={{
-      color: '#64748B',
-      fontSize: '0.68rem',
-      fontWeight: 700,
-      textTransform: 'uppercase',
-      letterSpacing: '0.1em',
-      margin: '0 0 1.25rem',
-      fontFamily: 'var(--font-body)',
+      color: '#64748B', fontSize: '0.68rem', fontWeight: 700,
+      textTransform: 'uppercase', letterSpacing: '0.1em',
+      margin: '0 0 1.25rem', fontFamily: 'var(--font-body)',
     }}>
       {children}
     </p>
   );
 }
+
+function SubSlider({ label, val, color, onChange }: {
+  label: string; val: number; color: string; onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+        <span style={{ color: '#94A3B8', fontSize: '0.78rem', fontFamily: 'var(--font-body)' }}>{label}</span>
+        <span style={{ color, fontSize: '0.82rem', fontWeight: 800, fontFamily: 'var(--font-heading)', minWidth: 28, textAlign: 'right' }}>{val}</span>
+      </div>
+      <input
+        type="range" min={0} max={10} step={1} value={val}
+        onChange={e => onChange(Number(e.target.value))}
+        style={{ width: '100%', accentColor: color, cursor: 'pointer' }}
+      />
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function EditPlayerPage() {
   const { user, loading } = useAuth();
@@ -85,6 +171,7 @@ export default function EditPlayerPage() {
 
   const [editForm, setEditForm] = useState<Partial<Player>>({});
   const [tagsInput, setTagsInput] = useState('');
+  const [showDetailedMetrics, setShowDetailedMetrics] = useState(false);
 
   // Photo
   const [photoBase64, setPhotoBase64] = useState('');
@@ -100,62 +187,108 @@ export default function EditPlayerPage() {
     if (isDemo) {
       const p = DEMO_PLAYERS.find(pl => pl.id === playerId) ?? null;
       setPlayer(p);
-      if (p) {
-        setEditForm(p);
-        setTagsInput(p.tags.join(', '));
-        setPhotoBase64(p.photoBase64 || '');
-      }
+      if (p) { setEditForm(p); setTagsInput(p.tags.join(', ')); setPhotoBase64(p.photoBase64 || ''); }
       setLoadingPlayer(false);
       return;
     }
     getPlayer(playerId)
       .then(p => {
         setPlayer(p);
-        if (p) {
-          setEditForm(p);
-          setTagsInput(p.tags.join(', '));
-          setPhotoBase64(p.photoBase64 || '');
-        }
+        if (p) { setEditForm(p); setTagsInput(p.tags.join(', ')); setPhotoBase64(p.photoBase64 || ''); }
+      })
+      .catch(err => {
+        console.error('getPlayer error:', err);
+        setSaveError(err instanceof Error ? err.message : 'Error al cargar el jugador');
       })
       .finally(() => setLoadingPlayer(false));
   }, [playerId, isDemo]);
 
-  const MAX_PHOTO_BYTES = 500 * 1024; // 500 KB
-
+  // ── Photo handler ──
+  const MAX_PHOTO_BYTES = 500 * 1024;
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Reset input so the same file can be re-selected after an error
     e.target.value = '';
-
     if (file.size > MAX_PHOTO_BYTES) {
-      setPhotoError(`La imagen pesa ${(file.size / 1024).toFixed(0)} KB. El máximo es 500 KB. Reduce el tamaño antes de subirla.`);
+      setPhotoError(`La imagen pesa ${(file.size / 1024).toFixed(0)} KB. El máximo es 500 KB.`);
       return;
     }
     setPhotoError('');
-
     const reader = new FileReader();
-    reader.onload = () => {
-      setPhotoBase64(reader.result as string);
-    };
+    reader.onload = () => setPhotoBase64(reader.result as string);
     reader.readAsDataURL(file);
   };
 
+  // ── Tag chip toggle ──
+  const currentTagSet = new Set(
+    tagsInput.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
+  );
+  const togglePresetTag = (tag: string) => {
+    const current = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+    const lower = tag.toLowerCase();
+    if (current.some(t => t.toLowerCase() === lower)) {
+      setTagsInput(current.filter(t => t.toLowerCase() !== lower).join(', '));
+    } else {
+      setTagsInput([...current, tag].join(', '));
+    }
+  };
+
+  // ── Detailed metrics update (auto-recalculates parent metric) ──
+  const updateDetailedMetric = (dim: keyof DetailedMetrics, sub: string, val: number) => {
+    setEditForm(f => {
+      const base = f.detailedMetrics ?? INITIAL_DETAILED;
+      const dimVals = base[dim] as Record<string, number>;
+      const updatedDim = { ...dimVals, [sub]: val };
+      const newDetailed = { ...base, [dim]: updatedDim } as DetailedMetrics;
+      const subVals = Object.values(updatedDim);
+      const avg = Math.round(subVals.reduce((a, b) => a + b, 0) / subVals.length);
+      const baseMetrics = f.metrics ?? { technical: 5, tactical: 5, physical: 5, attitude: 5 };
+      return { ...f, detailedMetrics: newDetailed, metrics: { ...baseMetrics, [dim]: avg } };
+    });
+  };
+
+  // ── Club history helpers ──
+  const addClubEntry = () => {
+    setEditForm(f => ({ ...f, clubHistory: [...(f.clubHistory ?? []), { ...EMPTY_CLUB_ENTRY }] }));
+  };
+  const removeClubEntry = (idx: number) => {
+    setEditForm(f => ({ ...f, clubHistory: (f.clubHistory ?? []).filter((_, i) => i !== idx) }));
+  };
+  const updateClubEntry = (idx: number, field: keyof ClubHistoryEntry, val: string | number) => {
+    setEditForm(f => {
+      const arr = [...(f.clubHistory ?? [])];
+      arr[idx] = { ...arr[idx], [field]: val };
+      return { ...f, clubHistory: arr };
+    });
+  };
+
+  // ── Video link helpers ──
+  const addVideoLink = () => {
+    setEditForm(f => ({ ...f, videoLinks: [...(f.videoLinks ?? []), { ...EMPTY_VIDEO_LINK }] }));
+  };
+  const removeVideoLink = (idx: number) => {
+    setEditForm(f => ({ ...f, videoLinks: (f.videoLinks ?? []).filter((_, i) => i !== idx) }));
+  };
+  const updateVideoLink = (idx: number, field: keyof VideoLink, val: string) => {
+    setEditForm(f => {
+      const arr = [...(f.videoLinks ?? [])];
+      arr[idx] = { ...arr[idx], [field]: val };
+      return { ...f, videoLinks: arr };
+    });
+  };
+
+  // ── Save ──
   const handleSave = async () => {
     if (!player) return;
-    if (isDemo) {
-      router.push(`/app/players/${player.id}`);
-      return;
-    }
+    if (isDemo) { router.push(`/app/players/${player.id}`); return; }
     setSaving(true);
     setSaveError('');
     try {
-      const updatedData = {
+      await updatePlayer(player.id, {
         ...editForm,
         photoBase64,
         tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean),
-      };
-      await updatePlayer(player.id, updatedData);
+      });
       router.push(`/app/players/${player.id}`);
     } catch (err: unknown) {
       setSaveError(err instanceof Error ? err.message : 'Error al guardar');
@@ -163,6 +296,7 @@ export default function EditPlayerPage() {
     }
   };
 
+  // ── Delete ──
   const handleDelete = async () => {
     if (!player) return;
     if (isDemo) { setConfirmDelete(false); return; }
@@ -175,9 +309,11 @@ export default function EditPlayerPage() {
     }
   };
 
+  // ─── Early returns ────────────────────────────────────────────────────────
+
   if (loading || loadingPlayer) return (
     <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}>Cargando...</p>
+      <p style={{ color: '#94A3B8', fontFamily: 'var(--font-body)' }}>Cargando…</p>
     </main>
   );
 
@@ -189,11 +325,15 @@ export default function EditPlayerPage() {
   );
 
   const savingLabel = saving ? 'Guardando…' : 'Guardar cambios';
+  const isGoalkeeper = (editForm.position ?? player.position) === 'Portero';
+  const detailedMetrics = editForm.detailedMetrics ?? INITIAL_DETAILED;
+
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#0B0F1A' }}>
 
-      {/* Header */}
+      {/* ── Sticky header ── */}
       <header style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0 2rem', position: 'sticky', top: 0, backgroundColor: '#0B0F1A', zIndex: 30 }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -203,78 +343,50 @@ export default function EditPlayerPage() {
             <span style={{ color: '#374151', fontSize: '0.82rem' }}>/</span>
             <span style={{ color: 'white', fontSize: '0.82rem', fontFamily: 'var(--font-body)' }}>Editar</span>
           </div>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            style={{
-              background: saving ? 'rgba(124,58,237,0.5)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)',
-              color: 'white', border: 'none', padding: '0.5rem 1.25rem',
-              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700,
-              cursor: saving ? 'not-allowed' : 'pointer',
-              fontFamily: 'var(--font-body)',
-              boxShadow: saving ? 'none' : '0 2px 12px rgba(124,58,237,0.3)',
-            }}
-          >
+          <button onClick={handleSave} disabled={saving} style={{
+            background: saving ? 'rgba(124,58,237,0.5)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)',
+            color: 'white', border: 'none', padding: '0.5rem 1.25rem',
+            borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700,
+            cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)',
+            boxShadow: saving ? 'none' : '0 2px 12px rgba(124,58,237,0.3)',
+          }}>
             {savingLabel}
           </button>
         </div>
       </header>
 
+      {/* ── Form content ── */}
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: '2rem 2rem 5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
         {/* ── Photo + name hero ── */}
         <div style={{ ...sectionStyle, display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-          {/* Avatar / photo */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <div
               onClick={() => fileInputRef.current?.click()}
               style={{
-                width: 80, height: 80, borderRadius: 16,
-                overflow: 'hidden', cursor: 'pointer',
+                width: 80, height: 80, borderRadius: 16, overflow: 'hidden', cursor: 'pointer',
                 background: photoBase64 ? 'transparent' : 'linear-gradient(135deg,rgba(124,58,237,0.3),rgba(109,40,217,0.5))',
                 border: '2px dashed rgba(124,58,237,0.4)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-                transition: 'border-color 0.15s',
               }}
               title="Cambiar foto"
             >
               {photoBase64 ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={photoBase64}
-                  alt={player.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                />
+                <img src={photoBase64} alt={player.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
               ) : (
                 <span style={{ color: '#A78BFA', fontSize: 28, fontWeight: 800, fontFamily: 'var(--font-display)' }}>
                   {player.name.charAt(0).toUpperCase()}
                 </span>
               )}
             </div>
-            {/* Camera overlay */}
             <div
               onClick={() => fileInputRef.current?.click()}
-              style={{
-                position: 'absolute', bottom: 0, right: 0,
-                width: 24, height: 24, borderRadius: '50%',
-                background: '#7C3AED', border: '2px solid #0B0F1A',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', fontSize: 11,
-              }}
+              style={{ position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, borderRadius: '50%', background: '#7C3AED', border: '2px solid #0B0F1A', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 11 }}
               title="Cambiar foto"
-            >
-              📷
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              style={{ display: 'none' }}
-              onChange={handlePhotoSelect}
-            />
+            >📷</div>
+            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handlePhotoSelect} />
           </div>
-
           <div style={{ flex: 1, minWidth: 200 }}>
             <p style={{ ...labelStyle, marginBottom: '0.375rem' }}>Nombre del jugador</p>
             <input
@@ -360,9 +472,57 @@ export default function EditPlayerPage() {
           </div>
         </div>
 
-        {/* ── Métricas ── */}
+        {/* ── Estadísticas de temporada ── */}
+        <div style={sectionStyle}>
+          <SectionTitle>Estadísticas de temporada</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+            <div>
+              <label style={labelStyle}>Partidos</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.matchesPlayed ?? ''} onChange={e => setEditForm(f => ({ ...f, matchesPlayed: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+            </div>
+            <div>
+              <label style={labelStyle}>Minutos</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.minutesPlayed ?? ''} onChange={e => setEditForm(f => ({ ...f, minutesPlayed: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+            </div>
+            <div>
+              <label style={labelStyle}>Goles</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.goals ?? ''} onChange={e => setEditForm(f => ({ ...f, goals: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+            </div>
+            <div>
+              <label style={labelStyle}>Asistencias</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.assists ?? ''} onChange={e => setEditForm(f => ({ ...f, assists: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+            </div>
+            <div>
+              <label style={labelStyle}>Amarillas</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.yellowCards ?? ''} onChange={e => setEditForm(f => ({ ...f, yellowCards: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+            </div>
+            <div>
+              <label style={labelStyle}>Rojas</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.redCards ?? ''} onChange={e => setEditForm(f => ({ ...f, redCards: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+            </div>
+            {isGoalkeeper && (
+              <>
+                <div>
+                  <label style={labelStyle}>Paradas</label>
+                  <input type="number" style={inputStyle} min={0} value={editForm.saves ?? ''} onChange={e => setEditForm(f => ({ ...f, saves: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Goles encajados</label>
+                  <input type="number" style={inputStyle} min={0} value={editForm.goalsConceded ?? ''} onChange={e => setEditForm(f => ({ ...f, goalsConceded: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="0" />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── Métricas principales ── */}
         <div style={sectionStyle}>
           <SectionTitle>Valoración técnica (0–10)</SectionTitle>
+          {editForm.detailedMetrics && (
+            <p style={{ color: '#475569', fontSize: '0.72rem', marginTop: '-0.875rem', marginBottom: '1rem', fontFamily: 'var(--font-body)' }}>
+              Calculadas automáticamente desde métricas detalladas
+            </p>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {METRIC_LABELS.map(({ key, label, color }) => {
               const val = editForm.metrics?.[key] ?? 5;
@@ -375,10 +535,10 @@ export default function EditPlayerPage() {
                     </span>
                   </div>
                   <input
-                    type="range" min={0} max={10} step={1}
-                    value={val}
+                    type="range" min={0} max={10} step={1} value={val}
                     onChange={e => setEditForm(f => ({ ...f, metrics: { ...f.metrics!, [key]: Number(e.target.value) } }))}
                     style={{ width: '100%', accentColor: color, cursor: 'pointer' }}
+                    disabled={!!editForm.detailedMetrics}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
                     {Array.from({ length: 11 }, (_, i) => (
@@ -391,12 +551,89 @@ export default function EditPlayerPage() {
           </div>
         </div>
 
-        {/* ── Nota global y etiquetas ── */}
+        {/* ── Métricas detalladas (colapsable) ── */}
+        <div style={sectionStyle}>
+          <button
+            onClick={() => setShowDetailedMetrics(s => !s)}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer', width: '100%',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: 0, marginBottom: showDetailedMetrics ? '1.25rem' : 0,
+            }}
+          >
+            <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'var(--font-body)' }}>
+              Métricas detalladas (subcategorías)
+            </span>
+            <span style={{ color: '#475569', fontSize: '0.75rem' }}>{showDetailedMetrics ? '▲ Ocultar' : '▼ Expandir'}</span>
+          </button>
+
+          {showDetailedMetrics && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              {DETAILED_GROUPS.map(({ dim, label, color, subs }) => (
+                <div key={dim}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.875rem' }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                    <span style={{ color: '#CBD5E1', fontSize: '0.8rem', fontWeight: 700, fontFamily: 'var(--font-body)' }}>{label}</span>
+                    <span style={{ color, fontSize: '0.75rem', fontWeight: 800, marginLeft: 'auto', fontFamily: 'var(--font-heading)' }}>
+                      Media: {editForm.metrics?.[dim] ?? 5}/10
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {subs.map(({ key, label: subLabel }) => (
+                      <SubSlider
+                        key={key}
+                        label={subLabel}
+                        val={(detailedMetrics[dim] as Record<string, number>)[key] ?? 5}
+                        color={color}
+                        onChange={v => updateDetailedMetric(dim, key, v)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Notas y etiquetas ── */}
         <div style={sectionStyle}>
           <SectionTitle>Notas y etiquetas</SectionTitle>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+            {/* Chips predefinidos */}
             <div>
-              <label style={labelStyle}>Etiquetas (separadas por coma)</label>
+              <p style={{ ...labelStyle, marginBottom: '0.625rem' }}>Etiquetas rápidas</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+                {PRESET_TAGS.map(tag => {
+                  const active = currentTagSet.has(tag.toLowerCase());
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => togglePresetTag(tag)}
+                      style={{
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '999px',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        fontFamily: 'var(--font-body)',
+                        border: active ? '1px solid rgba(124,58,237,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                        background: active ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)',
+                        color: active ? '#A78BFA' : '#64748B',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      {active ? '✓ ' : ''}{tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Campo de texto */}
+            <div>
+              <label style={labelStyle}>Etiquetas personalizadas (separadas por coma)</label>
               <input
                 style={inputStyle}
                 value={tagsInput}
@@ -404,6 +641,7 @@ export default function EditPlayerPage() {
                 placeholder="Rápido, Buen regate, Liderazgo…"
               />
             </div>
+
             <div>
               <label style={labelStyle}>Notas del scout (privadas)</label>
               <textarea
@@ -414,6 +652,156 @@ export default function EditPlayerPage() {
               />
             </div>
           </div>
+        </div>
+
+        {/* ── Contacto y entorno ── */}
+        <div style={sectionStyle}>
+          <SectionTitle>Contacto y entorno</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={labelStyle}>Nombre del contacto</label>
+              <input style={inputStyle} value={editForm.contactName ?? ''} onChange={e => setEditForm(f => ({ ...f, contactName: e.target.value }))} placeholder="Juan García" />
+            </div>
+            <div>
+              <label style={labelStyle}>Relación</label>
+              <select style={inputStyle} value={editForm.contactRelation ?? ''} onChange={e => setEditForm(f => ({ ...f, contactRelation: e.target.value }))}>
+                <option value="">— Seleccionar —</option>
+                <option value="Padre">Padre</option>
+                <option value="Madre">Madre</option>
+                <option value="Representante">Representante</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Teléfono de contacto</label>
+              <input type="tel" style={inputStyle} value={editForm.contactPhone ?? ''} onChange={e => setEditForm(f => ({ ...f, contactPhone: e.target.value }))} placeholder="+34 600 000 000" />
+            </div>
+            <div>
+              <label style={labelStyle}>Agente / Representante</label>
+              <input style={inputStyle} value={editForm.agentName ?? ''} onChange={e => setEditForm(f => ({ ...f, agentName: e.target.value }))} placeholder="Nombre del agente (si tiene)" />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Disponibilidad ── */}
+        <div style={sectionStyle}>
+          <SectionTitle>Disponibilidad</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={labelStyle}>Fin de contrato</label>
+              <input type="date" style={inputStyle} value={editForm.contractEnd ?? ''} onChange={e => setEditForm(f => ({ ...f, contractEnd: e.target.value }))} />
+            </div>
+            <div>
+              <label style={labelStyle}>Interés en cambio de club</label>
+              <select style={inputStyle} value={editForm.transferInterest ?? 'desconocido'} onChange={e => setEditForm(f => ({ ...f, transferInterest: e.target.value as Player['transferInterest'] }))}>
+                <option value="desconocido">Desconocido</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Cláusula (€)</label>
+              <input type="number" style={inputStyle} min={0} value={editForm.clauseAmount ?? ''} onChange={e => setEditForm(f => ({ ...f, clauseAmount: e.target.value === '' ? undefined : Number(e.target.value) }))} placeholder="Opcional" />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Historial de clubes ── */}
+        <div style={sectionStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <SectionTitle>Historial de clubes</SectionTitle>
+            <button
+              type="button"
+              onClick={addClubEntry}
+              style={{ background: 'rgba(124,58,237,0.12)', border: '1px solid rgba(124,58,237,0.25)', color: '#A78BFA', padding: '0.35rem 0.875rem', borderRadius: '7px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+            >
+              + Añadir club
+            </button>
+          </div>
+
+          {(editForm.clubHistory ?? []).length === 0 ? (
+            <p style={{ color: '#334155', fontSize: '0.8rem', fontFamily: 'var(--font-body)', textAlign: 'center', padding: '1rem 0' }}>
+              Sin clubes anteriores registrados.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+              {(editForm.clubHistory ?? []).map((entry, idx) => (
+                <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 60px 60px 32px', gap: '0.625rem', alignItems: 'flex-end' }}>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>Club</label>}
+                    <input style={inputStyle} value={entry.club} onChange={e => updateClubEntry(idx, 'club', e.target.value)} placeholder="CF Ejemplo" />
+                  </div>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>Categoría</label>}
+                    <input style={inputStyle} value={entry.category} onChange={e => updateClubEntry(idx, 'category', e.target.value)} placeholder="Cadete A" />
+                  </div>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>Temporada</label>}
+                    <input style={inputStyle} value={entry.season} onChange={e => updateClubEntry(idx, 'season', e.target.value)} placeholder="2023/24" />
+                  </div>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>Goles</label>}
+                    <input type="number" min={0} style={inputStyle} value={entry.goals ?? ''} onChange={e => updateClubEntry(idx, 'goals', e.target.value === '' ? '' : Number(e.target.value))} placeholder="0" />
+                  </div>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>Asist.</label>}
+                    <input type="number" min={0} style={inputStyle} value={entry.assists ?? ''} onChange={e => updateClubEntry(idx, 'assists', e.target.value === '' ? '' : Number(e.target.value))} placeholder="0" />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <button
+                      type="button"
+                      onClick={() => removeClubEntry(idx)}
+                      style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, padding: '0.5rem 0.25rem', fontFamily: 'var(--font-body)' }}
+                      title="Eliminar"
+                    >×</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Vídeos ── */}
+        <div style={sectionStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <SectionTitle>Vídeos</SectionTitle>
+            <button
+              type="button"
+              onClick={addVideoLink}
+              style={{ background: 'rgba(124,58,237,0.12)', border: '1px solid rgba(124,58,237,0.25)', color: '#A78BFA', padding: '0.35rem 0.875rem', borderRadius: '7px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+            >
+              + Añadir vídeo
+            </button>
+          </div>
+
+          {(editForm.videoLinks ?? []).length === 0 ? (
+            <p style={{ color: '#334155', fontSize: '0.8rem', fontFamily: 'var(--font-body)', textAlign: 'center', padding: '1rem 0' }}>
+              Sin enlaces de vídeo registrados.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {(editForm.videoLinks ?? []).map((link, idx) => (
+                <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 32px', gap: '0.625rem', alignItems: 'flex-end' }}>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>Etiqueta</label>}
+                    <input style={inputStyle} value={link.label} onChange={e => updateVideoLink(idx, 'label', e.target.value)} placeholder="Highlights 2024" />
+                  </div>
+                  <div>
+                    {idx === 0 && <label style={labelStyle}>URL del vídeo</label>}
+                    <input type="url" style={inputStyle} value={link.url} onChange={e => updateVideoLink(idx, 'url', e.target.value)} placeholder="https://youtube.com/..." />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <button
+                      type="button"
+                      onClick={() => removeVideoLink(idx)}
+                      style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, padding: '0.5rem 0.25rem' }}
+                      title="Eliminar"
+                    >×</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── Error ── */}
@@ -431,10 +819,8 @@ export default function EditPlayerPage() {
             background: saving ? 'rgba(124,58,237,0.5)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)',
             color: 'white', border: 'none', padding: '0.875rem',
             borderRadius: '10px', fontSize: '0.9rem', fontWeight: 700,
-            cursor: saving ? 'not-allowed' : 'pointer',
-            fontFamily: 'var(--font-body)',
-            letterSpacing: '0.02em',
-            boxShadow: saving ? 'none' : '0 4px 20px rgba(124,58,237,0.35)',
+            cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)',
+            letterSpacing: '0.02em', boxShadow: saving ? 'none' : '0 4px 20px rgba(124,58,237,0.35)',
           }}
         >
           {savingLabel}
@@ -452,7 +838,7 @@ export default function EditPlayerPage() {
 
       </div>
 
-      {/* Delete confirmation modal */}
+      {/* ── Delete confirmation modal ── */}
       {confirmDelete && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '1rem' }}>
           <div style={{ backgroundColor: '#141928', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', padding: '2rem', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
@@ -465,7 +851,7 @@ export default function EditPlayerPage() {
                 Cancelar
               </button>
               <button onClick={handleDelete} disabled={deleting} style={{ backgroundColor: '#EF4444', color: 'white', border: 'none', padding: '0.625rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
-                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
+                {deleting ? 'Eliminando…' : 'Sí, eliminar'}
               </button>
             </div>
           </div>

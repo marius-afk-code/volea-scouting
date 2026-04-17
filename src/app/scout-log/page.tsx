@@ -218,6 +218,7 @@ export default function ScoutLogPage() {
 
   const [matches, setMatches] = useState<Match[]>([]);
   const [loadingMatches, setLoadingMatches] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [tab, setTab] = useState<'matches' | 'stats'>('matches');
 
   // Modal state
@@ -254,7 +255,7 @@ export default function ScoutLogPage() {
     if (!user) return;
     getMatches(user.uid)
       .then(setMatches)
-      .catch(err => console.error('Error cargando partidos:', err))
+      .catch(err => { console.error('Error cargando partidos:', err); setLoadError('Error al cargar los partidos. Recarga la página.'); })
       .finally(() => setLoadingMatches(false));
   }, [user, isDemo]);
 
@@ -475,7 +476,9 @@ export default function ScoutLogPage() {
             {/* List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {loadingMatches ? (
-                <div style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>Cargando partidos...</div>
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>Cargando partidos…</div>
+              ) : loadError ? (
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</div>
               ) : filtered.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '3rem', color: '#64748B' }}>
                   <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>📋</div>

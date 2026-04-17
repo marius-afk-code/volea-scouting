@@ -10,7 +10,6 @@ import {
   setDoc,
   query,
   where,
-  orderBy,
 } from 'firebase/firestore';
 import { Match } from '@/types/match';
 

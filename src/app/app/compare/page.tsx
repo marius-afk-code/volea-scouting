@@ -79,6 +79,7 @@ export default function ComparePage() {
   const [players, setPlayers]       = useState<Player[]>([]);
   const [visitMap, setVisitMap]     = useState<Record<string, Visit[]>>({});
   const [loadingData, setLoadingData] = useState(true);
+  const [loadError, setLoadError]   = useState('');
 
   // Comparison state
   const [slots, setSlots]           = useState(2);
@@ -109,8 +110,10 @@ export default function ComparePage() {
         const vm: Record<string, Visit[]> = {};
         ps.forEach((p, i) => { vm[p.id] = visitArrays[i]; });
         setVisitMap(vm);
-      } catch (err) { console.error(err); }
-      finally { setLoadingData(false); }
+      } catch (err) {
+        console.error(err);
+        setLoadError('Error al cargar los jugadores. Recarga la página.');
+      } finally { setLoadingData(false); }
     })();
   }, [user, isDemo]);
 
@@ -159,6 +162,14 @@ export default function ComparePage() {
     return (
       <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#475569' }}>Cargando…</p>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
       </main>
     );
   }

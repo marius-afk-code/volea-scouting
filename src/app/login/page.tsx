@@ -31,34 +31,50 @@ export default function LoginPage() {
   return (
     <main style={{
       minHeight: '100vh',
-      backgroundColor: '#05060D',
+      backgroundColor: '#060810',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Grid bg */}
+      {/* Dot grid bg */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: `
-          linear-gradient(rgba(212,175,55,0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(212,175,55,0.02) 1px, transparent 1px)
-        `,
-        backgroundSize: '44px 44px',
+        backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+        backgroundSize: '28px 28px',
       }} />
 
-      {/* Ambient glow */}
+      {/* Large ambient glow — purple */}
       <div style={{
         position: 'absolute',
-        top: '40%',
+        top: '50%',
         left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '600px',
-        height: '400px',
-        background: 'radial-gradient(ellipse, rgba(212,175,55,0.05) 0%, transparent 65%)',
+        transform: 'translate(-50%, -60%)',
+        width: '700px',
+        height: '700px',
+        background: 'radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 65%)',
         pointerEvents: 'none',
+      }} />
+
+      {/* Secondary glow — bottom right */}
+      <div style={{
+        position: 'absolute',
+        bottom: '-100px',
+        right: '-100px',
+        width: '400px',
+        height: '400px',
+        background: 'radial-gradient(ellipse, rgba(124,58,237,0.06) 0%, transparent 65%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Horizontal scanline */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent 0%, rgba(124,58,237,0.4) 40%, rgba(167,139,250,0.6) 50%, rgba(124,58,237,0.4) 60%, transparent 100%)',
       }} />
 
       {/* Login card */}
@@ -66,50 +82,65 @@ export default function LoginPage() {
         className="mm-fade-up"
         style={{
           position: 'relative',
-          backgroundColor: '#0C0E19',
-          borderRadius: '16px',
+          backgroundColor: 'rgba(13,17,30,0.95)',
+          borderRadius: '20px',
           padding: '2.75rem 2.5rem',
           width: '100%',
-          maxWidth: '400px',
-          border: '1px solid rgba(255,255,255,0.05)',
-          boxShadow: '0 0 0 1px rgba(212,175,55,0.06), 0 32px 64px rgba(0,0,0,0.6)',
+          maxWidth: '420px',
+          border: '1px solid rgba(255,255,255,0.07)',
+          boxShadow: '0 0 0 1px rgba(124,58,237,0.08), 0 40px 80px rgba(0,0,0,0.7)',
+          backdropFilter: 'blur(20px)',
         }}
       >
-        {/* Gold top accent on card */}
+        {/* Purple top accent on card */}
         <div style={{
           position: 'absolute',
-          top: 0, left: '10%', right: '10%',
+          top: 0, left: '15%', right: '15%',
           height: '1px',
-          background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(124,58,237,0.6), rgba(167,139,250,0.8), rgba(124,58,237,0.6), transparent)',
           borderRadius: '0 0 2px 2px',
         }} />
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2.25rem' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo-volea-icon.png"
-            alt="Volea Scouting"
-            height={48}
-            width={48}
-            style={{ margin: '0 auto 1.25rem', display: 'block', objectFit: 'contain' }}
-          />
+          {/* Logo icon */}
+          <div style={{
+            width: 56,
+            height: 56,
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.25rem',
+            boxShadow: '0 0 32px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.12)',
+          }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-volea-icon.png"
+              alt="Volea Scouting"
+              height={34}
+              width={34}
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
 
           <div style={{
-            fontFamily: "'Syne', var(--font-heading), sans-serif",
-            fontSize: '1.3rem',
-            fontWeight: 800,
-            color: '#EFF6FF',
-            letterSpacing: '-0.01em',
+            fontFamily: 'var(--font-condensed)',
+            fontSize: '1.6rem',
+            fontWeight: 900,
+            color: '#E2E8F0',
+            letterSpacing: '0.1em',
             marginBottom: '0.35rem',
+            textTransform: 'uppercase',
           }}>
-            VOLEA <span style={{ color: '#D4AF37' }}>SCOUTING</span>
+            Volea <span style={{ color: 'var(--purple-3)' }}>Scouting</span>
           </div>
           <p style={{
-            color: '#1E2A38',
-            fontSize: '0.78rem',
+            color: '#475569',
+            fontSize: '0.72rem',
             fontWeight: 600,
-            letterSpacing: '0.08em',
+            letterSpacing: '0.1em',
             textTransform: 'uppercase',
           }}>
             Accede a tu cuenta
@@ -120,7 +151,7 @@ export default function LoginPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label style={{
-              color: '#243040',
+              color: '#64748B',
               fontSize: '0.67rem',
               fontWeight: 700,
               textTransform: 'uppercase',
@@ -161,7 +192,7 @@ export default function LoginPage() {
 
           <div>
             <label style={{
-              color: '#243040',
+              color: '#64748B',
               fontSize: '0.67rem',
               fontWeight: 700,
               textTransform: 'uppercase',
@@ -264,7 +295,7 @@ export default function LoginPage() {
         }}>
           <div style={{ width: '20px', height: '1px', background: 'rgba(212,175,55,0.15)' }} />
           <span style={{
-            color: '#0F1822',
+            color: '#334155',
             fontSize: '0.6rem',
             fontWeight: 700,
             letterSpacing: '0.15em',

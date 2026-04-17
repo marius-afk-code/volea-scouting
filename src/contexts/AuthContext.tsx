@@ -18,9 +18,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
       setLoading(false);
+      // Cookie de sesión para el middleware (no httpOnly → readable desde Edge)
+      if (firebaseUser) {
+        document.cookie = `__session=${firebaseUser.uid}; path=/; SameSite=Lax; max-age=2592000`;
+      } else {
+        document.cookie = '__session=; path=/; max-age=0';
+      }
     });
     return unsubscribe;
   }, []);
@@ -31,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
+    document.cookie = '__session=; path=/; max-age=0';
   };
 
   return (

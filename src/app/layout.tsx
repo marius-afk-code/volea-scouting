@@ -3,6 +3,7 @@ import { Instrument_Serif, Syne, DM_Sans, Barlow_Condensed } from 'next/font/goo
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { DemoProvider } from '@/contexts/DemoContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
@@ -40,11 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body className={`${instrumentSerif.variable} ${syne.variable} ${dmSans.variable} ${barlowCondensed.variable}`}>
-        <DemoProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </DemoProvider>
+        <ErrorBoundary>
+          <DemoProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </DemoProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

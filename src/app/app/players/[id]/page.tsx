@@ -408,18 +408,18 @@ function buildReportHTML(player: Player, visits: Visit[], analysis: string): str
 
 const inputS: React.CSSProperties = {
   width: '100%',
-  background: '#FFFFFF',
-  border: '1px solid #D1D5DB',
+  background: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
   borderRadius: '8px',
   padding: '0.625rem 0.875rem',
-  color: '#111827',
+  color: '#E2E8F0',
   fontSize: '0.875rem',
   outline: 'none',
   fontFamily: 'var(--font-body)',
 };
 
 const labelS: React.CSSProperties = {
-  color: '#6B7280',
+  color: '#64748B',
   fontSize: '0.72rem',
   fontWeight: '600',
   textTransform: 'uppercase',
@@ -447,6 +447,7 @@ export default function PlayerDetailPage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [visits, setVisits] = useState<Visit[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   // Visit form
   const [vFecha, setVFecha]       = useState(todayISO());
@@ -521,7 +522,7 @@ export default function PlayerDetailPage() {
     }
     Promise.all([getPlayer(playerId), getVisits(playerId)])
       .then(([p, v]) => { setPlayer(p); setVisits(v); })
-      .catch(err => console.error('Error cargando datos:', err))
+      .catch(err => { console.error('Error cargando datos:', err); setLoadError('Error al cargar los datos del jugador. Recarga la página.'); })
       .finally(() => setLoadingData(false));
   }, [playerId, isDemo]);
 
@@ -562,6 +563,7 @@ export default function PlayerDetailPage() {
       setConfirmVisit(null);
     } catch (err: unknown) {
       console.error(err);
+      setVisitError(err instanceof Error ? err.message : 'Error al eliminar la visita');
     }
   }
 
@@ -613,6 +615,7 @@ export default function PlayerDetailPage() {
       setShareUrl(`${window.location.origin}/shared/${reportId}`);
     } catch (err: unknown) {
       console.error(err);
+      setVisitError(err instanceof Error ? err.message : 'Error al generar el enlace compartido');
     } finally {
       setSharing(false);
     }
@@ -663,6 +666,12 @@ export default function PlayerDetailPage() {
   if (loading || loadingData) return (
     <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#475569' }}>Cargando…</p>
+    </main>
+  );
+
+  if (loadError) return (
+    <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
     </main>
   );
 
@@ -737,52 +746,55 @@ export default function PlayerDetailPage() {
         </div>
       )}
 
-      {/* ── White content panel ── */}
-      <div style={{ background: '#FFFFFF', borderRadius: '0', marginTop: '0', boxShadow: '0 -8px 32px rgba(0,0,0,0.15)', minHeight: '60vh', paddingTop: '2rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', position: 'relative', zIndex: 10 }}>
+      {/* ── Dark content panel ── */}
+      <div style={{ background: 'var(--navy)', minHeight: '60vh', paddingTop: '2rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', position: 'relative', zIndex: 10 }}>
       <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0' }}>
 
         {/* ══ HERO ══ */}
         <div className="mm-fade-up" style={{
-          background: 'linear-gradient(135deg, #F9FAFB, #F3F0FF)',
-          borderRadius: '16px', padding: '2rem', marginBottom: '1.5rem',
-          border: '1px solid rgba(124,58,237,0.15)', position: 'relative', overflow: 'hidden',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(124,58,237,0.07) 100%)',
+          borderRadius: '16px', padding: '1.75rem 2rem', marginBottom: '1.5rem',
+          border: '1px solid rgba(124,58,237,0.2)', position: 'relative', overflow: 'hidden',
+          boxShadow: '0 4px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)',
         }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg,#7C3AED,#A78BFA,transparent)' }} />
-          <div style={{ position: 'absolute', right: '-60px', top: '-60px', width: '240px', height: '240px', borderRadius: '50%', background: 'rgba(124,58,237,0.06)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg,#7C3AED,#A78BFA,transparent)' }} />
+          <div style={{ position: 'absolute', right: '-80px', top: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', position: 'relative', zIndex: 1, flexWrap: 'wrap' }}>
             {/* Avatar */}
-            <div style={{ width: '72px', height: '72px', borderRadius: '16px', background: 'linear-gradient(135deg,#EDE9FE,#C4B5FD)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '18px', background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', boxShadow: '0 0 24px rgba(124,58,237,0.2)' }}>
               {player.photoBase64 ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={player.photoBase64} alt={player.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
               ) : (
-                <span style={{ color: '#5B21B6', fontSize: '26px', fontWeight: '700', fontFamily: 'var(--font-display)' }}>{player.name.charAt(0).toUpperCase()}</span>
+                <span style={{ color: '#A78BFA', fontSize: '28px', fontWeight: '900', fontFamily: 'var(--font-condensed)', letterSpacing: '-0.02em' }}>{player.name.charAt(0).toUpperCase()}</span>
               )}
             </div>
             {/* Info */}
             <div style={{ flex: 1, minWidth: '200px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
-                <h1 style={{ color: '#111827', fontSize: '1.75rem', margin: 0, fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>{player.name}</h1>
-                <span style={{ background: sc.bg, color: sc.color, padding: '0.2rem 0.75rem', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 700 }}>{sc.label}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.3rem' }}>
+                <h1 style={{ color: '#F1F5F9', fontSize: '2rem', margin: 0, fontFamily: 'var(--font-condensed)', letterSpacing: '0.02em', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1 }}>{player.name}</h1>
+                <span style={{ background: sc.bg, color: sc.color, padding: '0.2rem 0.75rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700, border: `1px solid ${sc.color}30` }}>{sc.label}</span>
               </div>
-              <p style={{ color: '#6B7280', margin: '0 0 0.75rem', fontSize: '0.9rem' }}>{player.position}</p>
-              <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+              <p style={{ color: '#64748B', margin: '0 0 0.625rem', fontSize: '0.85rem', fontFamily: 'var(--font-body)', letterSpacing: '0.02em' }}>{player.position}</p>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
                 {[
                   player.club && player.club,
                   player.city && player.city,
                   player.category && player.category,
                   player.division && player.division,
                 ].filter(Boolean).map((chip, i) => (
-                  <span key={i} style={{ color: '#64748B', fontSize: '0.82rem' }}>{chip as string}</span>
+                  <span key={i} style={{ color: '#94A3B8', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    {i > 0 && <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '0.6rem' }}>◆</span>}
+                    {chip as string}
+                  </span>
                 ))}
               </div>
             </div>
             {/* Overall rating */}
-            <div style={{ textAlign: 'center', background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '14px', padding: '1rem 1.5rem', flexShrink: 0 }}>
-              <p style={{ color: '#7C3AED', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 0.25rem' }}>Nota global</p>
-              <p className="mm-stat-num" style={{ color: ratingColor(avg), fontSize: '3rem', margin: 0 }}>{avg}</p>
-              <p style={{ color: '#6B7280', fontSize: '0.7rem', margin: '0.25rem 0 0' }}>sobre 10</p>
+            <div style={{ textAlign: 'center', background: 'rgba(124,58,237,0.12)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '14px', padding: '1rem 1.75rem', flexShrink: 0, boxShadow: '0 0 24px rgba(124,58,237,0.1)' }}>
+              <p style={{ color: '#A78BFA', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 0.2rem', fontFamily: 'var(--font-body)' }}>Nota global</p>
+              <p className="mm-stat-num" style={{ color: ratingColor(avg), fontSize: '3.25rem', margin: 0 }}>{avg}</p>
+              <p style={{ color: '#475569', fontSize: '0.65rem', margin: '0.2rem 0 0', fontFamily: 'var(--font-body)' }}>sobre 10</p>
             </div>
           </div>
         </div>
@@ -791,17 +803,18 @@ export default function PlayerDetailPage() {
         <div className="mm-fade-up-1" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
 
           {/* Metric boxes + progress bars */}
-          <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
-            <h3 style={{ color: '#6B7280', fontSize: '0.72rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 1rem' }}>Métricas</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+          <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+            <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Métricas</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(['technical', 'tactical', 'physical', 'attitude'] as const).map(key => {
                 const v = player.metrics[key];
+                const c = metricColor(key);
                 return (
-                  <div key={key} style={{ background: '#F9FAFB', borderRadius: '10px', padding: '0.875rem 0.75rem', textAlign: 'center', border: '1px solid #E5E7EB' }}>
-                    <p style={{ color: '#6B7280', fontSize: '0.65rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 0.25rem' }}>{metricLabel(key)}</p>
-                    <p style={{ color: ratingColor(v), fontSize: '1.75rem', fontFamily: 'var(--font-display)', margin: 0, lineHeight: 1.1 }}>{v}</p>
-                    <div style={{ marginTop: '0.5rem', height: '4px', borderRadius: '2px', backgroundColor: '#F3F4F6' }}>
-                      <div style={{ height: '4px', borderRadius: '2px', backgroundColor: metricColor(key), width: `${v * 10}%` }} />
+                  <div key={key} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '0.75rem', textAlign: 'center', border: `1px solid ${c}22` }}>
+                    <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.2rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key)}</p>
+                    <p style={{ color: c, fontSize: '1.875rem', fontFamily: 'var(--font-condensed)', margin: 0, lineHeight: 1, fontWeight: 900 }}>{v}</p>
+                    <div style={{ marginTop: '0.5rem', height: '3px', borderRadius: '2px', backgroundColor: 'rgba(255,255,255,0.07)' }}>
+                      <div className="mm-bar-animated" style={{ height: '3px', borderRadius: '2px', backgroundColor: c, width: `${v * 10}%`, boxShadow: `0 0 8px ${c}60` }} />
                     </div>
                   </div>
                 );
@@ -814,11 +827,11 @@ export default function PlayerDetailPage() {
               return (
                 <div key={key} style={{ marginBottom: '0.625rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                    <span style={{ color: '#6B7280', fontSize: '0.78rem' }}>{metricLabel(key)}</span>
-                    <span style={{ color: c, fontSize: '0.78rem', fontWeight: '700' }}>{v}/10</span>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key)}</span>
+                    <span style={{ color: c, fontSize: '0.75rem', fontWeight: '700', fontFamily: 'var(--font-condensed)' }}>{v}/10</span>
                   </div>
-                  <div style={{ height: '6px', backgroundColor: '#F3F4F6', borderRadius: '999px', overflow: 'hidden' }}>
-                    <div style={{ width: `${v * 10}%`, height: '100%', backgroundColor: c, borderRadius: '999px' }} />
+                  <div style={{ height: '5px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '999px', overflow: 'hidden' }}>
+                    <div className="mm-bar-animated" style={{ width: `${v * 10}%`, height: '100%', backgroundColor: c, borderRadius: '999px', boxShadow: `0 0 6px ${c}50` }} />
                   </div>
                 </div>
               );
@@ -826,15 +839,15 @@ export default function PlayerDetailPage() {
           </div>
 
           {/* Radar chart */}
-          <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <h3 style={{ color: '#6B7280', fontSize: '0.72rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 1rem', alignSelf: 'flex-start' }}>Radar</h3>
-            <RadarChart metrics={player.metrics} dark={false} />
+          <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', alignSelf: 'flex-start', fontFamily: 'var(--font-body)' }}>Radar</h3>
+            <RadarChart metrics={player.metrics} dark={true} />
           </div>
 
           {/* Personal data */}
-          <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
-            <h3 style={{ color: '#6B7280', fontSize: '0.72rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 1rem' }}>Datos personales</h3>
-            <dl style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+          <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+            <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Datos personales</h3>
+            <dl style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
                 ['Nacimiento', formatDate(player.birthDate)],
                 ['Pie', player.foot ? player.foot.charAt(0).toUpperCase() + player.foot.slice(1) : '—'],
@@ -845,24 +858,104 @@ export default function PlayerDetailPage() {
                 ['Categoría', player.category || '—'],
                 ['División', player.division || '—'],
               ].map(([label, value]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #F3F4F6', paddingBottom: '0.5rem' }}>
-                  <dt style={{ color: '#6B7280', fontSize: '0.78rem' }}>{label}</dt>
-                  <dd style={{ color: '#111827', fontSize: '0.85rem', fontWeight: '500', margin: 0 }}>{value}</dd>
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.45rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>{label}</dt>
+                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: '500', margin: 0, fontFamily: 'var(--font-body)' }}>{value}</dd>
                 </div>
               ))}
             </dl>
           </div>
         </div>
 
+        {/* ══ CONTACT (private) ══ */}
+        {(player.contactName || player.contactPhone || player.agentName) && (
+          <div className="mm-fade-up-1" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid rgba(245,158,11,0.15)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: 0, fontFamily: 'var(--font-body)' }}>Contacto y entorno</h3>
+              <span style={{ background: 'rgba(245,158,11,0.1)', color: '#F59E0B', fontSize: '0.6rem', fontWeight: 700, padding: '1px 8px', borderRadius: 4, letterSpacing: '0.06em', fontFamily: 'var(--font-body)' }}>PRIVADO</span>
+            </div>
+            <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 1.5rem' }}>
+              {player.contactName && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>
+                    {player.contactRelation ? player.contactRelation : 'Contacto'}
+                  </dt>
+                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.contactName}</dd>
+                </div>
+              )}
+              {player.contactPhone && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Teléfono</dt>
+                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.contactPhone}</dd>
+                </div>
+              )}
+              {player.agentName && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Agente</dt>
+                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{player.agentName}</dd>
+                </div>
+              )}
+              {player.contractEnd && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Fin contrato</dt>
+                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>{formatDate(player.contractEnd)}</dd>
+                </div>
+              )}
+              {player.transferInterest && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Interés traspaso</dt>
+                  <dd style={{ color: player.transferInterest === 'si' ? '#22C55E' : player.transferInterest === 'no' ? '#EF4444' : '#F59E0B', fontSize: '0.82rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-body)', textTransform: 'capitalize' }}>
+                    {player.transferInterest === 'si' ? 'Sí' : player.transferInterest === 'no' ? 'No' : 'Desconocido'}
+                  </dd>
+                </div>
+              )}
+              {player.clauseAmount !== undefined && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>
+                  <dt style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>Cláusula</dt>
+                  <dd style={{ color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 500, margin: 0, fontFamily: 'var(--font-body)' }}>
+                    {player.clauseAmount.toLocaleString('es-ES')} €
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </div>
+        )}
+
+        {/* ══ SEASON STATS ══ */}
+        {(player.matchesPlayed !== undefined || player.goals !== undefined || player.assists !== undefined || player.saves !== undefined) && (
+          <div className="mm-fade-up-1" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+            <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Estadísticas de temporada</h3>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {[
+                { label: 'Partidos', value: player.matchesPlayed, color: '#94A3B8' },
+                { label: 'Minutos', value: player.minutesPlayed, color: '#94A3B8' },
+                { label: 'Goles', value: player.goals, color: '#22C55E' },
+                { label: 'Asistencias', value: player.assists, color: '#3B82F6' },
+                { label: 'Amarillas', value: player.yellowCards, color: '#F59E0B' },
+                { label: 'Rojas', value: player.redCards, color: '#EF4444' },
+                ...(player.position === 'Portero' ? [
+                  { label: 'Paradas', value: player.saves, color: '#7C3AED' },
+                  { label: 'Goles encajados', value: player.goalsConceded, color: '#EF4444' },
+                ] : []),
+              ].filter(s => s.value !== undefined).map(stat => (
+                <div key={stat.label} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '0.875rem 1.125rem', border: '1px solid rgba(255,255,255,0.07)', minWidth: '80px', textAlign: 'center' }}>
+                  <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.3rem', fontFamily: 'var(--font-body)' }}>{stat.label}</p>
+                  <p style={{ color: stat.color, fontSize: '1.75rem', fontFamily: 'var(--font-condensed)', margin: 0, lineHeight: 1, fontWeight: 900 }}>{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ══ TAGS + NOTES ══ */}
         {(player.tags.length > 0 || player.privateNotes) && (
           <div style={{ display: 'grid', gridTemplateColumns: player.tags.length && player.privateNotes ? '1fr 1fr' : '1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
             {player.tags.length > 0 && (
-              <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
-                <h3 style={{ color: '#64748B', fontSize: '0.72rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 0.875rem' }}>Etiquetas</h3>
+              <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+                <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 0.875rem', fontFamily: 'var(--font-body)' }}>Etiquetas</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {player.tags.map(tag => (
-                    <span key={tag} style={{ backgroundColor: '#EDE9FE', color: '#5B21B6', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.8rem', fontWeight: '500' }}>
+                    <span key={tag} style={{ backgroundColor: 'rgba(124,58,237,0.15)', color: '#A78BFA', padding: '0.2rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem', fontWeight: '600', border: '1px solid rgba(124,58,237,0.25)', fontFamily: 'var(--font-body)' }}>
                       {tag}
                     </span>
                   ))}
@@ -870,33 +963,104 @@ export default function PlayerDetailPage() {
               </div>
             )}
             {player.privateNotes && (
-              <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.5rem' }}>
-                <h3 style={{ color: '#64748B', fontSize: '0.72rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 0.875rem' }}>Notas privadas</h3>
-                <p style={{ color: '#6B7280', fontSize: '0.875rem', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>{player.privateNotes}</p>
+              <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem' }}>
+                <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 0.875rem', fontFamily: 'var(--font-body)' }}>Notas privadas</h3>
+                <p style={{ color: '#94A3B8', fontSize: '0.875rem', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>{player.privateNotes}</p>
               </div>
             )}
           </div>
         )}
 
+        {/* ══ CLUB HISTORY ══ */}
+        {(player.clubHistory ?? []).length > 0 && (
+          <div className="mm-fade-up-2" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+            <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1.25rem', fontFamily: 'var(--font-body)' }}>Historial de clubes</h3>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {(player.clubHistory ?? []).map((entry, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: 0 }}>
+                  {/* Timeline dot + line */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '28px', flexShrink: 0 }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7C3AED', border: '2px solid rgba(124,58,237,0.3)', flexShrink: 0, marginTop: '0.6rem', boxShadow: '0 0 8px rgba(124,58,237,0.4)' }} />
+                    {idx < (player.clubHistory ?? []).length - 1 && (
+                      <div style={{ width: '1px', flex: 1, background: 'rgba(124,58,237,0.2)', margin: '4px 0', minHeight: '20px' }} />
+                    )}
+                  </div>
+                  {/* Content */}
+                  <div style={{ flex: 1, paddingLeft: '0.875rem', paddingBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
+                      <span style={{ color: '#CBD5E1', fontSize: '0.875rem', fontWeight: 600, fontFamily: 'var(--font-body)' }}>{entry.club}</span>
+                      <span style={{ color: '#475569', fontSize: '0.72rem', background: 'rgba(255,255,255,0.05)', padding: '1px 8px', borderRadius: 4, fontFamily: 'var(--font-body)' }}>{entry.season}</span>
+                      {entry.category && (
+                        <span style={{ color: '#64748B', fontSize: '0.72rem', fontFamily: 'var(--font-body)' }}>{entry.category}</span>
+                      )}
+                    </div>
+                    {(entry.goals !== undefined || entry.assists !== undefined) && (
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.3rem' }}>
+                        {entry.goals !== undefined && (
+                          <span style={{ color: '#22C55E', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>⚽ {entry.goals} goles</span>
+                        )}
+                        {entry.assists !== undefined && (
+                          <span style={{ color: '#3B82F6', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>🅰️ {entry.assists} asistencias</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ══ VIDEO LINKS ══ */}
+        {(player.videoLinks ?? []).length > 0 && (
+          <div className="mm-fade-up-2" style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1.5rem' }}>
+            <h3 style={{ color: '#475569', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 1rem', fontFamily: 'var(--font-body)' }}>Vídeos</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {(player.videoLinks ?? []).map((link, idx) => (
+                <a
+                  key={idx}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '0.75rem',
+                    padding: '0.625rem 0.875rem', borderRadius: '8px',
+                    background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.15)',
+                    textDecoration: 'none', transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(124,58,237,0.12)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(124,58,237,0.06)')}
+                >
+                  <span style={{ fontSize: '1rem' }}>▶</span>
+                  <span style={{ color: '#A78BFA', fontSize: '0.85rem', fontWeight: 600, fontFamily: 'var(--font-body)', flex: 1 }}>{link.label || 'Ver vídeo'}</span>
+                  <span style={{ color: '#475569', fontSize: '0.7rem', fontFamily: 'var(--font-body)' }}>↗</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ══ EVOLUTION CHART ══ */}
         {evoData && (
-          <div className="mm-fade-up-2" style={{ background: '#FFFFFF', borderRadius: '12px',
-            border: '1px solid #E5E7EB', padding: '1.5rem',
+          <div className="mm-fade-up-2" style={{ background: 'var(--navy-2)', borderRadius: '12px',
+            border: '1px solid var(--border)', padding: '1.5rem',
             marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <h2 style={{ color: '#111827', fontSize: '1rem', margin: 0 }}>Evolución del jugador</h2>
+                <h2 style={{ color: '#CBD5E1', fontSize: '0.9rem', margin: 0, fontFamily: 'var(--font-body)', fontWeight: 600 }}>Evolución del jugador</h2>
                 <span style={{
-                  padding: '0.2rem 0.625rem', borderRadius: 999, fontSize: '0.72rem',
+                  padding: '0.2rem 0.625rem', borderRadius: 999, fontSize: '0.7rem',
                   fontWeight: 700, background: evoData.badge.bg, color: evoData.badge.color,
+                  fontFamily: 'var(--font-body)',
                 }}>{evoData.badge.label}</span>
               </div>
               <button onClick={handleEvoAI} disabled={evoAiLoading} style={{
-                background: evoAiLoading ? 'rgba(124,58,237,0.2)' : 'rgba(124,58,237,0.15)',
+                background: evoAiLoading ? 'rgba(124,58,237,0.2)' : 'rgba(124,58,237,0.12)',
                 border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA',
-                padding: '0.35rem 0.875rem', borderRadius: 8, fontSize: '0.78rem',
+                padding: '0.35rem 0.875rem', borderRadius: 8, fontSize: '0.75rem',
                 fontWeight: 600, cursor: evoAiLoading ? 'not-allowed' : 'pointer',
+                fontFamily: 'var(--font-body)',
               }}>
                 {evoAiLoading ? '⏳ Analizando…' : '🤖 Analizar evolución con IA'}
               </button>
@@ -912,7 +1076,7 @@ export default function PlayerDetailPage() {
                       label: 'Valoración del scout',
                       data: evoData.data,
                       borderColor: '#7C3AED',
-                      backgroundColor: 'rgba(124,58,237,0.1)',
+                      backgroundColor: 'rgba(124,58,237,0.08)',
                       fill: true,
                       tension: 0.3,
                       borderWidth: 2.5,
@@ -921,13 +1085,13 @@ export default function PlayerDetailPage() {
                       ),
                       pointRadius: 6,
                       pointHoverRadius: 8,
-                      pointBorderColor: '#FFFFFF',
+                      pointBorderColor: 'rgba(255,255,255,0.15)',
                       pointBorderWidth: 2,
                     },
                     {
                       label: 'Tendencia',
                       data: evoData.trend,
-                      borderColor: 'rgba(124,58,237,0.35)',
+                      borderColor: 'rgba(124,58,237,0.4)',
                       borderWidth: 1.5,
                       borderDash: [6, 4],
                       pointRadius: 0,
@@ -942,18 +1106,28 @@ export default function PlayerDetailPage() {
                   plugins: {
                     legend: {
                       position: 'bottom',
-                      labels: { color: '#64748B', font: { size: 11 }, boxWidth: 12, padding: 10 },
+                      labels: { color: '#475569', font: { size: 11 }, boxWidth: 12, padding: 10 },
+                    },
+                    tooltip: {
+                      backgroundColor: 'rgba(13,21,38,0.95)',
+                      borderColor: 'rgba(124,58,237,0.3)',
+                      borderWidth: 1,
+                      titleColor: '#E2E8F0',
+                      bodyColor: '#94A3B8',
+                      padding: 10,
                     },
                   },
                   scales: {
                     y: {
                       min: 1, max: 10,
-                      ticks: { stepSize: 1, color: '#6B7280', font: { size: 10 } },
-                      grid: { color: 'rgba(0,0,0,0.06)' },
+                      ticks: { stepSize: 1, color: '#475569', font: { size: 10 } },
+                      grid: { color: 'rgba(255,255,255,0.05)' },
+                      border: { color: 'transparent' },
                     },
                     x: {
-                      ticks: { color: '#6B7280', font: { size: 10 } },
-                      grid: { color: 'rgba(0,0,0,0.06)' },
+                      ticks: { color: '#475569', font: { size: 10 } },
+                      grid: { color: 'rgba(255,255,255,0.04)' },
+                      border: { color: 'transparent' },
                     },
                   },
                 }}
@@ -962,13 +1136,13 @@ export default function PlayerDetailPage() {
 
             {evoAiText && (
               <div style={{ marginTop: '1rem', padding: '1rem 1.25rem', borderRadius: 10,
-                background: 'linear-gradient(135deg,rgba(124,58,237,0.1),rgba(124,58,237,0.05))',
-                border: '1px solid rgba(124,58,237,0.25)' }}>
-                <p style={{ color: '#A78BFA', fontSize: '0.68rem', fontWeight: 700,
-                  textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
+                background: 'rgba(124,58,237,0.08)',
+                border: '1px solid rgba(124,58,237,0.2)' }}>
+                <p style={{ color: '#A78BFA', fontSize: '0.67rem', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 0.5rem', fontFamily: 'var(--font-body)' }}>
                   Análisis de evolución IA
                 </p>
-                <p style={{ color: '#374151', fontSize: '0.875rem', lineHeight: 1.7, margin: 0 }}>
+                <p style={{ color: '#94A3B8', fontSize: '0.875rem', lineHeight: 1.75, margin: 0 }}>
                   {evoAiText}
                 </p>
               </div>
@@ -977,16 +1151,16 @@ export default function PlayerDetailPage() {
         )}
 
         {/* ══ VISITS ══ */}
-        <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', overflow: 'hidden' }}>
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ color: '#111827', fontSize: '1rem', margin: 0 }}>
+        <div style={{ background: 'var(--navy-2)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
+          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ color: '#CBD5E1', fontSize: '0.9rem', margin: 0, fontFamily: 'var(--font-body)', fontWeight: 600 }}>
               Historial de visitas
-              <span style={{ color: '#64748B', fontWeight: '400', fontSize: '0.85rem', marginLeft: '0.5rem' }}>({visits.length})</span>
+              <span style={{ color: '#475569', fontWeight: '400', fontSize: '0.82rem', marginLeft: '0.5rem' }}>({visits.length})</span>
             </h2>
           </div>
 
           {/* Add visit form */}
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #E5E7EB', backgroundColor: 'rgba(124,58,237,0.03)' }}>
+          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', backgroundColor: 'rgba(124,58,237,0.05)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div>
                 <label style={labelS}>Fecha</label>
@@ -999,14 +1173,14 @@ export default function PlayerDetailPage() {
             </div>
 
             {/* Valoración slider */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.875rem 1rem', backgroundColor: 'rgba(124,58,237,0.08)', borderRadius: '10px', border: '1px solid rgba(124,58,237,0.2)', marginBottom: '0.75rem' }}>
-              <span style={{ color: '#6B7280', fontSize: '0.8rem', fontWeight: '500', whiteSpace: 'nowrap' }}>¿Cómo lo has visto hoy?</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.875rem 1rem', backgroundColor: 'rgba(124,58,237,0.1)', borderRadius: '10px', border: '1px solid rgba(124,58,237,0.2)', marginBottom: '0.75rem' }}>
+              <span style={{ color: '#64748B', fontSize: '0.78rem', fontWeight: '500', whiteSpace: 'nowrap', fontFamily: 'var(--font-body)' }}>¿Cómo lo has visto hoy?</span>
               <input
                 type="range" min={1} max={10} step={1} value={vValoracion}
                 onChange={e => setVVal(Number(e.target.value))}
                 style={{ flex: 1, accentColor: '#7C3AED' }}
               />
-              <span style={{ fontSize: '1.75rem', fontWeight: '800', color: ratingColor(vValoracion), minWidth: '2rem', textAlign: 'center' }}>{vValoracion}</span>
+              <span style={{ fontSize: '1.875rem', fontWeight: '900', fontFamily: 'var(--font-condensed)', color: ratingColor(vValoracion), minWidth: '2.5rem', textAlign: 'center' }}>{vValoracion}</span>
             </div>
 
             <textarea
@@ -1017,46 +1191,55 @@ export default function PlayerDetailPage() {
               placeholder="Notas: posicionamiento, acciones destacadas, aspectos a mejorar..."
             />
 
-            {visitError && <p style={{ color: '#EF4444', fontSize: '0.78rem', marginBottom: '0.5rem' }}>{visitError}</p>}
+            {visitError && <p style={{ color: '#F87171', fontSize: '0.78rem', marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>{visitError}</p>}
 
             <button onClick={handleAddVisit} disabled={savingVisit}
-              style={{ backgroundColor: savingVisit ? '#5B21B6' : '#7C3AED', color: 'white', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: '600', cursor: savingVisit ? 'not-allowed' : 'pointer' }}>
+              style={{ backgroundColor: savingVisit ? '#5B21B6' : '#7C3AED', color: 'white', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: '600', cursor: savingVisit ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)', boxShadow: savingVisit ? 'none' : '0 4px 12px rgba(124,58,237,0.3)' }}>
               {savingVisit ? 'Guardando...' : '+ Añadir visita'}
             </button>
           </div>
 
           {/* Visit list */}
           {visits.length === 0 ? (
-            <p style={{ color: '#64748B', fontSize: '0.875rem', textAlign: 'center', padding: '2.5rem' }}>
+            <p style={{ color: '#475569', fontSize: '0.875rem', textAlign: 'center', padding: '2.5rem', fontFamily: 'var(--font-body)' }}>
               Sin visitas registradas todavía. ¡Añade la primera!
             </p>
           ) : (
-            <div style={{ padding: '0.5rem 0' }}>
-              {visits.map(v => (
-                <div key={v.id}
-                  style={{ borderLeft: `3px solid rgba(124,58,237,0.4)`, margin: '0 1.5rem', padding: '0.875rem 1rem', marginBottom: '0.5rem', borderRadius: '0 8px 8px 0', backgroundColor: '#F9FAFB', position: 'relative' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.375rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
-                      <span style={{ color: '#6B7280', fontSize: '0.8rem', fontWeight: '600' }}>
-                        📅 {v.fecha}
-                      </span>
-                      <span style={{ color: '#111827', fontSize: '0.85rem', fontWeight: '600' }}>{v.partido}</span>
-                      {v.valoracion > 0 && (
-                        <span style={{ fontSize: '0.75rem', fontWeight: '800', color: ratingColor(v.valoracion), backgroundColor: ratingBg(v.valoracion), padding: '1px 8px', borderRadius: '6px' }}>
-                          {v.valoracion}/10
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => setConfirmVisit(v)}
-                      style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '13px', padding: '2px 6px', borderRadius: '4px', lineHeight: 1 }}
-                      onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
-                      onMouseLeave={e => (e.currentTarget.style.color = '#64748B')}
-                    >✕</button>
+            <div style={{ padding: '0.75rem 0' }}>
+              {visits.map((v, idx) => (
+                <div key={v.id} style={{ position: 'relative', display: 'flex', gap: '0', margin: '0 1.5rem', marginBottom: idx < visits.length - 1 ? '0' : '0' }}>
+                  {/* Timeline connector */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '28px', flexShrink: 0, paddingTop: '0.875rem' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7C3AED', border: '2px solid rgba(124,58,237,0.3)', flexShrink: 0, boxShadow: '0 0 8px rgba(124,58,237,0.4)' }} />
+                    {idx < visits.length - 1 && (
+                      <div style={{ width: '1px', flex: 1, background: 'rgba(124,58,237,0.2)', margin: '4px 0', minHeight: '20px' }} />
+                    )}
                   </div>
-                  {v.nota && (
-                    <p style={{ color: '#374151', fontSize: '0.85rem', lineHeight: 1.65, margin: 0, whiteSpace: 'pre-wrap' }}>{v.nota}</p>
-                  )}
+                  {/* Visit content */}
+                  <div style={{ flex: 1, padding: '0.75rem 0.875rem', marginBottom: '0.25rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#475569', fontSize: '0.72rem', fontWeight: '600', fontFamily: 'var(--font-body)', letterSpacing: '0.03em' }}>
+                          {v.fecha}
+                        </span>
+                        <span style={{ color: '#CBD5E1', fontSize: '0.85rem', fontWeight: '600', fontFamily: 'var(--font-body)' }}>{v.partido}</span>
+                        {v.valoracion > 0 && (
+                          <span style={{ fontSize: '0.72rem', fontWeight: '800', fontFamily: 'var(--font-condensed)', color: ratingColor(v.valoracion), backgroundColor: ratingBg(v.valoracion), padding: '1px 8px', borderRadius: '5px', letterSpacing: '0.02em' }}>
+                            {v.valoracion}/10
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => setConfirmVisit(v)}
+                        style={{ background: 'none', border: 'none', color: '#334155', cursor: 'pointer', fontSize: '12px', padding: '2px 6px', borderRadius: '4px', lineHeight: 1 }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#F87171')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#334155')}
+                      >✕</button>
+                    </div>
+                    {v.nota && (
+                      <p style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'var(--font-body)' }}>{v.nota}</p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1067,18 +1250,18 @@ export default function PlayerDetailPage() {
 
       {/* ── Delete visit modal ── */}
       {confirmVisit && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '1rem' }}>
-          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '2rem', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
-            <h2 style={{ color: '#111827', fontSize: '1rem', fontWeight: '700', marginBottom: '0.5rem' }}>¿Eliminar visita?</h2>
-            <p style={{ color: '#374151', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-              <strong style={{ color: '#111827' }}>{confirmVisit.partido}</strong>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '1rem', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'var(--navy-2)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', padding: '2rem', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.7)' }}>
+            <h2 style={{ color: '#E2E8F0', fontSize: '1rem', fontWeight: '700', marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>¿Eliminar visita?</h2>
+            <p style={{ color: '#94A3B8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+              <strong style={{ color: '#CBD5E1' }}>{confirmVisit.partido}</strong>
             </p>
-            <p style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '1.5rem' }}>{confirmVisit.fecha}</p>
+            <p style={{ color: '#475569', fontSize: '0.8rem', marginBottom: '1.5rem', fontFamily: 'var(--font-body)' }}>{confirmVisit.fecha}</p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-              <button onClick={() => setConfirmVisit(null)} style={{ backgroundColor: 'transparent', color: '#374151', border: '1px solid #E5E7EB', padding: '0.625rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', cursor: 'pointer' }}>
+              <button onClick={() => setConfirmVisit(null)} style={{ backgroundColor: 'transparent', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.1)', padding: '0.625rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
                 Cancelar
               </button>
-              <button onClick={handleDeleteVisit} style={{ backgroundColor: '#EF4444', color: 'white', border: 'none', padding: '0.625rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }}>
+              <button onClick={handleDeleteVisit} style={{ backgroundColor: '#EF4444', color: 'white', border: 'none', padding: '0.625rem 1.25rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer', fontFamily: 'var(--font-body)', boxShadow: '0 4px 12px rgba(239,68,68,0.3)' }}>
                 Eliminar
               </button>
             </div>

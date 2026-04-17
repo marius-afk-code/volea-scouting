@@ -24,7 +24,15 @@
       "Bash(ls:*)",
       "Bash(grep -v \"node_modules\\\\|\\\\.next\\\\|YYYY-MM\\\\|//.*MM\\\\|className\\\\|fontFamily\\\\|css\\\\|--font\")",
       "Bash(grep -v \"//.*leaflet\")",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(node -e \"console.log\\(require\\(''./node_modules/firebase/package.json''\\).version\\)\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep -rn \"MM Scouting\\\\|mm-scouting\\\\b\\\\|Mario Martínez Scouting\" --include=*.ts --include=*.tsx --include=*.json --include=*.html .)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(grep -rn console.logb --include=*.ts --include=*.tsx src/)"
     ]
   },
   "enableAllProjectMcpServers": true,

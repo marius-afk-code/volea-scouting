@@ -223,6 +223,8 @@ export default function AlertsPage() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [loadError, setLoadError] = useState('');
+  const [actionError, setActionError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<Alert | null>(null);
 
   const today = todayISO();
@@ -241,7 +243,7 @@ export default function AlertsPage() {
     if (!user) return;
     Promise.all([getPlayers(user.uid), getAlerts(user.uid)])
       .then(([ps, as]) => { setPlayers(ps); setAlerts(as); })
-      .catch(err => console.error('alerts load error:', err))
+      .catch(err => { console.error('alerts load error:', err); setLoadError('Error al cargar alertas. Recarga la página.'); })
       .finally(() => setLoadingData(false));
   }, [user, isDemo]);
 
@@ -268,46 +270,70 @@ export default function AlertsPage() {
 
   const handleComplete = async (a: Alert) => {
     if (!user) return;
+    setActionError('');
     try {
       await completeAlertFn(user.uid, a.id);
       setAlerts(prev => prev.map(x => x.id === a.id ? { ...x, done: true, doneAt: new Date().toISOString() } : x));
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      setActionError('No se pudo completar la alerta. Inténtalo de nuevo.');
+    }
   };
 
   const handlePostpone = async (a: Alert) => {
     if (!user) return;
+    setActionError('');
     try {
       await postponeAlertFn(user.uid, a.id, a.date);
       const base = a.date ? new Date(a.date + 'T00:00:00') : new Date();
       base.setDate(base.getDate() + 7);
       const newDate = base.toISOString().split('T')[0];
       setAlerts(prev => prev.map(x => x.id === a.id ? { ...x, date: newDate } : x));
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      setActionError('No se pudo posponer la alerta. Inténtalo de nuevo.');
+    }
   };
 
   const handleSnooze = async (a: Alert, days: number) => {
     if (!user) return;
+    setActionError('');
     try {
       const until = new Date(); until.setDate(until.getDate() + days);
       const snoozedUntil = until.toISOString().split('T')[0];
       await updateAlert(user.uid, a.id, { snoozedUntil });
       setAlerts(prev => prev.map(x => x.id === a.id ? { ...x, snoozedUntil } : x));
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      setActionError('No se pudo posponer la alerta. Inténtalo de nuevo.');
+    }
   };
 
   const handleDelete = async (a: Alert) => {
     if (!user) return;
     setConfirmDelete(null);
+    setActionError('');
     try {
       await deleteAlertFn(user.uid, a.id);
       setAlerts(prev => prev.filter(x => x.id !== a.id));
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      setActionError('No se pudo eliminar la alerta. Inténtalo de nuevo.');
+    }
   };
 
   if (loading || loadingData) {
     return (
       <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#475569' }}>Cargando…</p>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#F87171', fontFamily: 'var(--font-body)' }}>{loadError}</p>
       </main>
     );
   }
@@ -354,6 +380,16 @@ export default function AlertsPage() {
       {/* ── White content panel ── */}
       <div style={{ background: '#FFFFFF', borderRadius: '2rem 2rem 0 0', marginTop: '-1.5rem', boxShadow: '0 -12px 40px rgba(0,0,0,0.18)', minHeight: '60vh', paddingTop: '2rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', position: 'relative', zIndex: 10 }}>
       <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0' }}>
+
+        {actionError && (
+          <div style={{
+            marginBottom: '1rem', padding: '0.625rem 1rem', borderRadius: '8px',
+            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+            color: '#DC2626', fontSize: '0.825rem', fontFamily: 'var(--font-body)',
+          }}>
+            {actionError}
+          </div>
+        )}
 
         {/* Create form */}
         <SectionCard title="Nueva alerta" className="mm-fade-up-1">
