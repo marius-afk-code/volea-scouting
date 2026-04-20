@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth } from '@/lib/firebase-admin';
-import { checkLimit, incrementUsage } from '@/lib/plans';
 
 // ─── Verificar token Firebase ──────────────────────────────────────────────
 
@@ -29,19 +28,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 2. Verificar plan y límite mensual de IA
-  const check = await checkLimit(userId, 'aiCalls');
-  if (!check.allowed) {
-    return NextResponse.json(
-      {
-        error: 'Has alcanzado el límite mensual de análisis IA de tu plan.',
-        used: check.used,
-        limit: check.limit,
-        upgradeRequired: true,
-      },
-      { status: 403 }
-    );
-  }
+  // 2. (checkLimit desactivado temporalmente hasta que LemonSqueezy esté activo)
 
   // 3. Validar API key de Anthropic
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -91,11 +78,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: data.error.message }, { status: 400 });
     }
 
-    // 6. Incrementar contador solo si la llamada fue exitosa
-    await incrementUsage(userId, 'aiCalls');
-
     const text = data.content?.find(b => b.type === 'text')?.text ?? '';
-    return NextResponse.json({ text, remaining: check.remaining === -1 ? null : check.remaining - 1 });
+    return NextResponse.json({ text });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Error desconocido';
     return NextResponse.json({ error: msg }, { status: 500 });
