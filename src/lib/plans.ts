@@ -101,10 +101,18 @@ export function currentMonthKey(): string {
 export async function getUserPlan(userId: string): Promise<PlanId> {
   const db = adminDb();
   const snap = await db.collection('users').doc(userId).get();
-  if (!snap.exists) return 'free';
+  if (!snap.exists) {
+    console.log('[plans] getUserPlan: documento no encontrado para userId:', userId, '→ free');
+    return 'free';
+  }
   const data = snap.data();
   const plan = data?.plan as PlanId | undefined;
-  if (!plan || !(plan in PLANS)) return 'free';
+  console.log('[plans] getUserPlan userId:', userId, '→ plan en Firestore:', plan);
+  if (!plan || !(plan in PLANS)) {
+    // Documento existe pero sin campo plan válido — fallback elite para no bloquear usuarios legítimos
+    console.log('[plans] getUserPlan: plan inválido o ausente, usando fallback elite');
+    return 'elite';
+  }
   return plan;
 }
 
@@ -150,6 +158,7 @@ export interface LimitCheck {
 }
 
 export async function checkLimit(userId: string, feature: 'aiCalls' | 'pdfExports' | 'cvExports'): Promise<LimitCheck> {
+  console.log('[plans] checkLimit userId:', userId, 'feature:', feature);
   const [planId, usage] = await Promise.all([getUserPlan(userId), getMonthlyUsage(userId)]);
   const limits = PLANS[planId].limits;
   const limit = limits[feature];
