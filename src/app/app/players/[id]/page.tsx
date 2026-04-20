@@ -53,7 +53,10 @@ function formatDate(iso: string): string {
   } catch { return iso; }
 }
 
-function metricLabel(key: string): string {
+function metricLabel(key: string, isGk = false): string {
+  if (isGk) {
+    return { technical: 'Téc. portero', tactical: 'Juego aéreo', physical: 'Juego con pies', attitude: 'Actitud' }[key] ?? key;
+  }
   return { technical: 'Técnica', tactical: 'Táctica', physical: 'Físico', attitude: 'Actitud' }[key] ?? key;
 }
 
@@ -687,6 +690,7 @@ export default function PlayerDetailPage() {
 
   const avg = avgMetrics(player);
   const sc  = STATUS_CONFIG[player.status] ?? STATUS_CONFIG.espera;
+  const isGk = player.position === 'Portero';
 
   return (
     <main style={{ minHeight: '100vh', background: '#FAFAFA' }}>
@@ -813,7 +817,7 @@ export default function PlayerDetailPage() {
                 const c = metricColor(key);
                 return (
                   <div key={key} style={{ background: '#F9FAFB', borderRadius: '10px', padding: '0.75rem', textAlign: 'center', border: `1px solid ${c}22` }}>
-                    <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.2rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key)}</p>
+                    <p style={{ color: '#475569', fontSize: '0.6rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 0.2rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key, isGk)}</p>
                     <p style={{ color: c, fontSize: '1.875rem', fontFamily: 'var(--font-condensed)', margin: 0, lineHeight: 1, fontWeight: 900 }}>{v}</p>
                     <div style={{ marginTop: '0.5rem', height: '3px', borderRadius: '2px', backgroundColor: '#E5E7EB' }}>
                       <div className="mm-bar-animated" style={{ height: '3px', borderRadius: '2px', backgroundColor: c, width: `${v * 10}%`, boxShadow: `0 0 8px ${c}60` }} />
@@ -829,7 +833,7 @@ export default function PlayerDetailPage() {
               return (
                 <div key={key} style={{ marginBottom: '0.625rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                    <span style={{ color: '#64748B', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key)}</span>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', fontFamily: 'var(--font-body)' }}>{metricLabel(key, isGk)}</span>
                     <span style={{ color: c, fontSize: '0.75rem', fontWeight: '700', fontFamily: 'var(--font-condensed)' }}>{v}/10</span>
                   </div>
                   <div style={{ height: '5px', backgroundColor: '#E5E7EB', borderRadius: '999px', overflow: 'hidden' }}>
@@ -931,14 +935,15 @@ export default function PlayerDetailPage() {
               const stats = [
                 { label: 'Partidos', value: player.matchesPlayed, color: '#94A3B8' },
                 { label: 'Minutos', value: player.minutesPlayed, color: '#94A3B8' },
-                { label: 'Goles', value: player.goals, color: '#22C55E' },
-                { label: 'Asistencias', value: player.assists, color: '#3B82F6' },
-                { label: 'Amarillas', value: player.yellowCards, color: '#F59E0B' },
-                { label: 'Rojas', value: player.redCards, color: '#EF4444' },
-                ...(player.position === 'Portero' ? [
+                ...(isGk ? [
                   { label: 'Paradas', value: player.saves, color: '#7C3AED' },
                   { label: 'Goles encajados', value: player.goalsConceded, color: '#EF4444' },
-                ] : []),
+                ] : [
+                  { label: 'Goles', value: player.goals, color: '#22C55E' },
+                  { label: 'Asistencias', value: player.assists, color: '#3B82F6' },
+                ]),
+                { label: 'Amarillas', value: player.yellowCards, color: '#F59E0B' },
+                { label: 'Rojas', value: player.redCards, color: '#EF4444' },
               ].filter(s => s.value !== undefined);
               return stats.length > 0 ? (
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>

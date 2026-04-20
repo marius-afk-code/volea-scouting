@@ -27,6 +27,13 @@ const METRIC_LABELS: { key: keyof Player['metrics']; label: string; color: strin
   { key: 'attitude',  label: 'Actitud',  color: '#F59E0B' },
 ];
 
+const GK_METRIC_LABELS: { key: keyof Player['metrics']; label: string; color: string }[] = [
+  { key: 'technical', label: 'Técnica de portero', color: '#7C3AED' },
+  { key: 'tactical',  label: 'Juego aéreo',         color: '#3B82F6' },
+  { key: 'physical',  label: 'Juego con pies',       color: '#10B981' },
+  { key: 'attitude',  label: 'Actitud',               color: '#F59E0B' },
+];
+
 const PRESET_TAGS = [
   'Rápido', 'Líder', 'Goleador', 'Creativo', 'Lesionado', 'Canterano',
   'Polivalente', 'Disciplinado', 'Técnico', 'Físico', 'Zurdo',
@@ -74,6 +81,44 @@ const DETAILED_GROUPS: {
       { key: 'leadership',      label: 'Liderazgo' },
       { key: 'competitiveness', label: 'Competitividad' },
       { key: 'coachability',    label: 'Receptividad al entrenador' },
+    ],
+  },
+];
+
+const GK_DETAILED_GROUPS: typeof DETAILED_GROUPS = [
+  {
+    dim: 'technical', label: 'Técnica de portero', color: '#7C3AED',
+    subs: [
+      { key: 'passing',   label: 'Paradas a pie' },
+      { key: 'control',   label: 'Paradas en salida' },
+      { key: 'vision',    label: 'Reflejos' },
+      { key: 'dribbling', label: 'Posicionamiento' },
+    ],
+  },
+  {
+    dim: 'tactical', label: 'Juego aéreo', color: '#3B82F6',
+    subs: [
+      { key: 'balance',    label: 'Despeje de puños' },
+      { key: 'transition', label: 'Interceptación' },
+      { key: 'recovery',   label: 'Dominio del área' },
+      { key: 'creation',   label: 'Salidas' },
+    ],
+  },
+  {
+    dim: 'physical', label: 'Juego con pies', color: '#10B981',
+    subs: [
+      { key: 'speed',      label: 'Pase corto' },
+      { key: 'resistance', label: 'Pase largo' },
+      { key: 'strength',   label: 'Distribución bajo presión' },
+      { key: 'jump',       label: 'Saque de meta' },
+    ],
+  },
+  {
+    dim: 'attitude', label: 'Actitud', color: '#F59E0B',
+    subs: [
+      { key: 'leadership',      label: 'Liderazgo' },
+      { key: 'competitiveness', label: 'Comunicación' },
+      { key: 'coachability',    label: 'Concentración' },
     ],
   },
 ];
@@ -288,6 +333,7 @@ export default function EditPlayerPage() {
         ...editForm,
         photoBase64,
         tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean),
+        isGoalkeeper: (editForm.position ?? player.position) === 'Portero',
       });
       router.push(`/app/players/${player.id}`);
     } catch (err: unknown) {
@@ -524,7 +570,7 @@ export default function EditPlayerPage() {
             </p>
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {METRIC_LABELS.map(({ key, label, color }) => {
+            {(isGoalkeeper ? GK_METRIC_LABELS : METRIC_LABELS).map(({ key, label, color }) => {
               const val = editForm.metrics?.[key] ?? 5;
               return (
                 <div key={key}>
@@ -569,7 +615,7 @@ export default function EditPlayerPage() {
 
           {showDetailedMetrics && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-              {DETAILED_GROUPS.map(({ dim, label, color, subs }) => (
+              {(isGoalkeeper ? GK_DETAILED_GROUPS : DETAILED_GROUPS).map(({ dim, label, color, subs }) => (
                 <div key={dim}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.875rem' }}>
                     <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
