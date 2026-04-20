@@ -6,6 +6,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getPlayer, updatePlayer } from '@/lib/players';
+import { auth } from '@/lib/firebase';
 import { DEMO_PLAYERS } from '@/lib/demo-data';
 import { Player, DetailedMetrics } from '@/types/player';
 
@@ -727,7 +728,8 @@ export default function CvPage() {
     if (!aiDone) {
       // Phase 1 — AI generates professional description from all player data
       try {
-        const token = user ? await user.getIdToken() : null;
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error('no token');
 
         // Top-3 subcategories from detailedMetrics
         let top3dm = '';
@@ -768,8 +770,10 @@ ${statsLine ? 'ESTADÍSTICAS: ' + statsLine : ''}${historyStr ? '\nTRAYECTORIA: 
 
 Genera la descripción profesional del jugador:`;
 
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        };
 
         const res = await fetch('/api/claude', { method: 'POST', headers, body: JSON.stringify({ prompt, maxTokens: 300 }) });
         const data = await res.json() as { text?: string };
