@@ -197,18 +197,11 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, logoU
       </div>
     </div>`;
 
-  // Perfil — grows to fill remaining left space when no detailed metrics
+  // Perfil — left column, fixed height
   const profileSection = hasProfile ? `
-    <div class="sec${!hasDetailedMetrics ? ' sec-grow' : ''}">
+    <div class="sec">
       <div class="sec-title">Perfil del jugador</div>
       <div class="profile-text">${esc(profileText)}</div>
-    </div>` : '';
-
-  // Métricas detalladas — only if exists
-  const detailedMetricsSection = hasDetailedMetrics ? `
-    <div class="sec sec-grow">
-      <div class="sec-title">Métricas detalladas</div>
-      <div class="dm-wrap">${buildDetailedMetrics(player.detailedMetrics!)}</div>
     </div>` : '';
 
   // Trayectoria — clubHistory preferred, fallback to cvClubs
@@ -250,13 +243,11 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, logoU
       </div>
     </div>` : '';
 
-  // Left column grows from profile if no detailedMetrics, or from detailedMetrics if exists
-  // If no profile either, datos personales grows via sec-grow
-  const datosClass = (!hasProfile && !hasDetailedMetrics) ? ' sec-grow' : '';
-  const datosSection = datosHtml.replace('<div class="sec">', `<div class="sec${datosClass}">`);
+  const datosSection = datosHtml;
 
   // ── RIGHT COLUMN sections ──
 
+  // Valoración técnica: radar + main bars + detailed metrics (if exists) all in one visual block
   const metricSection = `
     <div class="sec">
       <div class="sec-title">Valoración técnica</div>
@@ -264,10 +255,11 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, logoU
         <div style="flex-shrink:0">${radarSvg}</div>
         <div class="bars-col">${barsHtml}</div>
       </div>
+      ${hasDetailedMetrics ? `<div class="dm-divider"></div><div class="dm-wrap">${buildDetailedMetrics(player.detailedMetrics!)}</div>` : ''}
     </div>`;
 
   const tagsSection = hasTags ? `
-    <div class="sec sec-grow">
+    <div class="sec">
       <div class="sec-title">Cualidades técnicas</div>
       <ul class="qual-list">
         ${player.tags.map(t => `<li>${esc(t)}</li>`).join('')}
@@ -275,7 +267,7 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, logoU
     </div>` : '';
 
   const highlightsSection = `
-    <div class="sec${!hasTags ? ' sec-grow' : ''}">
+    <div class="sec">
       <div class="sec-title">Puntos destacados</div>
       <div class="highlights">
         ${topHighlights.map(h => `
@@ -289,8 +281,9 @@ function buildCvHtml(player: Player, clubs: CvClub[], description: string, logoU
       </div>
     </div>`;
 
+  // Contact pinned to bottom of right column with margin-top:auto
   const contactSection = hasContact ? `
-    <div class="sec">
+    <div class="sec" style="margin-top:auto">
       <div class="sec-title">Contacto y representación</div>
       ${player.contactName ? `<div class="ct-row"><span class="ct-lbl">${esc(player.contactRelation || 'Contacto')}</span><span class="ct-val">${esc(player.contactName)}${player.contactPhone ? ' · ' + esc(player.contactPhone) : ''}</span></div>` : ''}
       ${player.agentName   ? `<div class="ct-row"><span class="ct-lbl">Agente</span><span class="ct-val">${esc(player.agentName)}</span></div>` : ''}
@@ -410,33 +403,22 @@ body {
   flex: 1; display: flex; min-height: 0; overflow: hidden;
 }
 
-/* LEFT SIDEBAR (42%) */
+/* LEFT SIDEBAR (40%) — narrative, whitespace at bottom is OK */
 .col-l {
-  width: 42%; min-width: 0;
+  width: 40%; min-width: 0;
   padding: 13px 10px 12px 18px;
   background: #F7F8FA;
   border-right: 1.5px solid #E2E8F0;
   display: flex; flex-direction: column; overflow: hidden;
 }
 
-/* RIGHT MAIN (58%) */
+/* RIGHT MAIN (60%) — technical, flex-start, contact pinned to bottom */
 .col-r {
-  width: 58%; min-width: 0;
+  width: 60%; min-width: 0;
   padding: 13px 18px 12px 12px;
   background: #ffffff;
   display: flex; flex-direction: column; overflow: hidden;
-  justify-content: space-between;
-}
-.col-r .sec,
-.col-r .sec-grow {
-  flex: 1; min-height: 0;
-  display: flex; flex-direction: column;
-  margin-bottom: 0; padding-bottom: 8px;
-  border-bottom: 1px solid #EEF0F4;
-}
-.col-r .sec:last-child,
-.col-r .sec-grow:last-child {
-  border-bottom: none; padding-bottom: 0;
+  justify-content: flex-start;
 }
 
 /* ── SECTIONS ── */
@@ -486,7 +468,8 @@ body {
 }
 
 /* ── DETAILED METRICS ── */
-.dm-wrap { flex: 1; overflow: hidden; }
+.dm-divider { height: 1px; background: #EDE9FE; margin: 9px 0 8px; }
+.dm-wrap { overflow: hidden; }
 .dmg { margin-bottom: 7px; }
 .dmg:last-child { margin-bottom: 0; }
 .dmg-title {
@@ -628,16 +611,15 @@ body {
   <!-- BODY -->
   <div class="body">
 
-    <!-- LEFT 42% — Sidebar -->
+    <!-- LEFT 40% — Narrative -->
     <div class="col-l">
       ${datosSection}
       ${profileSection}
-      ${detailedMetricsSection}
       ${trayectoriaSection}
       ${statsSection}
     </div>
 
-    <!-- RIGHT 58% — Main -->
+    <!-- RIGHT 60% — Technical -->
     <div class="col-r">
       ${metricSection}
       ${tagsSection}
