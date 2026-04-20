@@ -758,17 +758,12 @@ export default function CvPage() {
           player.minutesPlayed != null ? `${player.minutesPlayed} min` : '',
         ].filter(Boolean).join(' · ');
 
-        const prompt = `Eres un redactor de informes de scouting de fútbol base profesional. Genera una descripción profesional, en tercera persona, fluida y concisa (máximo 80 palabras) del siguiente jugador. No inventes datos; usa solo la información proporcionada.
+        const prompt = `Eres un scout de fútbol base con años de experiencia. Escribe un perfil breve y directo de este jugador en máximo 75 palabras. Tono profesional pero natural, como lo escribiría alguien que conoce al jugador de primera mano. Usa datos concretos de las métricas y estadísticas. No exageres. No uses Markdown, asteriscos ni negritas. Solo texto plano en español.
 
-JUGADOR: ${player.name}
-Posición: ${player.position} | Club: ${player.club || '—'} | Categoría: ${player.category || '—'}${player.division ? ' · ' + player.division : ''}
-Edad: ${calcAge(player.birthDate)} años | Pie: ${player.foot}${player.height ? ' | ' + player.height + ' cm' : ''}${player.weight ? ' · ' + player.weight + ' kg' : ''}
+JUGADOR: ${player.name} | ${player.position} | ${player.club || '—'} | ${player.category || '—'} | ${calcAge(player.birthDate)} años | Pie ${player.foot}
+MÉTRICAS: Técnica ${player.metrics.technical}/10 · Táctica ${player.metrics.tactical}/10 · Físico ${player.metrics.physical}/10 · Actitud ${player.metrics.attitude}/10${top3dm ? '\nDestacado en: ' + top3dm : ''}${statsLine ? '\nTemporada: ' + statsLine : ''}${historyStr ? '\nTRAYECTORIA: ' + historyStr : ''}${description.trim() ? '\nNOTAS DEL SCOUT: ' + description : ''}${player.tags.length ? '\nETIQUETAS: ' + player.tags.join(', ') : ''}
 
-VALORACIÓN GLOBAL: ${avgMetrics(player)}/10
-Técnica: ${player.metrics.technical}/10 | Táctica: ${player.metrics.tactical}/10 | Físico: ${player.metrics.physical}/10 | Actitud: ${player.metrics.attitude}/10${top3dm ? '\nMejores cualidades: ' + top3dm : ''}
-${statsLine ? 'ESTADÍSTICAS: ' + statsLine : ''}${historyStr ? '\nTRAYECTORIA: ' + historyStr : ''}${player.tags.length ? '\nCUALIDADES: ' + player.tags.join(', ') : ''}${description.trim() ? '\nNOTAS DEL SCOUT: ' + description : ''}
-
-Genera la descripción profesional del jugador:`;
+Escribe SOLO el perfil. Sin título, sin introducción, sin explicaciones.`;
 
         const headers = {
           'Content-Type': 'application/json',
