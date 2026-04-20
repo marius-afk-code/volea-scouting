@@ -11,7 +11,8 @@ async function verifyToken(req: NextRequest): Promise<string | null> {
   try {
     const decoded = await adminAuth().verifyIdToken(token);
     return decoded.uid;
-  } catch {
+  } catch (err) {
+    console.error('[claude] verifyIdToken failed:', err);
     return null;
   }
 }
