@@ -13,6 +13,15 @@ import { Player, DetailedMetrics } from '@/types/player';
 
 interface CvClub { club: string; etapa: string; categoria: string; }
 
+// ─── Labels para métricas detalladas ───────────────────────────────────────
+
+const DETAILED_LABELS: Record<string, string> = {
+  passing: 'Pase', control: 'Control', vision: 'Visión', dribbling: 'Regate', pressing: 'Pressing',
+  balance: 'Equilibrio', transition: 'Transición', recovery: 'Recuperación', creation: 'Creación', highPress: 'Presión alta',
+  speed: 'Velocidad', resistance: 'Resistencia', strength: 'Fuerza', jump: 'Salto',
+  leadership: 'Liderazgo', competitiveness: 'Competitividad', coachability: 'Entrenabilidad',
+};
+
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function avgMetrics(p: Player) {
@@ -669,7 +678,8 @@ export default function CvPage() {
   const [clubs, setClubs]              = useState<CvClub[]>([]);
   const [newClub, setNewClub]          = useState({ club: '', etapa: '', categoria: '' });
   const [description, setDescription]  = useState('');
-  const [polishing, setPolishing]      = useState(false);
+  const [aiDone, setAiDone]            = useState(false);
+  const [aiImproved, setAiImproved]    = useState(false);
   const [generating, setGenerating]    = useState(false);
 
   useEffect(() => {
@@ -713,31 +723,74 @@ export default function CvPage() {
   async function handleGenerate() {
     if (!player) return;
     setGenerating(true);
-    let polishedDesc = description;
 
-    if (description.trim()) {
-      setPolishing(true);
+    if (!aiDone) {
+      // Phase 1 — AI generates professional description from all player data
       try {
-        const res = await fetch('/api/claude', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: `Eres un redactor de informes de fútbol base profesional. Reescribe esta descripción de un jugador de forma profesional, en tercera persona, fluida y concisa (máximo 80 palabras). No inventes datos, solo mejora la redacción y el estilo:\n\n"${description}"\n\nJugador: ${player.name}, ${player.position}, ${player.category}. Nota global: ${avgMetrics(player)}/10.`,
-            maxTokens: 300,
-          }),
-        });
+        const token = user ? await user.getIdToken() : null;
+
+        // Top-3 subcategories from detailedMetrics
+        let top3dm = '';
+        if (player.detailedMetrics) {
+          const dm = player.detailedMetrics;
+          const allSubs = [
+            ...Object.entries(dm.technical).map(([k, v]) => ({ label: DETAILED_LABELS[k] ?? k, val: v as number })),
+            ...Object.entries(dm.tactical).map(([k, v]) => ({ label: DETAILED_LABELS[k] ?? k, val: v as number })),
+            ...Object.entries(dm.physical).map(([k, v]) => ({ label: DETAILED_LABELS[k] ?? k, val: v as number })),
+            ...Object.entries(dm.attitude).map(([k, v]) => ({ label: DETAILED_LABELS[k] ?? k, val: v as number })),
+          ];
+          top3dm = allSubs.sort((a, b) => b.val - a.val).slice(0, 3).map(s => `${s.label} (${s.val}/10)`).join(', ');
+        }
+
+        // Club history string
+        const historyStr = player.clubHistory?.length
+          ? player.clubHistory.map(e => `${e.club} (${e.category}${e.season ? ', ' + e.season : ''})`).join('; ')
+          : clubs.length
+            ? clubs.map(c => `${c.club} (${c.etapa}${c.categoria ? ', ' + c.categoria : ''})`).join('; ')
+            : '';
+
+        const statsLine = [
+          player.matchesPlayed != null ? `${player.matchesPlayed} partidos` : '',
+          player.goals         != null ? `${player.goals} goles` : '',
+          player.assists       != null ? `${player.assists} asistencias` : '',
+          player.minutesPlayed != null ? `${player.minutesPlayed} min` : '',
+        ].filter(Boolean).join(' · ');
+
+        const prompt = `Eres un redactor de informes de scouting de fútbol base profesional. Genera una descripción profesional, en tercera persona, fluida y concisa (máximo 80 palabras) del siguiente jugador. No inventes datos; usa solo la información proporcionada.
+
+JUGADOR: ${player.name}
+Posición: ${player.position} | Club: ${player.club || '—'} | Categoría: ${player.category || '—'}${player.division ? ' · ' + player.division : ''}
+Edad: ${calcAge(player.birthDate)} años | Pie: ${player.foot}${player.height ? ' | ' + player.height + ' cm' : ''}${player.weight ? ' · ' + player.weight + ' kg' : ''}
+
+VALORACIÓN GLOBAL: ${avgMetrics(player)}/10
+Técnica: ${player.metrics.technical}/10 | Táctica: ${player.metrics.tactical}/10 | Físico: ${player.metrics.physical}/10 | Actitud: ${player.metrics.attitude}/10${top3dm ? '\nMejores cualidades: ' + top3dm : ''}
+${statsLine ? 'ESTADÍSTICAS: ' + statsLine : ''}${historyStr ? '\nTRAYECTORIA: ' + historyStr : ''}${player.tags.length ? '\nCUALIDADES: ' + player.tags.join(', ') : ''}${description.trim() ? '\nNOTAS DEL SCOUT: ' + description : ''}
+
+Genera la descripción profesional del jugador:`;
+
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch('/api/claude', { method: 'POST', headers, body: JSON.stringify({ prompt, maxTokens: 300 }) });
         const data = await res.json() as { text?: string };
-        if (data.text) polishedDesc = data.text.trim();
-      } catch { /* keep original */ }
-      finally { setPolishing(false); }
+        if (data.text) {
+          setDescription(data.text.trim());
+          setAiImproved(true);
+        }
+      } catch { /* keep existing description, no interruption */ }
+
+      setAiDone(true);
+      setGenerating(false);
+      return;
     }
 
+    // Phase 2 — Save cvClubs and open PDF
     if (!isDemo) {
       try { await updatePlayer(player.id, { cvClubs: clubs }); } catch { /* non-critical */ }
     }
 
     const logoUrl = typeof window !== 'undefined' ? window.location.origin + '/logo-volea-icon.svg' : '';
-    const html = buildCvHtml(player, clubs, polishedDesc, logoUrl);
+    const html = buildCvHtml(player, clubs, description, logoUrl);
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
     window.open(url, '_blank');
@@ -850,17 +903,19 @@ export default function CvPage() {
         <div style={{ background: '#141928', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '1.25rem', marginBottom: '1.5rem' }}>
           <p style={{ color: '#64748B', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.875rem' }}>Perfil del jugador</p>
           <textarea rows={4} style={{ ...inputS, resize: 'vertical', marginBottom: '0.5rem' }} value={description} onChange={e => setDescription(e.target.value)} placeholder="Descripción narrativa del jugador para el CV…" />
-          <p style={{ color: '#64748B', fontSize: '0.75rem', margin: 0 }}>
-            {polishing ? '🤖 La IA está puliendo el texto…' : 'Pre-cargado desde las notas privadas. La IA lo mejorará al generar.'}
+          <p style={{ color: aiImproved ? '#A78BFA' : '#64748B', fontSize: '0.75rem', margin: 0 }}>
+            {aiImproved ? '✨ Descripción mejorada por IA' : 'Pre-cargado desde las notas privadas. La IA generará una descripción profesional al hacer clic.'}
           </p>
         </div>
 
         {/* Generate button */}
         <div style={{ textAlign: 'center' }}>
           <button onClick={handleGenerate} disabled={generating} style={{ background: generating ? '#5B21B6' : 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: 'white', border: 'none', padding: '0.875rem 2.5rem', borderRadius: 10, fontWeight: 700, fontSize: '1rem', cursor: generating ? 'not-allowed' : 'pointer', boxShadow: generating ? 'none' : '0 4px 20px rgba(124,58,237,0.4)' }}>
-            {generating ? '⏳ Generando…' : '📋 Generar Sports CV'}
+            {generating && !aiDone ? '⏳ Generando descripción con IA…' : aiDone ? '📄 Generar PDF' : '✨ Generar Sports CV'}
           </button>
-          <p style={{ color: '#64748B', fontSize: '0.78rem', marginTop: '0.75rem' }}>Se abrirá en una nueva ventana. Usa el botón 🖨️ para guardar como PDF.</p>
+          <p style={{ color: '#64748B', fontSize: '0.78rem', marginTop: '0.75rem' }}>
+            {aiDone ? 'Revisa el texto y haz clic para abrir el PDF.' : 'La IA generará una descripción profesional antes de abrir el PDF.'}
+          </p>
         </div>
 
       </div>
