@@ -425,6 +425,18 @@ body {
   padding: 13px 18px 12px 12px;
   background: #ffffff;
   display: flex; flex-direction: column; overflow: hidden;
+  justify-content: space-between;
+}
+.col-r .sec,
+.col-r .sec-grow {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  margin-bottom: 0; padding-bottom: 8px;
+  border-bottom: 1px solid #EEF0F4;
+}
+.col-r .sec:last-child,
+.col-r .sec-grow:last-child {
+  border-bottom: none; padding-bottom: 0;
 }
 
 /* ── SECTIONS ── */
