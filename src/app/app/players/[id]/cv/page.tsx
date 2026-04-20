@@ -39,176 +39,451 @@ function calcAge(birthDate: string): number {
   return Math.floor((Date.now() - new Date(birthDate + 'T12:00:00').getTime()) / (365.25 * 24 * 60 * 60 * 1000));
 }
 
-// ─── Radar SVG for CV (light background) ───────────────────────────────────
+// ─── Compact Radar SVG for CV ───────────────────────────────────────────────
 
-function buildCvRadarSvg(metrics: Player['metrics']): string {
-  const dims = ['Técnica','Táctica','Físico','Actitud'];
+function buildCompactRadar(metrics: Player['metrics']): string {
+  const dims = ['Técnica', 'Táctica', 'Físico', 'Actitud'];
   const vals = [metrics.technical, metrics.tactical, metrics.physical, metrics.attitude];
-  const size = 200, cx = size / 2, cy = size / 2, R = size * 0.32;
+  const size = 116, cx = size / 2, cy = size / 2, R = size * 0.3;
   const n = 4, sa = -Math.PI / 2, step = (2 * Math.PI) / n;
   const po = (a: number, r: number) => [cx + r * Math.cos(a), cy + r * Math.sin(a)] as [number, number];
 
-  let s = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">`;
+  let s = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0">`;
   for (let l = 1; l <= 5; l++) {
     const r = R * l / 5;
-    const pts = Array.from({length:n}, (_,i) => po(sa+i*step,r).join(',')).join(' ');
-    s += `<polygon points="${pts}" fill="none" stroke="${l===5?'#D1D5DB':'#E5E7EB'}" stroke-width="${l===5?1.5:0.8}"/>`;
+    const pts = Array.from({ length: n }, (_, i) => po(sa + i * step, r).join(',')).join(' ');
+    s += `<polygon points="${pts}" fill="none" stroke="${l === 5 ? '#D1D5DB' : '#E5E7EB'}" stroke-width="${l === 5 ? 1 : 0.5}"/>`;
   }
   for (let i = 0; i < n; i++) {
-    const [x,y] = po(sa+i*step, R);
-    s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E5E7EB" stroke-width="0.8"/>`;
-    const [lx,ly] = po(sa+i*step, R+22);
-    const anc = Math.abs(lx-cx)<5?'middle':lx>cx?'start':'end';
-    s += `<text x="${lx}" y="${ly+4}" text-anchor="${anc}" font-size="11" font-weight="600" fill="#64748B" font-family="system-ui">${dims[i]}</text>`;
+    const [x, y] = po(sa + i * step, R);
+    s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E5E7EB" stroke-width="0.5"/>`;
+    const [lx, ly] = po(sa + i * step, R + 14);
+    const anc = Math.abs(lx - cx) < 5 ? 'middle' : lx > cx ? 'start' : 'end';
+    s += `<text x="${lx}" y="${ly + 3}" text-anchor="${anc}" font-size="7.5" font-weight="600" fill="#94A3B8" font-family="system-ui">${dims[i]}</text>`;
   }
-  const dp = vals.map((v,i) => po(sa+i*step, R*Math.max(0.5,v)/10).join(',')).join(' ');
-  s += `<polygon points="${dp}" fill="rgba(124,58,237,0.2)" stroke="#7C3AED" stroke-width="2.5" stroke-linejoin="round"/>`;
-  vals.forEach((v,i) => {
-    const [x,y] = po(sa+i*step, R*Math.max(0.5,v)/10);
-    s += `<circle cx="${x}" cy="${y}" r="5" fill="#7C3AED" stroke="#fff" stroke-width="2"/>`;
-    s += `<text x="${x}" y="${y-9}" text-anchor="middle" font-size="10" font-weight="800" fill="#7C3AED" font-family="system-ui">${v}</text>`;
+  const dp = vals.map((v, i) => po(sa + i * step, R * Math.max(0.5, v) / 10).join(',')).join(' ');
+  s += `<polygon points="${dp}" fill="rgba(124,58,237,0.15)" stroke="#7C3AED" stroke-width="1.8" stroke-linejoin="round"/>`;
+  vals.forEach((v, i) => {
+    const [x, y] = po(sa + i * step, R * Math.max(0.5, v) / 10);
+    s += `<circle cx="${x}" cy="${y}" r="3" fill="#7C3AED" stroke="#fff" stroke-width="1.5"/>`;
+    s += `<text x="${x}" y="${y - 5}" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7C3AED" font-family="system-ui">${v}</text>`;
   });
   return s + '</svg>';
 }
 
 // ─── CV HTML builder ────────────────────────────────────────────────────────
 
-function buildCvHtml(player: Player, clubs: CvClub[], description: string): string {
+function buildCvHtml(player: Player, clubs: CvClub[], description: string, logoUrl: string): string {
   const avg = avgMetrics(player);
-  const rc  = ratingColor;
+  const rc = ratingColor;
   const age = calcAge(player.birthDate);
+  const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+
   const metricDefs = [
-    { key: 'technical' as const, label: 'Técnica',  color: '#7C3AED' },
-    { key: 'tactical'  as const, label: 'Táctica',  color: '#3B82F6' },
-    { key: 'physical'  as const, label: 'Físico',   color: '#10B981' },
-    { key: 'attitude'  as const, label: 'Actitud',  color: '#F59E0B' },
+    { key: 'technical' as const, label: 'Técnica', color: '#7C3AED' },
+    { key: 'tactical'  as const, label: 'Táctica', color: '#3B82F6' },
+    { key: 'physical'  as const, label: 'Físico',  color: '#10B981' },
+    { key: 'attitude'  as const, label: 'Actitud', color: '#F59E0B' },
   ];
 
-  const tagsHtml = player.tags.map(t =>
-    `<span style="font-size:10px;padding:3px 10px;border-radius:99px;background:#EDE9FE;color:#5B21B6;font-weight:600">${esc(t)}</span>`
-  ).join(' ');
+  const hasStats = player.goals != null || player.assists != null || player.matchesPlayed != null || player.minutesPlayed != null;
+  const hasContact = !!(player.contactName || player.agentName);
 
-  const scoreBar = (label: string, v: number, color: string) =>
-    `<div style="margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-        <span style="font-size:11px;color:#64748B;font-weight:500">${label}</span>
-        <span style="font-size:12px;font-weight:800;color:${rc(v)}">${v}/10</span>
-      </div>
-      <div style="height:6px;border-radius:3px;background:#F1F5F9">
-        <div style="height:6px;border-radius:3px;background:${color};width:${v*10}%"></div>
-      </div>
-    </div>`;
+  // Data pills
+  const dataPills = [
+    player.birthDate ? `<div class="dp"><span class="dp-l">Nacimiento</span><span class="dp-v">${formatDate(player.birthDate)}</span></div>` : '',
+    age ? `<div class="dp"><span class="dp-l">Edad</span><span class="dp-v">${age} años</span></div>` : '',
+    player.foot ? `<div class="dp"><span class="dp-l">Pie</span><span class="dp-v">${esc(player.foot)}</span></div>` : '',
+    player.height ? `<div class="dp"><span class="dp-l">Altura</span><span class="dp-v">${player.height} cm</span></div>` : '',
+    player.weight ? `<div class="dp"><span class="dp-l">Peso</span><span class="dp-v">${player.weight} kg</span></div>` : '',
+    player.category ? `<div class="dp"><span class="dp-l">Categoría</span><span class="dp-v">${esc(player.category)}</span></div>` : '',
+  ].filter(Boolean).join('');
 
-  const ir = (label: string, value: string) =>
-    `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #F8FAFC">
-      <span style="font-size:12px;color:#64748B;min-width:90px">${label}</span>
-      <span style="font-size:13px;font-weight:600;color:#1e293b">${value}</span>
-    </div>`;
+  // Radar
+  const radarSvg = buildCompactRadar(player.metrics);
+
+  // Score bars
+  const barsHtml = metricDefs.map(m => `
+    <div class="bar">
+      <div class="bar-row">
+        <span class="bar-lbl">${m.label}</span>
+        <span class="bar-val" style="color:${rc(player.metrics[m.key])}">${player.metrics[m.key]}/10</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${player.metrics[m.key] * 10}%;background:${m.color}"></div></div>
+    </div>`).join('');
+
+  // Left column sections
+  const profileHtml = description ? `
+    <div class="sec">
+      <div class="sec-title">Perfil del jugador</div>
+      <div class="profile-text">${esc(description)}</div>
+    </div>` : '';
 
   const clubsHtml = clubs.length ? `
-    <div style="margin-bottom:20px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7C3AED;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #F5F3FF">Trayectoria deportiva</div>
-      <div style="position:relative;padding-left:22px">
-        ${clubs.map((c,i) => `
-          <div style="position:relative;padding-bottom:${i<clubs.length-1?'14':'0'}px">
-            <div style="position:absolute;left:-22px;top:3px;width:12px;height:12px;border-radius:50%;background:#7C3AED;border:2px solid #fff;z-index:1"></div>
-            ${i<clubs.length-1?'<div style="position:absolute;left:-17px;top:14px;bottom:0;width:2px;background:#E2E8F0"></div>':''}
-            <div style="font-size:13px;font-weight:700;color:#1e293b">${esc(c.club)}</div>
-            <div style="font-size:11px;color:#64748B">${esc(c.etapa)}${c.categoria?' · '+esc(c.categoria):''}</div>
+    <div class="sec">
+      <div class="sec-title">Trayectoria</div>
+      <div class="timeline">
+        ${clubs.map((c, i) => `
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            ${i < clubs.length - 1 ? '<div class="tl-line"></div>' : ''}
+            <div>
+              <div class="tl-club">${esc(c.club)}</div>
+              <div class="tl-meta">${esc(c.etapa)}${c.categoria ? ' · ' + esc(c.categoria) : ''}</div>
+            </div>
           </div>`).join('')}
       </div>
     </div>` : '';
 
-  const descHtml = description ? `
-    <div style="margin-bottom:20px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7C3AED;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #F5F3FF">Perfil del jugador</div>
-      <div style="font-size:13.5px;line-height:1.8;color:#1e293b;background:#F5F3FF;border-left:4px solid #7C3AED;padding:16px 20px;border-radius:0 10px 10px 0">${esc(description)}</div>
+  const statsHtml = hasStats ? `
+    <div class="sec">
+      <div class="sec-title">Estadísticas de temporada</div>
+      <div class="stats-row">
+        ${player.goals != null ? `<div class="stat"><div class="stat-n" style="color:#7C3AED">${player.goals}</div><div class="stat-l">Goles</div></div>` : ''}
+        ${player.assists != null ? `<div class="stat"><div class="stat-n" style="color:#3B82F6">${player.assists}</div><div class="stat-l">Asist.</div></div>` : ''}
+        ${player.matchesPlayed != null ? `<div class="stat"><div class="stat-n" style="color:#10B981">${player.matchesPlayed}</div><div class="stat-l">Partidos</div></div>` : ''}
+        ${player.minutesPlayed != null ? `<div class="stat"><div class="stat-n" style="color:#F59E0B">${player.minutesPlayed}</div><div class="stat-l">Min</div></div>` : ''}
+      </div>
     </div>` : '';
 
+  // Right column sections
+  const tagsHtml = player.tags.length ? `
+    <div class="sec">
+      <div class="sec-title">Cualidades técnicas</div>
+      <ul class="qual-list">
+        ${player.tags.map(t => `<li>${esc(t)}</li>`).join('')}
+      </ul>
+    </div>` : '';
 
-  const today = new Date().toLocaleDateString('es-ES', { day:'2-digit', month:'long', year:'numeric' });
+  const contactHtml = hasContact ? `
+    <div class="sec">
+      <div class="sec-title">Contacto y representación</div>
+      ${player.contactName ? `<div class="ct-row"><span class="ct-lbl">${esc(player.contactRelation || 'Contacto')}</span><span class="ct-val">${esc(player.contactName)}${player.contactPhone ? ' · ' + esc(player.contactPhone) : ''}</span></div>` : ''}
+      ${player.agentName ? `<div class="ct-row"><span class="ct-lbl">Agente</span><span class="ct-val">${esc(player.agentName)}</span></div>` : ''}
+    </div>` : '';
+
+  const headerTagsHtml = player.tags.length
+    ? `<div class="tag-pills">${player.tags.slice(0, 6).map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}</div>`
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Sports CV — ${esc(player.name)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  @page{margin:10mm;size:A4}
-  .pbtns{position:fixed;top:16px;right:16px;z-index:100;display:flex;gap:8px}
-  .pbtns button{font-family:system-ui;font-size:13px;padding:10px 20px;border-radius:8px;cursor:pointer;border:none;font-weight:700}
-  @media print{.pbtns{display:none!important}body{background:#fff}}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 10px;
+    background: #CBD5E1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { size: A4; margin: 0; }
+  @media screen {
+    body { padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .page { box-shadow: 0 8px 48px rgba(0,0,0,0.28); }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .no-print { display: none !important; }
+    .page { box-shadow: none; }
+  }
+
+  /* Print button */
+  .no-print {
+    display: flex; gap: 8px;
+    align-self: flex-end;
+  }
+  .no-print button {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 13px; padding: 10px 18px; border-radius: 8px;
+    cursor: pointer; border: none; font-weight: 700;
+  }
+
+  /* A4 page shell */
+  .page {
+    width: 210mm;
+    height: 297mm;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .hdr {
+    background: #0B0F1A;
+    padding: 9px 20px 13px;
+    flex-shrink: 0;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 7px;
+    margin-bottom: 9px;
+  }
+  .brand img { height: 15px; display: block; }
+  .brand-txt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: .14em;
+    color: #A78BFA; text-transform: uppercase;
+  }
+  .hdr-body {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .player-photo {
+    width: 70px; height: 70px; border-radius: 10px;
+    object-fit: cover; object-position: top;
+    border: 2px solid rgba(124,58,237,0.5); flex-shrink: 0;
+  }
+  .player-init {
+    width: 70px; height: 70px; border-radius: 10px;
+    background: rgba(124,58,237,0.25);
+    border: 2px solid rgba(124,58,237,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px; font-weight: 900; color: #A78BFA; flex-shrink: 0;
+  }
+  .player-info { flex: 1; min-width: 0; }
+  .player-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 30px; font-weight: 900; color: #FFFFFF;
+    text-transform: uppercase; letter-spacing: .03em; line-height: 1;
+    margin-bottom: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .player-sub {
+    font-size: 10.5px; color: #94A3B8; font-weight: 500; margin-bottom: 7px;
+  }
+  .tag-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag-pill {
+    font-size: 8.5px; padding: 2px 8px; border-radius: 99px;
+    background: rgba(124,58,237,0.28); color: #C4B5FD;
+    font-weight: 600; border: 1px solid rgba(124,58,237,0.35);
+  }
+  .score-box {
+    flex-shrink: 0; text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255,255,255,0.08);
+  }
+  .score-lbl {
+    font-size: 7.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748B; font-weight: 700; margin-bottom: 1px;
+  }
+  .score-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 56px; font-weight: 900; line-height: 1;
+  }
+  .score-den { font-size: 10px; color: #64748B; font-weight: 500; }
+
+  /* ── DATA STRIP ── */
+  .strip {
+    background: #F8F9FA;
+    border-bottom: 1px solid #E2E8F0;
+    padding: 7px 20px;
+    display: flex; flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .dp {
+    display: flex; align-items: center; gap: 5px;
+    padding: 2px 12px; border-right: 1px solid #E2E8F0;
+  }
+  .dp:last-child { border-right: none; }
+  .dp-l { font-size: 8px; color: #94A3B8; font-weight: 500; }
+  .dp-v { font-size: 9px; color: #0F172A; font-weight: 700; }
+
+  /* ── BODY ── */
+  .body {
+    flex: 1; display: flex; overflow: hidden;
+    min-height: 0;
+  }
+  .col-l {
+    width: 40%;
+    padding: 14px 10px 14px 20px;
+    border-right: 1px solid #F1F5F9;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .col-r {
+    width: 60%;
+    padding: 14px 20px 14px 10px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Sections */
+  .sec { margin-bottom: 13px; flex-shrink: 0; }
+  .sec:last-child { margin-bottom: 0; }
+  .sec-title {
+    font-size: 7px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .14em; color: #7C3AED;
+    border-bottom: 1.5px solid #F5F3FF;
+    padding-bottom: 4px; margin-bottom: 8px;
+  }
+
+  /* Profile */
+  .profile-text {
+    font-size: 9.5px; line-height: 1.65; color: #374151;
+    border-left: 2.5px solid #7C3AED;
+    background: #FAFAFA;
+    padding: 6px 8px; border-radius: 0 4px 4px 0;
+  }
+
+  /* Timeline */
+  .timeline { padding-left: 14px; }
+  .tl-item { position: relative; display: flex; gap: 8px; padding-bottom: 8px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot {
+    position: absolute; left: -14px; top: 4px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #7C3AED;
+    border: 1.5px solid white;
+    box-shadow: 0 0 0 1.5px rgba(124,58,237,0.25);
+    z-index: 1; flex-shrink: 0;
+  }
+  .tl-line {
+    position: absolute; left: -11px; top: 12px; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, #DDD6FE, #E2E8F0);
+  }
+  .tl-club { font-size: 10px; font-weight: 700; color: #0F172A; }
+  .tl-meta { font-size: 8.5px; color: #64748B; }
+
+  /* Stats */
+  .stats-row { display: flex; gap: 6px; }
+  .stat {
+    flex: 1; text-align: center;
+    background: #F8F9FA; border-radius: 6px;
+    padding: 7px 4px;
+  }
+  .stat-n {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px; font-weight: 800; line-height: 1;
+  }
+  .stat-l {
+    font-size: 7.5px; color: #94A3B8; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .06em; margin-top: 2px;
+  }
+
+  /* Radar + bars row */
+  .metric-row { display: flex; gap: 10px; align-items: flex-start; }
+  .bars-col { flex: 1; }
+  .bar { margin-bottom: 8px; }
+  .bar:last-child { margin-bottom: 0; }
+  .bar-row {
+    display: flex; justify-content: space-between;
+    font-size: 9px; color: #64748B; font-weight: 500;
+    margin-bottom: 3px;
+  }
+  .bar-val { font-weight: 700; }
+  .bar-track { height: 5px; border-radius: 3px; background: #F1F5F9; overflow: hidden; }
+  .bar-fill { height: 5px; border-radius: 3px; }
+
+  /* Qualities */
+  .qual-list { list-style: none; column-count: 2; column-gap: 8px; }
+  .qual-list li {
+    font-size: 9.5px; color: #374151; padding: 2px 0;
+    display: flex; align-items: baseline; gap: 5px;
+    break-inside: avoid;
+  }
+  .qual-list li::before { content: '—'; color: #7C3AED; font-weight: 700; flex-shrink: 0; }
+
+  /* Contact */
+  .ct-row {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 4px 0; border-bottom: 1px solid #F8FAFC;
+  }
+  .ct-row:last-child { border-bottom: none; }
+  .ct-lbl {
+    font-size: 8px; color: #94A3B8; font-weight: 600;
+    min-width: 55px; flex-shrink: 0;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .ct-val { font-size: 9.5px; color: #0F172A; font-weight: 600; }
+
+  /* ── FOOTER ── */
+  .ftr {
+    background: #0B0F1A;
+    border-top: 2px solid #7C3AED;
+    padding: 6px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0;
+  }
+  .ftr-l {
+    font-size: 8px; color: #A78BFA; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .ftr-r { font-size: 8px; color: #475569; }
 </style>
 </head>
 <body>
-<div class="pbtns">
+
+<div class="no-print">
   <button onclick="window.print()" style="background:#7C3AED;color:#fff">🖨️ Guardar como PDF</button>
   <button onclick="window.close()" style="background:#fff;color:#374151;border:1px solid #d1d5db">✕ Cerrar</button>
 </div>
-<div style="max-width:720px;margin:0 auto;padding:0 20px 20px">
 
-  <!-- Header -->
-  <div style="background:#fff;border-radius:0;padding:0;margin-bottom:24px;border-bottom:1px solid #E2E8F0">
-    <!-- Purple accent strip -->
-    <div style="height:5px;background:linear-gradient(90deg,#7C3AED,#A78BFA);border-radius:0;margin-bottom:0"></div>
-    <!-- Brand -->
-    <div style="display:flex;align-items:center;gap:8px;padding:10px 0 0">
-      <img src="https://voleascouting.com/logo-volea-icon.svg" alt="Volea Scouting" style="height:22px;display:block">
-      <span style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#0F172A;text-transform:uppercase">VOLEA SCOUTING</span>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="brand">
+      ${logoUrl ? `<img src="${logoUrl}" alt="Volea" onerror="this.style.display='none'">` : ''}
+      <span class="brand-txt">Volea Scouting</span>
     </div>
-    <div style="padding:20px 0 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <div class="hdr-body">
       ${player.photoBase64
-        ? `<img src="${player.photoBase64}" alt="${esc(player.name)}" style="width:88px;height:88px;border-radius:14px;object-fit:cover;object-position:top;border:2px solid #E2E8F0;flex-shrink:0">`
-        : `<div style="width:88px;height:88px;border-radius:14px;background:#F5F3FF;border:2px solid #DDD6FE;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#7C3AED;flex-shrink:0">${esc(player.name.charAt(0).toUpperCase())}</div>`
+        ? `<img src="${player.photoBase64}" alt="${esc(player.name)}" class="player-photo">`
+        : `<div class="player-init">${esc(player.name.charAt(0).toUpperCase())}</div>`
       }
-      <div style="flex:1;min-width:200px">
-        <div style="font-size:9px;letter-spacing:.14em;color:#A78BFA;text-transform:uppercase;margin-bottom:6px;font-weight:700">Sports CV · Fútbol Base · Volea Scouting</div>
-        <div style="font-size:28px;font-weight:800;color:#0F172A;letter-spacing:-.02em;margin-bottom:4px;line-height:1.1">${esc(player.name)}</div>
-        <div style="font-size:13px;color:#64748B;margin-bottom:10px;font-weight:500">${esc(player.position)} · ${esc(player.club||'—')}</div>
-        ${player.tags.length?`<div style="display:flex;gap:5px;flex-wrap:wrap">${tagsHtml}</div>`:''}
+      <div class="player-info">
+        <div class="player-name">${esc(player.name)}</div>
+        <div class="player-sub">${esc(player.position)}${player.club ? ' · ' + esc(player.club) : ''}${player.category ? ' · ' + esc(player.category) : ''}</div>
+        ${headerTagsHtml}
       </div>
-      <div style="text-align:center;background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:14px;padding:12px 20px;flex-shrink:0">
-        <div style="font-size:9px;letter-spacing:.1em;color:#7C3AED;text-transform:uppercase;font-weight:700;margin-bottom:2px">Nota global</div>
-        <div style="font-size:42px;font-weight:800;color:${rc(avg)};line-height:1">${avg}</div>
-        <div style="font-size:10px;color:#94A3B8;margin-top:2px;font-weight:500">/10</div>
+      <div class="score-box">
+        <div class="score-lbl">Nota global</div>
+        <div class="score-num" style="color:${rc(avg)}">${avg}</div>
+        <div class="score-den">/10</div>
       </div>
     </div>
   </div>
 
-  <!-- 2-col grid -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
-    <!-- Personal data -->
-    <div>
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7C3AED;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #F5F3FF">Datos personales</div>
-      ${ir('Nacimiento', `${formatDate(player.birthDate)}${age?` (${age} años)`:''}`)}
-      ${ir('Localidad', esc(player.city||'—'))}
-      ${ir('Club actual', esc(player.club||'—'))}
-      ${ir('Categoría', esc(player.category||'—'))}
-      ${ir('División', esc(player.division||'—'))}
-      ${ir('Pie dominante', esc(player.foot||'—'))}
-      ${ir('Altura', player.height?`${player.height} cm`:'—')}
-      ${ir('Peso', player.weight?`${player.weight} kg`:'—')}
+  <!-- DATA STRIP -->
+  <div class="strip">${dataPills}</div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- LEFT 40% -->
+    <div class="col-l">
+      ${profileHtml}
+      ${clubsHtml}
+      ${statsHtml}
     </div>
-    <!-- Valoración técnica -->
-    <div>
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7C3AED;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #F5F3FF">Valoración técnica</div>
-      <div style="text-align:center;margin-bottom:12px">${buildCvRadarSvg(player.metrics)}</div>
-      ${metricDefs.map(m => scoreBar(m.label, player.metrics[m.key], m.color)).join('')}
+
+    <!-- RIGHT 60% -->
+    <div class="col-r">
+      <div class="sec">
+        <div class="sec-title">Valoración técnica</div>
+        <div class="metric-row">
+          ${radarSvg}
+          <div class="bars-col">${barsHtml}</div>
+        </div>
+      </div>
+      ${tagsHtml}
+      ${contactHtml}
     </div>
+
   </div>
 
-  ${clubsHtml}
-  ${descHtml}
-
-  <!-- Footer -->
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:1px solid #f1f5f9">
-    <div style="display:flex;align-items:center;gap:6px">
-      <div style="width:6px;height:6px;border-radius:50%;background:#7C3AED"></div>
-      <span style="font-size:11px;color:#64748B;font-weight:600">Volea Scouting · Sports CV</span>
-    </div>
-    <span style="font-size:10px;color:#94a3b8">Generado el ${today}</span>
+  <!-- FOOTER -->
+  <div class="ftr">
+    <div class="ftr-l">Volea Scouting · voleascouting.com</div>
+    <div class="ftr-r">Documento confidencial · Generado el ${today}</div>
   </div>
 
 </div>
@@ -288,7 +563,6 @@ export default function CvPage() {
 
     let polishedDesc = description;
 
-    // Polish description with Claude if one was provided
     if (description.trim()) {
       setPolishing(true);
       try {
@@ -306,15 +580,14 @@ export default function CvPage() {
       finally { setPolishing(false); }
     }
 
-    // Persist club history to Firestore (skip in demo)
     if (!isDemo) {
       try {
         await updatePlayer(player.id, { cvClubs: clubs });
       } catch { /* non-critical */ }
     }
 
-    // Open CV in new window
-    const html = buildCvHtml(player, clubs, polishedDesc);
+    const logoUrl = typeof window !== 'undefined' ? window.location.origin + '/logo-volea-icon.svg' : '';
+    const html = buildCvHtml(player, clubs, polishedDesc, logoUrl);
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
     window.open(url, '_blank');
@@ -421,7 +694,6 @@ export default function CvPage() {
             Trayectoria en clubes
           </p>
 
-          {/* Existing clubs */}
           {clubs.length === 0 && (
             <p style={{ color: '#64748B', fontSize: '0.825rem', marginBottom: '0.75rem' }}>
               Aún no has añadido clubes
@@ -445,7 +717,6 @@ export default function CvPage() {
             </div>
           ))}
 
-          {/* Add club form */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px auto',
             gap: '0.625rem', marginTop: '0.75rem', alignItems: 'flex-end' }}>
             <div>
